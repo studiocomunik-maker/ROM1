@@ -164,7 +164,7 @@ export default async function RealisationPage({
       />
       <PageNav back="/" backLabel="Accueil" />
 
-      <div className="lg:grid lg:grid-cols-[1.8fr_1fr]">
+      <div className="flex flex-col lg:grid lg:grid-cols-[1.8fr_1fr]">
         {/* COLONNE GAUCHE — visuels qui scrollent (0px entre eux) */}
         <div className="order-2 flex flex-col lg:order-1">
           {visuals.length > 0 ? (
