@@ -138,13 +138,17 @@ export default function Accueil() {
                 <span aria-hidden className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange" />
               </span>
             </span>{" "}
-            <span style={rev(8)}>à</span> <span style={rev(9)}>votre</span>{" "}
-            <span style={rev(10)}>
-              histoire<span className="text-orange">.</span>
-            </span>
-            <span className="ml-[0.2em] align-middle" style={rev(11)}>
-              <span className="inline-block h-[0.92em] w-[0.5em] -translate-y-[0.02em] rotate-[8deg]">
-                <Bolt className="h-full w-full" />
+            <span style={rev(8)}>à</span>{" "}
+            {/* votre + histoire restent sur la même ligne */}
+            <span className="inline-block whitespace-nowrap">
+              <span style={rev(9)}>votre</span>{" "}
+              <span style={rev(10)}>
+                histoire<span className="text-orange">.</span>
+              </span>
+              <span className="ml-[0.2em] align-middle" style={rev(11)}>
+                <span className="inline-block h-[0.92em] w-[0.5em] -translate-y-[0.02em] rotate-[8deg]">
+                  <Bolt className="h-full w-full" />
+                </span>
               </span>
             </span>
           </span>
