@@ -152,10 +152,20 @@ export default async function RealisationPage({
       <PageNav back="/" backLabel="Accueil" />
 
       <div className="lg:grid lg:grid-cols-[1.8fr_1fr]">
-        {/* COLONNE GAUCHE — visuels qui scrollent */}
-        <div className="order-2 flex flex-col gap-px bg-white/5 lg:order-1">
+        {/* COLONNE GAUCHE — visuels qui scrollent (0px entre eux) */}
+        <div className="order-2 flex flex-col lg:order-1">
           {visuals.length > 0 ? (
-            visuals.map((m, i) => <Visual key={i} m={m} titre={p.titre} />)
+            visuals.map((m, i) => (
+              <div
+                key={i}
+                style={{
+                  padding: m.pad ? `${m.pad}px` : undefined,
+                  background: m.bg || undefined,
+                }}
+              >
+                <Visual m={m} titre={p.titre} />
+              </div>
+            ))
           ) : (
             <div className="flex aspect-[4/3] w-full items-center justify-center bg-night">
               <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">

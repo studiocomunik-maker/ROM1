@@ -9,6 +9,8 @@ export type Media = {
   h?: number;
   poster?: string; // image d'overlay d'une vidéo (frame)
   images?: GalleryImage[]; // pour kind === "gallery" (slider)
+  pad?: number; // padding autour du média (px) — défaut 0
+  bg?: string; // couleur de fond autour du média — défaut aucun
 };
 
 export type Realisation = {

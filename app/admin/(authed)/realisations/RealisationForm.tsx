@@ -15,6 +15,8 @@ export type MediaItem = {
   h?: number;
   poster?: string; // image d'overlay pour une vidéo
   images?: GalleryImage[]; // pour kind === "gallery"
+  pad?: number; // padding autour du média (px)
+  bg?: string; // couleur de fond
 };
 
 // Lit les dimensions natives d'un fichier (pour next/image, sans déformation).
@@ -173,6 +175,10 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     });
   const setMediaUrl = (i: number, url: string) =>
     setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, url } : it)));
+  const setPad = (i: number, v: number) =>
+    setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, pad: v > 0 ? v : undefined } : it)));
+  const setBg = (i: number, v: string | undefined) =>
+    setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, bg: v || undefined } : it)));
 
   async function onMediaFile(i: number, e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -560,6 +566,35 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                 >
                   Suppr.
                 </button>
+              </div>
+
+              {/* Options communes : padding + couleur de fond */}
+              <div className="mt-2 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-2 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
+                <label className="flex items-center gap-2">
+                  Padding
+                  <input
+                    type="number"
+                    min={0}
+                    value={m.pad ?? 0}
+                    onChange={(e) => setPad(i, Number(e.target.value))}
+                    className="w-16 border border-paper/20 bg-transparent px-2 py-1 text-paper"
+                  />
+                  px
+                </label>
+                <label className="flex items-center gap-2">
+                  Fond
+                  <input
+                    type="color"
+                    value={m.bg ?? "#0c0c0e"}
+                    onChange={(e) => setBg(i, e.target.value)}
+                    className="h-6 w-8 cursor-pointer border border-paper/20 bg-transparent"
+                  />
+                </label>
+                {m.bg && (
+                  <button type="button" onClick={() => setBg(i, undefined)} className="text-orange">
+                    aucun fond
+                  </button>
+                )}
               </div>
 
               {/* Sous-builder galerie : grille d'images réordonnables */}
