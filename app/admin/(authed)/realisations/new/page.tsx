@@ -15,6 +15,7 @@ export default function NewRealisation() {
         position: 0,
         panel_theme: "dark",
         website: null,
+        partners: [],
       }}
     />
   );

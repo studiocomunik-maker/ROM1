@@ -2,6 +2,8 @@ import { supabasePublic } from "./supabase/public";
 
 export type GalleryImage = { url: string; w?: number; h?: number };
 
+export type Partner = { name: string; url?: string; logo?: string };
+
 export type Media = {
   kind: "image" | "video" | "youtube" | "gallery" | "text";
   url: string; // image / video / youtube
@@ -34,10 +36,11 @@ export type Realisation = {
   published: boolean;
   panel_theme: "dark" | "light";
   website: string | null;
+  partners: Partner[];
 };
 
 const COLS =
-  "id, slug, titre, description, univers, exps, cover_url, media, position, published, panel_theme, website";
+  "id, slug, titre, description, univers, exps, cover_url, media, position, published, panel_theme, website, partners";
 
 export async function getRealisations(): Promise<Realisation[]> {
   const { data } = await supabasePublic

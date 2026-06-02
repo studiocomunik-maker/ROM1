@@ -228,6 +228,39 @@ export default async function RealisationPage({
               ))}
             </div>
 
+            {p.partners.length > 0 && (
+              <div className="mt-8">
+                <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${light ? "text-coal/45" : "text-paper/45"}`}>
+                  Partenaires
+                </p>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                  {p.partners.map((pt, i) => {
+                    const inner = pt.logo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={pt.logo} alt={pt.name} className="h-7 w-auto max-w-[110px] object-contain" />
+                    ) : (
+                      <span className="font-display text-sm uppercase tracking-tight">{pt.name}</span>
+                    );
+                    return pt.url ? (
+                      <a
+                        key={i}
+                        href={pt.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="opacity-75 transition-opacity hover:opacity-100"
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <span key={i} className="opacity-75">
+                        {inner}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="mt-10 flex flex-wrap items-center gap-6">
               <a
                 href="mailto:rom1@rom1.fr"

@@ -60,6 +60,8 @@ function readDims(file: File, kind: MediaItem["kind"]): Promise<{ w?: number; h?
   });
 }
 
+export type Partner = { name: string; url?: string; logo?: string };
+
 export type RealisationData = {
   id?: string;
   titre: string;
@@ -73,6 +75,7 @@ export type RealisationData = {
   position: number;
   panel_theme: "dark" | "light";
   website: string | null;
+  partners: Partner[];
 };
 
 const slugify = (s: string) =>
@@ -213,6 +216,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
   const [position, setPosition] = useState(initial.position);
   const [panelTheme, setPanelTheme] = useState<"dark" | "light">(initial.panel_theme);
   const [website, setWebsite] = useState(initial.website ?? "");
+  const [partners, setPartners] = useState<Partner[]>(initial.partners ?? []);
 
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -300,6 +304,25 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     ]);
   const patchMedia = (i: number, patch: Partial<MediaItem>) =>
     setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+
+  // ----- partenaires -----
+  const addPartner = () => setPartners((p) => [...p, { name: "" }]);
+  const removePartner = (i: number) => setPartners((p) => p.filter((_, idx) => idx !== i));
+  const patchPartner = (i: number, patch: Partial<Partner>) =>
+    setPartners((p) => p.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+  async function onPartnerLogo(i: number, e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(`partner-${i}`);
+    setError(null);
+    try {
+      patchPartner(i, { logo: await uploadFile(file) });
+    } catch (err) {
+      setError(`Upload logo partenaire : ${(err as Error).message}`);
+    } finally {
+      setUploading(null);
+    }
+  }
 
   // Rafraîchit immédiatement le front (ISR on-demand) après une modif.
   const revalidateFront = async (s?: string) => {
@@ -437,6 +460,17 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       position,
       panel_theme: panelTheme,
       website: site ? (/^https?:\/\//.test(site) ? site : `https://${site}`) : null,
+      partners: partners
+        .filter((pt) => pt.name.trim())
+        .map((pt) => ({
+          name: pt.name.trim(),
+          url: pt.url?.trim()
+            ? /^https?:\/\//.test(pt.url.trim())
+              ? pt.url.trim()
+              : `https://${pt.url.trim()}`
+            : undefined,
+          logo: pt.logo || undefined,
+        })),
     };
 
     if (initial.id) {
@@ -865,6 +899,60 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
             </button>
           ))}
         </div>
+      </section>
+
+      {/* Partenaires */}
+      <section className={card}>
+        <h2 className={sectionTitle}>Partenaires</h2>
+        <div className="space-y-3">
+          {partners.map((pt, i) => (
+            <div key={i} className="flex flex-wrap items-center gap-3 border border-paper/10 bg-[#161619] p-3">
+              {pt.logo && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={pt.logo} alt="" className="h-8 w-auto max-w-[90px] object-contain" />
+              )}
+              <input
+                className={`${field} mt-0 min-w-[140px] flex-1`}
+                placeholder="Nom du partenaire"
+                value={pt.name}
+                onChange={(e) => patchPartner(i, { name: e.target.value })}
+              />
+              <input
+                className={`${field} mt-0 min-w-[160px] flex-1`}
+                placeholder="https://… (lien, optionnel)"
+                value={pt.url ?? ""}
+                onChange={(e) => patchPartner(i, { url: e.target.value })}
+              />
+              <label className="cursor-pointer border border-paper/25 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
+                {uploading === `partner-${i}` ? "Upload…" : pt.logo ? "Logo ✓" : "Logo"}
+                <input type="file" accept="image/*" onChange={(e) => onPartnerLogo(i, e)} className="hidden" />
+              </label>
+              {pt.logo && (
+                <button
+                  type="button"
+                  onClick={() => patchPartner(i, { logo: undefined })}
+                  className="font-mono text-[11px] text-orange"
+                >
+                  ×
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => removePartner(i)}
+                className="font-mono text-[11px] uppercase tracking-[0.1em] text-orange"
+              >
+                Suppr.
+              </button>
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={addPartner}
+          className="mt-3 border border-dashed border-paper/30 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange"
+        >
+          + partenaire
+        </button>
       </section>
 
       {/* Réglages */}

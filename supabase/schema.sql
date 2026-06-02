@@ -26,6 +26,8 @@ alter table public.realisations
   add column if not exists panel_theme text not null default 'dark';
 alter table public.realisations
   add column if not exists website text;
+alter table public.realisations
+  add column if not exists partners jsonb not null default '[]'::jsonb;
 
 -- updated_at automatique
 create or replace function public.touch_updated_at()
