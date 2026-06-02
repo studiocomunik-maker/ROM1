@@ -17,12 +17,15 @@ create table if not exists public.realisations (
   media       jsonb not null default '[]'::jsonb, -- [{kind:'image'|'video'|'youtube', url, w?, h?}]
   position    int  not null default 0,
   published   boolean not null default true,
-  panel_theme text not null default 'dark'   -- fond du descriptif : 'dark' | 'light'
+  panel_theme text not null default 'dark',  -- fond du descriptif : 'dark' | 'light'
+  website     text                            -- URL du site du projet (bouton « Voir le site »)
 );
 
--- Pour une base déjà créée avant l'ajout de cette colonne :
+-- Pour une base déjà créée avant l'ajout de ces colonnes :
 alter table public.realisations
   add column if not exists panel_theme text not null default 'dark';
+alter table public.realisations
+  add column if not exists website text;
 
 -- updated_at automatique
 create or replace function public.touch_updated_at()

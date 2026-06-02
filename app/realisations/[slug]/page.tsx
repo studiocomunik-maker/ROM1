@@ -204,6 +204,18 @@ export default async function RealisationPage({
               >
                 Un projet comme ça ?
               </a>
+              {p.website && (
+                <a
+                  href={p.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`border px-6 py-3 font-display text-sm uppercase tracking-[0.12em] transition-colors hover:border-orange hover:text-orange ${
+                    light ? "border-coal/30 text-coal" : "border-paper/30 text-paper"
+                  }`}
+                >
+                  Voir le site ↗
+                </a>
+              )}
               {next && (
                 <Link
                   href={`/realisations/${next.slug}`}

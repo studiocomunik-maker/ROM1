@@ -14,6 +14,7 @@ export default function NewRealisation() {
         published: true,
         position: 0,
         panel_theme: "dark",
+        website: null,
       }}
     />
   );

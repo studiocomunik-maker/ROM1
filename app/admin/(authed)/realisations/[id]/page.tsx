@@ -25,6 +25,7 @@ export default async function EditRealisation({
         published: data.published ?? true,
         position: data.position ?? 0,
         panel_theme: data.panel_theme === "light" ? "light" : "dark",
+        website: data.website ?? null,
       }}
     />
   );

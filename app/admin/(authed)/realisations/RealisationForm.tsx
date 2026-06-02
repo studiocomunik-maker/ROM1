@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../../../utils/supabase/client";
 import { EXPS, UNIVERS } from "../../../data";
@@ -52,6 +53,7 @@ export type RealisationData = {
   published: boolean;
   position: number;
   panel_theme: "dark" | "light";
+  website: string | null;
 };
 
 const slugify = (s: string) =>
@@ -116,7 +118,9 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
   const [published, setPublished] = useState(initial.published);
   const [position, setPosition] = useState(initial.position);
   const [panelTheme, setPanelTheme] = useState<"dark" | "light">(initial.panel_theme);
+  const [website, setWebsite] = useState(initial.website ?? "");
 
+  const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -232,6 +236,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setSaved(false);
     if (!titre.trim() || !slug.trim()) {
       setError("Titre et slug obligatoires.");
       return;
@@ -250,6 +255,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       return;
     }
     setBusy(true);
+    const site = website.trim();
     const payload = {
       slug: slug.trim(),
       titre: titre.trim(),
@@ -261,17 +267,34 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       published,
       position,
       panel_theme: panelTheme,
+      website: site ? (/^https?:\/\//.test(site) ? site : `https://${site}`) : null,
     };
-    const res = initial.id
-      ? await supabase.from("realisations").update(payload).eq("id", initial.id)
-      : await supabase.from("realisations").insert(payload);
-    setBusy(false);
-    if (res.error) {
-      setError(res.error.message);
-      return;
+
+    if (initial.id) {
+      // Mise à jour : on RESTE sur la fiche (pas de retour au listing).
+      const { error } = await supabase.from("realisations").update(payload).eq("id", initial.id);
+      setBusy(false);
+      if (error) {
+        setError(error.message);
+        return;
+      }
+      setSaved(true);
+      router.refresh();
+    } else {
+      // Création : on bascule sur la fiche d'édition du nouvel élément.
+      const { data, error } = await supabase
+        .from("realisations")
+        .insert(payload)
+        .select("id")
+        .single();
+      setBusy(false);
+      if (error) {
+        setError(error.message);
+        return;
+      }
+      router.replace(`/admin/realisations/${data.id}`);
+      router.refresh();
     }
-    router.push("/admin");
-    router.refresh();
   }
 
   async function onDelete() {
@@ -293,6 +316,15 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
 
   return (
     <form onSubmit={onSubmit} className="max-w-[760px] space-y-8">
+      <div className="flex justify-end">
+        <Link
+          href="/admin"
+          className="font-mono text-[11px] uppercase tracking-[0.15em] text-paper/55 transition-colors hover:text-paper"
+        >
+          ← Réalisations
+        </Link>
+      </div>
+
       <div className="flex items-center justify-between gap-4">
         <h1 className="font-display text-3xl uppercase tracking-tight">
           {editing ? "Éditer" : "Nouvelle réalisation"}
@@ -352,6 +384,21 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+      </label>
+
+      {/* Site internet (optionnel) */}
+      <label className="block">
+        <span className={label}>Site internet (optionnel)</span>
+        <input
+          className={field}
+          type="url"
+          placeholder="https://exemple.fr"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+        <span className="mt-1 block font-mono text-[10px] text-paper/35">
+          Affiche un bouton « Voir le site » sur la fiche. Vide = pas de bouton.
+        </span>
       </label>
 
       {/* Univers (unique) + Expertises (multiple) */}
@@ -538,6 +585,11 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         >
           Annuler
         </button>
+        {saved && (
+          <span className="font-mono text-xs uppercase tracking-[0.12em] text-[#3ddc84]">
+            Enregistré ✓
+          </span>
+        )}
         {editing && (
           <button
             type="button"
