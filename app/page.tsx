@@ -22,7 +22,7 @@ export default async function Home() {
       <img
         src="/logo-blanc.png"
         alt="Romain Renoux"
-        className="fixed left-6 top-7 z-50 h-9 w-auto mix-blend-difference md:left-12 md:h-12"
+        className="fixed left-6 top-7 z-50 h-11 w-auto mix-blend-difference md:left-12 md:h-14"
       />
       <Accueil />
       <Expertises />
