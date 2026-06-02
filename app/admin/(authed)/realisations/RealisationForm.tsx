@@ -258,6 +258,11 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, url, ...dims } : it)));
       // Vidéo : génère automatiquement la cover depuis une frame (fichier local).
       if (kind === "video") {
+        if (file.type === "video/quicktime" || /\.mov$/i.test(file.name)) {
+          setError(
+            "⚠ Format .mov (QuickTime) : souvent illisible dans les navigateurs (Chrome/Firefox, reels HEVC). Exporte en MP4 (H.264) pour une lecture universelle — la cover, elle, est bien générée.",
+          );
+        }
         const t = media[i].posterTime ?? 1;
         const objUrl = URL.createObjectURL(file);
         try {
