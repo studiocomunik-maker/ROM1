@@ -39,35 +39,51 @@ export async function generateMetadata({
   };
 }
 
+// Chaque visuel est centré sur fond noir et plafonné en hauteur (max-h-[88vh]) :
+// le paysage remplit la largeur, le portrait (ex. vidéo 1080×1920) reste dans
+// une taille raisonnable avec letterbox latéral, sans déformation.
 function Visual({ m, titre }: { m: Media; titre: string }) {
   if (m.kind === "youtube") {
     const id = youtubeId(m.url);
     if (!id) return null;
     return (
-      <div className="aspect-video w-full bg-black">
-        <iframe
-          className="h-full w-full"
-          src={`https://www.youtube.com/embed/${id}`}
-          title={titre}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
+      <div className="flex justify-center bg-black">
+        <div className="aspect-video w-full">
+          <iframe
+            className="h-full w-full"
+            src={`https://www.youtube.com/embed/${id}`}
+            title={titre}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
       </div>
     );
   }
   if (m.kind === "video") {
     return (
-      <video
-        className="w-full"
-        src={m.url}
-        controls
-        playsInline
-        preload="metadata"
-      />
+      <div className="flex justify-center bg-black">
+        <video
+          className="max-h-[88vh] w-auto max-w-full object-contain"
+          src={m.url}
+          controls
+          playsInline
+          preload="metadata"
+        />
+      </div>
     );
   }
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={m.url} alt={titre} loading="lazy" className="w-full object-cover" />;
+  return (
+    <div className="flex justify-center bg-black">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={m.url}
+        alt={titre}
+        loading="lazy"
+        className="max-h-[88vh] w-auto max-w-full object-contain"
+      />
+    </div>
+  );
 }
 
 export default async function RealisationPage({
