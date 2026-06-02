@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
+import Reveal from "../../components/Reveal";
 import { EXPS, SITE_URL, getMetier, metiers } from "../../data";
 import { getRealisationsByMetier } from "../../../utils/realisations";
 
@@ -125,6 +126,32 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
             className="font-display text-sm uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-60"
           >
             {next.t} →
+          </Link>
+        </div>
+      </section>
+
+      {/* CTA de fin de page métier */}
+      <section className="grain relative overflow-hidden bg-orange px-6 py-24 text-center text-coal md:px-12 md:py-32">
+        <Reveal>
+          <p className="mb-5 font-display text-xs uppercase tracking-[0.25em]">
+            Un projet en {metier.t.toLowerCase()} ?
+          </p>
+          <h2 className="font-display uppercase leading-[0.9] tracking-tight text-[clamp(2.4rem,8vw,5.5rem)]">
+            Parlons de la vôtre.
+          </h2>
+          <a
+            href="mailto:rom1@rom1.fr"
+            className="mt-8 inline-block bg-coal px-6 py-3 font-display text-sm uppercase tracking-[0.12em] text-paper transition-transform hover:scale-[1.03]"
+          >
+            rom1@rom1.fr
+          </a>
+        </Reveal>
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-xs uppercase tracking-[0.15em]">
+          <Link href="/#portfolio" className="text-coal/70 transition-colors hover:text-coal">
+            ← Toutes les réalisations
+          </Link>
+          <Link href={`/metiers/${next.key}`} className="text-coal/70 transition-colors hover:text-coal">
+            Métier suivant · {next.t} →
           </Link>
         </div>
       </section>
