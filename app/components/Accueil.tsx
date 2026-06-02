@@ -69,7 +69,7 @@ export default function Accueil() {
       </header>
 
       <div className="relative flex flex-1 items-center px-6 py-8 md:px-12">
-        <h1 className="mx-auto w-full max-w-[1080px] font-display uppercase leading-[0.86] tracking-[-0.015em] text-paper text-[clamp(4rem,12vw,6.2rem)] md:text-[clamp(3rem,8vw,7.6rem)]">
+        <h1 className="mx-auto w-full max-w-[1000px] font-display uppercase leading-[0.86] tracking-[-0.015em] text-paper text-[clamp(3.4rem,11vw,5.4rem)] md:text-[clamp(2.6rem,6.4vw,6rem)]">
           {/* MOBILE — lignes forcées */}
           <span className="block md:hidden">
             <span className="block">
@@ -132,13 +132,16 @@ export default function Accueil() {
               </span>
             </span>
             <span style={rev(6)}>aux</span>{" "}
-            <span style={rev(7)}>
-              <span className="relative inline-block">
-                marques
-                <span aria-hidden className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange" />
-              </span>
+            {/* « marques » + « à » restent collés (le À ne s'orpheline plus) */}
+            <span className="inline-block whitespace-nowrap">
+              <span style={rev(7)}>
+                <span className="relative inline-block">
+                  marques
+                  <span aria-hidden className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange" />
+                </span>
+              </span>{" "}
+              <span style={rev(8)}>à</span>
             </span>{" "}
-            <span style={rev(8)}>à</span>{" "}
             {/* votre + histoire restent sur la même ligne */}
             <span className="inline-block whitespace-nowrap">
               <span style={rev(9)}>votre</span>{" "}
