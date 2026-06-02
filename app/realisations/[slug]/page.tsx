@@ -172,7 +172,8 @@ export default async function RealisationPage({
               <div
                 key={i}
                 style={{
-                  padding: m.pad ? `${m.pad}px` : undefined,
+                  // pad fixe (px) plafonné en vw → reste raisonnable sur smartphone
+                  padding: m.pad ? `min(${m.pad}px, 8vw)` : undefined,
                   background: m.bg || undefined,
                 }}
               >

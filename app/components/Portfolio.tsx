@@ -80,7 +80,7 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
       `}</style>
 
       {/* En-tête centré (titre au-dessus des filtres), centré verticalement */}
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8 px-6 py-20 text-center md:px-12">
+      <div className="flex flex-col items-center justify-center gap-6 px-6 py-10 text-center md:py-14 md:px-12">
         <div>
           <p className="mb-3 font-display text-xs uppercase tracking-[0.3em] text-orange">
             ★ Portfolio
@@ -99,7 +99,7 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
       </div>
 
       {/* Grille full-wide, angles francs — texte au survol sur calque noir 50% */}
-      <div className="grid grid-cols-2 gap-px bg-coal/10 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-px bg-coal/10 sm:grid-cols-3">
         {list.map((p) => (
           <Link
             key={p.slug}
