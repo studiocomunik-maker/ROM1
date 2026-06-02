@@ -95,6 +95,16 @@ body {
   animation: heroFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Trait qui barre (AUX / MARQUES) : se dessine de gauche à droite */
+@keyframes heroStrike {
+  from { transform: rotate(-2deg) scaleX(0); }
+  to { transform: rotate(-2deg) scaleX(1); }
+}
+.hero-strike {
+  transform-origin: left center;
+  animation: heroStrike 0.55s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+
 /* Barre de chargement de l'overlay de transition */
 @keyframes loadbar {
   0% { transform: translateX(-100%); }

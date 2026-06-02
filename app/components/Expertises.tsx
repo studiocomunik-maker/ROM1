@@ -211,7 +211,7 @@ export default function Expertises() {
             transitionProperty: "transform",
             transitionDuration: "0.8s",
             transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-            transitionDelay: `${gi * 0.08}s`,
+            transitionDelay: `${gi * 0.15}s`,
             transform: shown ? "translateY(0)" : "translateY(110%)",
           }}
         >

@@ -38,6 +38,7 @@ function Burst({ className = "" }: { className?: string }) {
 
 const STEP = 0.16; // gros délai entre chaque mot (s)
 const d = (i: number) => ({ animationDelay: `${i * STEP}s` });
+const STRIKE_DELAY = "1.7s"; // le trait se dessine une fois « aux marques » montés
 
 // Mot en MASQUE : le bord clippe, la lettre monte depuis le bas (CSS heroRise).
 // pt/-mt + lineHeight : marge haute pour ne pas rogner les accents (À, É, le point).
@@ -91,13 +92,18 @@ export default function Accueil() {
               </span>
             </span>
             <span className="block">
-              <Mask i={6}>aux</Mask>
+              <Mask i={6}>
+              <span className="relative inline-block">
+                aux
+                <span aria-hidden className="hero-strike absolute inset-x-0 top-[50%] h-[0.055em] bg-orange" style={{ animationDelay: STRIKE_DELAY }} />
+              </span>
+            </Mask>
             </span>
             <span className="block">
               <Mask i={7}>
                 <span className="relative inline-block">
                   marques
-                  <span aria-hidden className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange" />
+                  <span aria-hidden className="hero-strike absolute inset-x-0 top-[50%] h-[0.055em] bg-orange" style={{ animationDelay: STRIKE_DELAY }} />
                 </span>
               </Mask>{" "}
               <Mask i={8}>à</Mask>
@@ -134,13 +140,18 @@ export default function Accueil() {
                 <Eye className="eye-blink h-full w-full" />
               </span>
             </span>
-            <Mask i={6}>aux</Mask>{" "}
+            <Mask i={6}>
+              <span className="relative inline-block">
+                aux
+                <span aria-hidden className="hero-strike absolute inset-x-0 top-[50%] h-[0.055em] bg-orange" style={{ animationDelay: STRIKE_DELAY }} />
+              </span>
+            </Mask>{" "}
             {/* « marques » + « à » restent collés */}
             <span className="inline-block whitespace-nowrap">
               <Mask i={7}>
                 <span className="relative inline-block">
                   marques
-                  <span aria-hidden className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange" />
+                  <span aria-hidden className="hero-strike absolute inset-x-0 top-[50%] h-[0.055em] bg-orange" style={{ animationDelay: STRIKE_DELAY }} />
                 </span>
               </Mask>{" "}
               <Mask i={8}>à</Mask>
