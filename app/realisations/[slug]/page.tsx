@@ -114,11 +114,16 @@ export default async function RealisationPage({
   const idx = list.findIndex((x) => x.slug === p.slug);
   const next = list.length > 1 ? list[(idx + 1) % list.length] : null;
 
-  // Colonne gauche : image de mise en avant en tête, puis les médias.
-  const visuals: Media[] = [
-    ...(p.cover_url ? [{ kind: "image" as const, url: p.cover_url }] : []),
-    ...p.media,
-  ];
+  // Colonne gauche = UNIQUEMENT les médias uploadés (la cover sert de vignette
+  // dans les listings). Si aucun média, on retombe sur la cover en secours.
+  const visuals: Media[] =
+    p.media.length > 0
+      ? p.media
+      : p.cover_url
+        ? [{ kind: "image" as const, url: p.cover_url }]
+        : [];
+
+  const light = p.panel_theme === "light";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -175,9 +180,13 @@ export default async function RealisationPage({
           )}
         </div>
 
-        {/* COLONNE DROITE — panneau sticky : titre + descriptif */}
+        {/* COLONNE DROITE — panneau sticky : titre + descriptif (thème au choix) */}
         <aside className="order-1 lg:order-2">
-          <div className="flex min-h-[60vh] flex-col justify-center px-6 py-28 lg:sticky lg:top-0 lg:h-screen lg:min-h-0 lg:px-10">
+          <div
+            className={`flex min-h-[60vh] flex-col justify-center px-6 py-28 lg:sticky lg:top-0 lg:h-screen lg:min-h-0 lg:px-10 ${
+              light ? "bg-paper text-coal" : "bg-coal text-paper"
+            }`}
+          >
             <p className="mb-5 font-display text-xs uppercase tracking-[0.25em] text-orange">
               {UNIVERS[p.univers] ?? p.univers}
             </p>
@@ -185,7 +194,9 @@ export default async function RealisationPage({
               {p.titre}
             </h1>
             {p.description && (
-              <p className="mt-7 max-w-[44ch] leading-relaxed text-paper/75">{p.description}</p>
+              <p className={`mt-7 max-w-[44ch] leading-relaxed ${light ? "text-coal/70" : "text-paper/75"}`}>
+                {p.description}
+              </p>
             )}
 
             <div className="mt-7 flex flex-wrap gap-2">
@@ -193,7 +204,9 @@ export default async function RealisationPage({
                 <Link
                   key={x}
                   href={`/metiers/${x}`}
-                  className="border border-paper/30 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-paper/80 transition-colors hover:border-orange hover:text-orange"
+                  className={`border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors hover:border-orange hover:text-orange ${
+                    light ? "border-coal/30 text-coal/80" : "border-paper/30 text-paper/80"
+                  }`}
                 >
                   {EXPS[x] ?? x}
                 </Link>
@@ -210,7 +223,9 @@ export default async function RealisationPage({
               {next && (
                 <Link
                   href={`/realisations/${next.slug}`}
-                  className="font-display text-xs uppercase tracking-[0.15em] text-paper/60 transition-colors hover:text-paper"
+                  className={`font-display text-xs uppercase tracking-[0.15em] transition-colors ${
+                    light ? "text-coal/60 hover:text-coal" : "text-paper/60 hover:text-paper"
+                  }`}
                 >
                   Suivant · {next.titre} →
                 </Link>

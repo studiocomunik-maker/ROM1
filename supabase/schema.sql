@@ -14,10 +14,15 @@ create table if not exists public.realisations (
   univers     text not null,                 -- UNE seule (vin, sceno, art, corporate, hotel)
   exps        text[] not null default '{}',  -- PLUSIEURS (identite, print, photo, web, motion)
   cover_url   text,                           -- image de mise en avant
-  media       jsonb not null default '[]'::jsonb, -- [{kind:'image'|'video'|'youtube', url, poster?}]
+  media       jsonb not null default '[]'::jsonb, -- [{kind:'image'|'video'|'youtube', url, w?, h?}]
   position    int  not null default 0,
-  published   boolean not null default true
+  published   boolean not null default true,
+  panel_theme text not null default 'dark'   -- fond du descriptif : 'dark' | 'light'
 );
+
+-- Pour une base déjà créée avant l'ajout de cette colonne :
+alter table public.realisations
+  add column if not exists panel_theme text not null default 'dark';
 
 -- updated_at automatique
 create or replace function public.touch_updated_at()

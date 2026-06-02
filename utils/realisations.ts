@@ -18,9 +18,11 @@ export type Realisation = {
   media: Media[];
   position: number;
   published: boolean;
+  panel_theme: "dark" | "light";
 };
 
-const COLS = "id, slug, titre, description, univers, exps, cover_url, media, position, published";
+const COLS =
+  "id, slug, titre, description, univers, exps, cover_url, media, position, published, panel_theme";
 
 export async function getRealisations(): Promise<Realisation[]> {
   const { data } = await supabasePublic

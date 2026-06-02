@@ -13,6 +13,7 @@ export default function NewRealisation() {
         media: [],
         published: true,
         position: 0,
+        panel_theme: "dark",
       }}
     />
   );

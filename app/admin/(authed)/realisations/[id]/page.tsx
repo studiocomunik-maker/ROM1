@@ -24,6 +24,7 @@ export default async function EditRealisation({
         media: (data.media ?? []) as MediaItem[],
         published: data.published ?? true,
         position: data.position ?? 0,
+        panel_theme: data.panel_theme === "light" ? "light" : "dark",
       }}
     />
   );

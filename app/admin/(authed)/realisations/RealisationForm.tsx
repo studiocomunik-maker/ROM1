@@ -48,6 +48,7 @@ export type RealisationData = {
   media: MediaItem[];
   published: boolean;
   position: number;
+  panel_theme: "dark" | "light";
 };
 
 const slugify = (s: string) =>
@@ -60,6 +61,27 @@ const slugify = (s: string) =>
 
 const UNIVERS_KEYS = Object.keys(UNIVERS);
 const EXPS_KEYS = Object.keys(EXPS);
+
+const ytId = (url: string): string | null => {
+  const m = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/,
+  );
+  return m ? m[1] : null;
+};
+
+function MediaThumb({ m }: { m: MediaItem }) {
+  const box = "h-14 w-20 shrink-0 bg-white/5 object-cover";
+  if (m.kind === "youtube") {
+    const id = ytId(m.url);
+    // eslint-disable-next-line @next/next/no-img-element
+    return id ? <img src={`https://img.youtube.com/vi/${id}/mqdefault.jpg`} alt="" className={box} /> : <div className={box} />;
+  }
+  if (m.kind === "video") {
+    return m.url ? <video src={m.url} muted playsInline preload="metadata" className={box} /> : <div className={box} />;
+  }
+  // eslint-disable-next-line @next/next/no-img-element
+  return m.url ? <img src={m.url} alt="" className={box} /> : <div className={box} />;
+}
 
 export default function RealisationForm({ initial }: { initial: RealisationData }) {
   const router = useRouter();
@@ -76,6 +98,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
   const [media, setMedia] = useState<MediaItem[]>(initial.media);
   const [published, setPublished] = useState(initial.published);
   const [position, setPosition] = useState(initial.position);
+  const [panelTheme, setPanelTheme] = useState<"dark" | "light">(initial.panel_theme);
 
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
@@ -175,6 +198,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       media: media.filter((m) => m.url.trim() !== ""),
       published,
       position,
+      panel_theme: panelTheme,
     };
     const res = initial.id
       ? await supabase.from("realisations").update(payload).eq("id", initial.id)
@@ -211,10 +235,31 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         <h1 className="font-display text-3xl uppercase tracking-tight">
           {editing ? "Éditer" : "Nouvelle réalisation"}
         </h1>
-        <label className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-paper/60">
-          <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
-          Publiée
-        </label>
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-paper/45">
+              Descriptif
+            </span>
+            {(["dark", "light"] as const).map((t) => (
+              <button
+                type="button"
+                key={t}
+                onClick={() => setPanelTheme(t)}
+                className={`border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors ${
+                  panelTheme === t
+                    ? "border-orange bg-orange text-coal"
+                    : "border-paper/25 text-paper/70 hover:border-paper/60"
+                }`}
+              >
+                {t === "dark" ? "Sombre" : "Clair"}
+              </button>
+            ))}
+          </div>
+          <label className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-paper/60">
+            <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
+            Publiée
+          </label>
+        </div>
       </div>
 
       {/* Titre + slug */}
@@ -323,9 +368,10 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                 <button type="button" onClick={() => moveMedia(i, -1)} className="px-1 text-paper/40 hover:text-paper">▲</button>
                 <button type="button" onClick={() => moveMedia(i, 1)} className="px-1 text-paper/40 hover:text-paper">▼</button>
               </div>
-              <span className="w-16 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-orange">
+              <span className="w-14 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-orange">
                 {m.kind}
               </span>
+              <MediaThumb m={m} />
               {m.kind === "youtube" ? (
                 <input
                   className={`${field} mt-0 flex-1`}
