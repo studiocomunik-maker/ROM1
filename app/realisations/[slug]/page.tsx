@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
 import Gallery from "./Gallery";
 import VideoPlayer from "./VideoPlayer";
+import TextBand from "./TextBand";
 import { EXPS, UNIVERS, SITE_URL } from "../../data";
 import {
   getRealisation,
@@ -48,27 +49,8 @@ const SIZES = "(min-width: 1024px) 64vw, 100vw";
 
 function Visual({ m, titre }: { m: Media; titre: string }) {
   if (m.kind === "text") {
-    const sizeCls =
-      m.size === "l"
-        ? "text-[clamp(2rem,6vw,4.5rem)]"
-        : m.size === "s"
-          ? "text-[clamp(1.1rem,2.5vw,1.8rem)]"
-          : "text-[clamp(1.5rem,4vw,3rem)]";
-    const padCls = m.size === "l" ? "py-28" : m.size === "s" ? "py-12" : "py-20";
     return (
-      <div
-        className={`px-6 md:px-12 ${padCls} ${m.align === "center" ? "text-center" : "text-left"}`}
-        style={{ color: m.color || undefined }}
-      >
-        {m.eyebrow && (
-          <p className="mb-4 font-display text-xs uppercase tracking-[0.3em] text-orange">{m.eyebrow}</p>
-        )}
-        {m.text && (
-          <p className={`max-w-[24ch] font-display uppercase leading-[0.95] tracking-tight ${sizeCls} ${m.align === "center" ? "mx-auto" : ""}`}>
-            {m.text}
-          </p>
-        )}
-      </div>
+      <TextBand eyebrow={m.eyebrow} text={m.text} align={m.align} size={m.size} color={m.color} />
     );
   }
   if (m.kind === "gallery") {
