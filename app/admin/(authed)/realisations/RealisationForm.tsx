@@ -13,7 +13,8 @@ export type MediaItem = {
   url: string;
   w?: number;
   h?: number;
-  poster?: string; // image d'overlay pour une vidéo
+  poster?: string; // image d'overlay pour une vidéo (frame capturée)
+  posterTime?: number; // seconde de la frame
   images?: GalleryImage[]; // pour kind === "gallery"
   pad?: number; // padding autour du média (px)
   bg?: string; // couleur de fond
@@ -66,6 +67,35 @@ const slugify = (s: string) =>
     .replace(/[̀-ͯ]/g, "") // retire les accents combinants
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+
+// Capture une frame d'une vidéo (src = object/blob URL, donc canvas non taché) → JPEG Blob.
+function captureVideoFrame(src: string, time: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "auto";
+    video.onloadedmetadata = () => {
+      const dur = video.duration || 1;
+      video.currentTime = Math.min(Math.max(time, 0), Math.max(0, dur - 0.05));
+    };
+    video.onseeked = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("canvas indisponible"));
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("export image échoué"))), "image/jpeg", 0.85);
+      } catch (e) {
+        reject(e as Error);
+      }
+    };
+    video.onerror = () => reject(new Error("lecture vidéo impossible"));
+    video.src = src;
+  });
+}
 
 const UNIVERS_KEYS = Object.keys(UNIVERS);
 const EXPS_KEYS = Object.keys(EXPS);
@@ -137,15 +167,51 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
   const toggleExp = (k: string) =>
     setExps((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k]));
 
-  async function uploadFile(file: File): Promise<string> {
-    const safe = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  async function uploadBlob(blob: Blob, name: string): Promise<string> {
+    const safe = name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
     const path = `${slug || "tmp"}/${Date.now()}-${safe}`;
     const { error } = await supabase.storage
       .from("realisations")
-      .upload(path, file, { upsert: true, cacheControl: "31536000" });
+      .upload(path, blob, {
+        upsert: true,
+        cacheControl: "31536000",
+        contentType: blob.type || "application/octet-stream",
+      });
     if (error) throw error;
     return supabase.storage.from("realisations").getPublicUrl(path).data.publicUrl;
   }
+  const uploadFile = (file: File) => uploadBlob(file, file.name);
+
+  // Capture + upload la cover d'une vidéo (depuis une source blob/objet, sans CORS).
+  async function makeCoverFromVideoSrc(i: number, src: string, time: number) {
+    const blob = await captureVideoFrame(src, time);
+    const posterUrl = await uploadBlob(blob, "cover.jpg");
+    setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, poster: posterUrl, posterTime: time } : it)));
+  }
+
+  // Régénère la cover en relisant la vidéo déjà uploadée (fetch→blob = pas de taint canvas).
+  async function regenPoster(i: number) {
+    const it = media[i];
+    if (!it.url) return;
+    setUploading(`poster-${i}`);
+    setError(null);
+    try {
+      const res = await fetch(it.url);
+      const objUrl = URL.createObjectURL(await res.blob());
+      try {
+        await makeCoverFromVideoSrc(i, objUrl, it.posterTime ?? 1);
+      } finally {
+        URL.revokeObjectURL(objUrl);
+      }
+    } catch (err) {
+      setError(`Régénération cover : ${(err as Error).message} — ré-uploade la vidéo si ça bloque.`);
+    } finally {
+      setUploading(null);
+    }
+  }
+
+  const setPosterTime = (i: number, v: number) =>
+    setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, posterTime: v } : it)));
 
   async function onCoverChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -190,23 +256,20 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       const dims = await readDims(file, kind);
       const url = await uploadFile(file);
       setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, url, ...dims } : it)));
+      // Vidéo : génère automatiquement la cover depuis une frame (fichier local).
+      if (kind === "video") {
+        const t = media[i].posterTime ?? 1;
+        const objUrl = URL.createObjectURL(file);
+        try {
+          await makeCoverFromVideoSrc(i, objUrl, t);
+        } catch {
+          /* capture facultative */
+        } finally {
+          URL.revokeObjectURL(objUrl);
+        }
+      }
     } catch (err) {
       setError(`Upload média : ${(err as Error).message}`);
-    } finally {
-      setUploading(null);
-    }
-  }
-
-  async function onPosterFile(i: number, e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(`poster-${i}`);
-    setError(null);
-    try {
-      const url = await uploadFile(file);
-      setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, poster: url } : it)));
-    } catch (err) {
-      setError(`Upload overlay : ${(err as Error).message}`);
     } finally {
       setUploading(null);
     }
@@ -526,25 +589,32 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                       {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer vidéo" : "Choisir vidéo"}
                       <input type="file" accept="video/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
                     </label>
-                    {/* Overlay / poster (frame) */}
-                    <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-paper/40">Overlay</span>
+                    {/* Cover auto = frame de la vidéo */}
+                    <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-paper/40">Cover</span>
                     {m.poster && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={m.poster} alt="" className="h-8 w-12 shrink-0 object-cover" />
                     )}
-                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
-                      {uploading === `poster-${i}` ? "Upload…" : m.poster ? "Remplacer" : "Ajouter image"}
-                      <input type="file" accept="image/*" onChange={(e) => onPosterFile(i, e)} className="hidden" />
+                    <label className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
+                      à
+                      <input
+                        type="number"
+                        min={0}
+                        step={0.1}
+                        value={m.posterTime ?? 1}
+                        onChange={(e) => setPosterTime(i, Number(e.target.value))}
+                        className="w-14 border border-paper/20 bg-transparent px-2 py-1 text-paper"
+                      />
+                      s
                     </label>
-                    {m.poster && (
-                      <button
-                        type="button"
-                        onClick={() => setMedia((mm) => mm.map((it, idx) => (idx === i ? { ...it, poster: undefined } : it)))}
-                        className="font-mono text-[11px] text-orange"
-                      >
-                        ×
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => regenPoster(i)}
+                      disabled={!m.url}
+                      className="border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-orange hover:text-orange disabled:opacity-40"
+                    >
+                      {uploading === `poster-${i}` ? "…" : "Régénérer"}
+                    </button>
                   </div>
                 ) : (
                   <div className="flex flex-1 items-center gap-3">

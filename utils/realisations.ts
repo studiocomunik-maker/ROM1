@@ -7,7 +7,8 @@ export type Media = {
   url: string; // image / video / youtube
   w?: number; // dimensions natives (images/vidéos) → next/image sans déformation
   h?: number;
-  poster?: string; // image d'overlay d'une vidéo (frame)
+  poster?: string; // image d'overlay d'une vidéo (frame capturée)
+  posterTime?: number; // seconde de la frame utilisée comme cover
   images?: GalleryImage[]; // pour kind === "gallery" (slider)
   pad?: number; // padding autour du média (px) — défaut 0
   bg?: string; // couleur de fond autour du média — défaut aucun
