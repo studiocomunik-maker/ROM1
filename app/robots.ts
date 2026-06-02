@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-export const SITE_URL = "https://rom-1.vercel.app"; // ← remplacer par rom1.fr le moment venu
+import { SITE_URL } from "./data";
 
 export default function robots(): MetadataRoute.Robots {
   return {

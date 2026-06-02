@@ -2,8 +2,19 @@ import Accueil from "./components/Accueil";
 import Expertises from "./components/Expertises";
 import Portfolio from "./components/Portfolio";
 import Contact from "./components/Contact";
+import { getRealisations } from "../utils/realisations";
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function Home() {
+  const realisations = await getRealisations();
+  const items = realisations.map((r) => ({
+    slug: r.slug,
+    titre: r.titre,
+    univers: r.univers,
+    exps: r.exps,
+    cover_url: r.cover_url,
+  }));
   return (
     <>
       {/* Logo fixe — mix-blend difference => s'inverse en négatif selon le fond */}
@@ -15,7 +26,7 @@ export default function Home() {
       />
       <Accueil />
       <Expertises />
-      <Portfolio />
+      <Portfolio items={items} />
       <Contact />
     </>
   );

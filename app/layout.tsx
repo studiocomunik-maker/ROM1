@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Archivo_Black, Anton } from "next/font/google";
 import "./globals.css";
 import TransitionProvider from "./components/TransitionProvider";
+import { SITE_URL } from "./data";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -21,6 +22,7 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Romain Renoux — Direction artistique, image & web · Beaujolais",
   description:
     "20 ans à donner une image aux marques. Direction artistique, photo, vidéo & drone, motion design, print et web. Beaujolais · Lyon · Rhône.",

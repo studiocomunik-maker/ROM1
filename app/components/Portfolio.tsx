@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { EXPS, UNIVERS, projets } from "../data";
+import { EXPS, UNIVERS } from "../data";
+
+export type PortfolioItem = {
+  slug: string;
+  titre: string;
+  univers: string;
+  exps: string[];
+  cover_url: string | null;
+};
 
 /* Œil clignotant — version contour foncé pour fond clair */
 function Eye({ className = "" }: { className?: string }) {
@@ -21,11 +29,11 @@ function Eye({ className = "" }: { className?: string }) {
   );
 }
 
-export default function Portfolio() {
+export default function Portfolio({ items }: { items: PortfolioItem[] }) {
   const [u, setU] = useState("all");
   const [e, setE] = useState("all");
 
-  const list = projets.filter(
+  const list = items.filter(
     (p) => (u === "all" || p.univers === u) && (e === "all" || p.exps.includes(e))
   );
 
@@ -99,12 +107,12 @@ export default function Portfolio() {
           >
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-              style={p.img ? { backgroundImage: `url(${p.img})` } : { background: p.bg }}
+              style={p.cover_url ? { backgroundImage: `url(${p.cover_url})` } : undefined}
             />
             {/* calque noir 50% + texte (titre + expertises), apparaît au survol */}
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
-                {p.t}
+                {p.titre}
               </h3>
               <div className="flex flex-wrap justify-center gap-1.5">
                 {p.exps.map((x) => (
@@ -112,7 +120,7 @@ export default function Portfolio() {
                     key={x}
                     className="border border-paper/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-paper"
                   >
-                    {EXPS[x]}
+                    {EXPS[x] ?? x}
                   </span>
                 ))}
               </div>

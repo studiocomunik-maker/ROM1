@@ -2,7 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
-import { EXPS, getMetier, metiers, projetsByMetier } from "../../data";
+import { EXPS, SITE_URL, getMetier, metiers } from "../../data";
+import { getRealisationsByMetier } from "../../../utils/realisations";
+
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return metiers.map((m) => ({ slug: m.key }));
@@ -16,7 +19,8 @@ export async function generateMetadata({
   if (!m) return {};
   return {
     title: `${m.t} — Romain Renoux`,
-    description: m.intro,
+    description: m.intro.slice(0, 160),
+    alternates: { canonical: `${SITE_URL}/metiers/${m.key}` },
   };
 }
 
@@ -25,7 +29,7 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
   const metier = getMetier(slug);
   if (!metier) notFound();
 
-  const refs = projetsByMetier(metier.key);
+  const refs = await getRealisationsByMetier(metier.key);
   const idx = metiers.findIndex((m) => m.key === metier.key);
   const next = metiers[(idx + 1) % metiers.length];
 
@@ -61,37 +65,42 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-px bg-coal/10 sm:grid-cols-3">
-          {refs.map((p) => (
-            <Link
-              key={p.slug}
-              href={`/realisations/${p.slug}`}
-              className="group relative block aspect-[4/3] overflow-hidden bg-coal"
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-                style={p.img ? { backgroundImage: `url(${p.img})` } : { background: p.bg }}
-              />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
-                  {p.t}
-                </h3>
-                <div className="flex flex-wrap justify-center gap-1.5">
-                  {p.exps.map((x) => (
-                    <span
-                      key={x}
-                      className="border border-paper/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-paper"
-                    >
-                      {EXPS[x]}
-                    </span>
-                  ))}
+        {refs.length === 0 ? (
+          <p className="px-6 pb-20 text-center font-mono text-xs uppercase tracking-[0.15em] text-coal/40">
+            Bientôt des réalisations ici.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-px bg-coal/10 sm:grid-cols-3">
+            {refs.map((p) => (
+              <Link
+                key={p.slug}
+                href={`/realisations/${p.slug}`}
+                className="group relative block aspect-[4/3] overflow-hidden bg-coal"
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  style={p.cover_url ? { backgroundImage: `url(${p.cover_url})` } : undefined}
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
+                    {p.titre}
+                  </h3>
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {p.exps.map((x) => (
+                      <span
+                        key={x}
+                        className="border border-paper/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-paper"
+                      >
+                        {EXPS[x] ?? x}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
 
-        {/* lien métier suivant */}
         <div className="flex items-center justify-between px-6 py-12 md:px-12">
           <Link
             href="/"
