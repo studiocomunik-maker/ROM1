@@ -7,6 +7,7 @@ export type Media = {
   url: string; // image / video / youtube
   w?: number; // dimensions natives (images/vidéos) → next/image sans déformation
   h?: number;
+  poster?: string; // image d'overlay d'une vidéo (frame)
   images?: GalleryImage[]; // pour kind === "gallery" (slider)
 };
 

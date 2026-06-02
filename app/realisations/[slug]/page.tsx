@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
 import Gallery from "./Gallery";
+import VideoPlayer from "./VideoPlayer";
 import { EXPS, UNIVERS, SITE_URL } from "../../data";
 import {
   getRealisation,
@@ -65,7 +66,7 @@ function Visual({ m, titre }: { m: Media; titre: string }) {
     );
   }
   if (m.kind === "video") {
-    return <video className="block h-auto w-full" src={m.url} controls playsInline preload="metadata" />;
+    return <VideoPlayer url={m.url} poster={m.poster} w={m.w} h={m.h} titre={titre} />;
   }
   // Image avec dimensions connues → next/image (optimisé), pleine largeur.
   if (m.w && m.h) {

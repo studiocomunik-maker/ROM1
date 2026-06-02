@@ -13,6 +13,7 @@ export type MediaItem = {
   url: string;
   w?: number;
   h?: number;
+  poster?: string; // image d'overlay pour une vidéo
   images?: GalleryImage[]; // pour kind === "gallery"
 };
 
@@ -185,6 +186,21 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, url, ...dims } : it)));
     } catch (err) {
       setError(`Upload média : ${(err as Error).message}`);
+    } finally {
+      setUploading(null);
+    }
+  }
+
+  async function onPosterFile(i: number, e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(`poster-${i}`);
+    setError(null);
+    try {
+      const url = await uploadFile(file);
+      setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, poster: url } : it)));
+    } catch (err) {
+      setError(`Upload overlay : ${(err as Error).message}`);
     } finally {
       setUploading(null);
     }
@@ -493,6 +509,37 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                   <span className="flex-1 font-mono text-[11px] text-paper/50">
                     {m.images?.length ?? 0} image(s) — slider à flèches
                   </span>
+                ) : m.kind === "video" ? (
+                  <div className="flex flex-1 flex-wrap items-center gap-3">
+                    {m.url ? (
+                      <span className="max-w-[130px] truncate font-mono text-[11px] text-paper/50">{m.url.split("/").pop()}</span>
+                    ) : (
+                      <span className="font-mono text-[11px] text-paper/30">— aucune vidéo —</span>
+                    )}
+                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
+                      {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer vidéo" : "Choisir vidéo"}
+                      <input type="file" accept="video/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
+                    </label>
+                    {/* Overlay / poster (frame) */}
+                    <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-paper/40">Overlay</span>
+                    {m.poster && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={m.poster} alt="" className="h-8 w-12 shrink-0 object-cover" />
+                    )}
+                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
+                      {uploading === `poster-${i}` ? "Upload…" : m.poster ? "Remplacer" : "Ajouter image"}
+                      <input type="file" accept="image/*" onChange={(e) => onPosterFile(i, e)} className="hidden" />
+                    </label>
+                    {m.poster && (
+                      <button
+                        type="button"
+                        onClick={() => setMedia((mm) => mm.map((it, idx) => (idx === i ? { ...it, poster: undefined } : it)))}
+                        className="font-mono text-[11px] text-orange"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <div className="flex flex-1 items-center gap-3">
                     {m.url ? (
@@ -502,12 +549,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                     )}
                     <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
                       {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer" : "Choisir"}
-                      <input
-                        type="file"
-                        accept={m.kind === "video" ? "video/*" : "image/*"}
-                        onChange={(e) => onMediaFile(i, e)}
-                        className="hidden"
-                      />
+                      <input type="file" accept="image/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
                     </label>
                   </div>
                 )}
