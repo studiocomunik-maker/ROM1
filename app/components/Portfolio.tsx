@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Reveal from "./Reveal";
 import { EXPS, UNIVERS } from "../data";
 
 export type PortfolioItem = {
@@ -81,7 +82,7 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
 
       {/* En-tête centré (titre au-dessus des filtres), centré verticalement */}
       <div className="flex flex-col items-center justify-center gap-6 px-6 py-10 text-center md:py-14 md:px-12">
-        <div>
+        <Reveal>
           <p className="mb-3 font-display text-xs uppercase tracking-[0.3em] text-orange">
             ★ Portfolio
           </p>
@@ -91,7 +92,7 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
               <Eye className="eye-blink-rand h-full w-full" />
             </span>
           </h2>
-        </div>
+        </Reveal>
         <div className="flex flex-wrap justify-center gap-3">
           <Select value={u} onChange={setU} allLabel="Tous les univers" options={UNIVERS} />
           <Select value={e} onChange={setE} allLabel="Toutes les expertises" options={EXPS} />

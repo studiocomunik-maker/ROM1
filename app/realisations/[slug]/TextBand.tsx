@@ -30,7 +30,9 @@ export default function TextBand({
           io.disconnect();
         }
       },
-      { threshold: 0.25 },
+      // Déclenche quand le bandeau est bien entré dans l'écran (≈ 30% du bas),
+      // pas dès qu'il pointe → on a le temps de voir l'animation.
+      { threshold: 0, rootMargin: "0px 0px -30% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
