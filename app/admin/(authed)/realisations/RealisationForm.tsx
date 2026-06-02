@@ -84,17 +84,18 @@ const slugify = (s: string) =>
     .replace(/(^-|-$)/g, "");
 
 // Capture une frame d'une vidéo (src = object/blob URL, donc canvas non taché) → JPEG Blob.
+// Attend que la frame soit RÉELLEMENT décodée/présentée (sinon image noire).
 function captureVideoFrame(src: string, time: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
     video.muted = true;
     video.playsInline = true;
     video.preload = "auto";
-    video.onloadedmetadata = () => {
-      const dur = video.duration || 1;
-      video.currentTime = Math.min(Math.max(time, 0), Math.max(0, dur - 0.05));
-    };
-    video.onseeked = () => {
+    let done = false;
+
+    const draw = () => {
+      if (done) return;
+      done = true;
       try {
         const canvas = document.createElement("canvas");
         canvas.width = video.videoWidth;
@@ -102,13 +103,37 @@ function captureVideoFrame(src: string, time: number): Promise<Blob> {
         const ctx = canvas.getContext("2d");
         if (!ctx) return reject(new Error("canvas indisponible"));
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("export image échoué"))), "image/jpeg", 0.85);
+        canvas.toBlob(
+          (b) => (b ? resolve(b) : reject(new Error("export image échoué"))),
+          "image/jpeg",
+          0.88,
+        );
       } catch (e) {
         reject(e as Error);
       }
     };
+
+    type RVFC = HTMLVideoElement & {
+      requestVideoFrameCallback?: (cb: () => void) => number;
+    };
+
+    video.onseeked = () => {
+      const v = video as RVFC;
+      if (typeof v.requestVideoFrameCallback === "function") {
+        // fire quand la frame seekée est présentée → jamais noire
+        v.requestVideoFrameCallback(() => draw());
+      } else {
+        // fallback : laisser 2 frames d'affichage avant de dessiner
+        requestAnimationFrame(() => requestAnimationFrame(draw));
+      }
+    };
+    video.onloadeddata = () => {
+      const dur = video.duration || 1;
+      video.currentTime = Math.min(Math.max(time, 0), Math.max(0, dur - 0.1));
+    };
     video.onerror = () => reject(new Error("lecture vidéo impossible"));
     video.src = src;
+    video.load();
   });
 }
 
