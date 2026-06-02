@@ -122,6 +122,25 @@ export default function Expertises() {
   const [hov, setHov] = useState<string | null>(null);
   const dim = (k: string) => hov !== null && hov !== k;
 
+  // Révélation en cascade des lignes quand la section entre dans l'écran
+  const [shown, setShown] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0, rootMargin: "0px 0px -20% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   // Parallax HORIZONTAL léger & un peu aléatoire sur chaque ligne
   const rowsRef = useRef<(HTMLLIElement | null)[]>([]);
   useEffect(() => {
@@ -181,23 +200,36 @@ export default function Expertises() {
       onMouseEnter={() => setHov(e.key)}
       onMouseLeave={() => setHov(null)}
       style={{ marginLeft: e.off, willChange: "transform" }}
-      className="group flex cursor-none items-center gap-4 py-1"
+      className="group flex cursor-none items-center py-1"
     >
-      {href ? (
-        <Link href={href} className={titleCls} style={titleStyle}>
-          {inner}
-        </Link>
-      ) : (
-        <span className={titleCls} style={titleStyle}>
-          {inner}
-        </span>
-      )}
-      {/* description sur le côté */}
+      {/* wrapper de révélation (translateY/opacity) — le li garde sa parallaxe translateX */}
       <span
-        className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.15em] text-paper/45 transition-opacity duration-300 sm:block"
-        style={{ opacity: dim(e.key) ? 0.18 : hov === e.key ? 1 : 0.5 }}
+        className="flex items-center gap-4"
+        style={{
+          transitionProperty: "transform, opacity",
+          transitionDuration: "0.7s",
+          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+          transitionDelay: `${gi * 0.08}s`,
+          transform: shown ? "translateY(0)" : "translateY(0.6em)",
+          opacity: shown ? 1 : 0,
+        }}
       >
-        {e.sub}
+        {href ? (
+          <Link href={href} className={titleCls} style={titleStyle}>
+            {inner}
+          </Link>
+        ) : (
+          <span className={titleCls} style={titleStyle}>
+            {inner}
+          </span>
+        )}
+        {/* description sur le côté */}
+        <span
+          className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.15em] text-paper/45 transition-opacity duration-300 sm:block"
+          style={{ opacity: dim(e.key) ? 0.18 : hov === e.key ? 1 : 0.5 }}
+        >
+          {e.sub}
+        </span>
       </span>
     </li>
     );
@@ -210,7 +242,7 @@ export default function Expertises() {
         className="relative z-10 min-h-screen overflow-hidden bg-coal px-6 py-28 text-paper md:px-12"
       >
         {/* Wrapper centré sur grand écran — décalages internes conservés */}
-        <div className="relative z-10 mx-auto w-full max-w-[1100px]">
+        <div ref={listRef} className="relative z-10 mx-auto w-full max-w-[1100px]">
           {/* Ordre : mot MÉTIERS → spirale → liste */}
           <p className="mb-3 text-center font-display text-xs uppercase tracking-[0.3em] text-orange">
             ★ Métiers
