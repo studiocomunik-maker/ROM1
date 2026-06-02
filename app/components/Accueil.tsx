@@ -1,9 +1,9 @@
 "use client";
 
-/* Accueil — registre PANGRAMS : noir + type blanche + accent orange.
-   Chaque mot se révèle en cascade (gros délai) au chargement. */
+/* Accueil — registre PANGRAMS. Chaque mot se révèle EN MASQUE (rise from mask)
+   au chargement, en cascade (gros délai). */
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 
 function Eye({ className = "" }: { className?: string }) {
   return (
@@ -47,14 +47,35 @@ export default function Accueil() {
     return () => cancelAnimationFrame(t);
   }, []);
 
-  // style de révélation pour le mot/marque d'index i
-  const rev = (i: number): CSSProperties => ({
-    display: "inline-block",
+  // Mot en MASQUE : le bord clippe, la lettre monte depuis le bas.
+  // pt/-mt : marge haute pour ne pas rogner les accents (À, É, le point).
+  const Mask = ({ i, children }: { i: number; children: ReactNode }) => (
+    <span
+      className="inline-block overflow-hidden align-bottom"
+      style={{ lineHeight: 1, paddingTop: "0.12em", marginTop: "-0.12em" }}
+    >
+      <span
+        className="inline-block will-change-transform"
+        style={{
+          transitionProperty: "transform",
+          transitionDuration: "0.9s",
+          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+          transitionDelay: `${i * STEP}s`,
+          transform: show ? "translateY(0)" : "translateY(115%)",
+        }}
+      >
+        {children}
+      </span>
+    </span>
+  );
+
+  // Marque (étoile/œil/éclair) : simple fade-in (pas de masque).
+  const markStyle = (i: number): CSSProperties => ({
     transitionProperty: "transform, opacity",
-    transitionDuration: "0.85s",
+    transitionDuration: "0.9s",
     transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
     transitionDelay: `${i * STEP}s`,
-    transform: show ? "translateY(0)" : "translateY(0.5em)",
+    transform: show ? "translateY(0)" : "translateY(0.4em)",
     opacity: show ? 1 : 0,
   });
 
@@ -69,47 +90,50 @@ export default function Accueil() {
       </header>
 
       <div className="relative flex flex-1 items-center px-6 py-8 md:px-12">
-        <h1 className="mx-auto w-full max-w-[1000px] font-display uppercase leading-[0.86] tracking-[-0.015em] text-paper text-[clamp(3.4rem,11vw,5.4rem)] md:text-[clamp(2.6rem,6.4vw,6rem)]">
+        <h1 className="mx-auto w-full max-w-[1000px] font-display uppercase leading-[0.94] tracking-[-0.015em] text-paper text-[clamp(3.4rem,11vw,5.4rem)] md:text-[clamp(2.6rem,6.4vw,6rem)]">
           {/* MOBILE — lignes forcées */}
           <span className="block md:hidden">
             <span className="block">
-              <span style={rev(0)}>Je</span> <span style={rev(1)}>donne</span>
+              <Mask i={0}>Je</Mask> <Mask i={1}>donne</Mask>
             </span>
             <span className="block">
-              <span className="mr-[0.18em] align-middle" style={rev(2)}>
+              <span className="mr-[0.18em] align-middle" style={markStyle(2)}>
                 <span className="inline-block h-[0.78em] w-[0.78em] -translate-y-[0.06em]">
                   <Burst className="spin-slow h-full w-full" />
                 </span>
               </span>
-              <span style={rev(3)}>une</span>
+              <Mask i={3}>une</Mask>
             </span>
             <span className="block">
-              <span className="text-orange" style={rev(4)}>image</span>
-              <span className="ml-[0.18em] align-middle" style={rev(5)}>
+              <Mask i={4}>
+                <span className="text-orange">image</span>
+              </Mask>
+              <span className="ml-[0.18em] align-middle" style={markStyle(5)}>
                 <span className="inline-block h-[0.62em] w-[1.05em] -translate-y-[0.05em] -rotate-6">
                   <Eye className="eye-blink h-full w-full" />
                 </span>
               </span>
             </span>
             <span className="block">
-              <span style={rev(6)}>aux</span>
+              <Mask i={6}>aux</Mask>
             </span>
             <span className="block">
-              <span style={rev(7)}>
+              <Mask i={7}>
                 <span className="relative inline-block">
                   marques
                   <span aria-hidden className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange" />
                 </span>
-              </span>
+              </Mask>{" "}
+              <Mask i={8}>à</Mask>
             </span>
             <span className="block">
-              <span style={rev(8)}>à</span> <span style={rev(9)}>votre</span>
+              <Mask i={9}>votre</Mask>
             </span>
             <span className="block">
-              <span style={rev(10)}>
+              <Mask i={10}>
                 histoire<span className="text-orange">.</span>
-              </span>
-              <span className="ml-[0.2em] align-middle" style={rev(11)}>
+              </Mask>
+              <span className="ml-[0.2em] align-middle" style={markStyle(11)}>
                 <span className="inline-block h-[0.92em] w-[0.5em] -translate-y-[0.02em] rotate-[8deg]">
                   <Bolt className="h-full w-full" />
                 </span>
@@ -119,36 +143,39 @@ export default function Accueil() {
 
           {/* DESKTOP — flux inline */}
           <span className="hidden md:block">
-            <span style={rev(0)}>Je</span> <span style={rev(1)}>donne</span>
-            <span className="mx-[0.18em] align-middle" style={rev(2)}>
+            <Mask i={0}>Je</Mask> <Mask i={1}>donne</Mask>
+            <span className="mx-[0.18em] align-middle" style={markStyle(2)}>
               <span className="inline-block h-[0.78em] w-[0.78em] -translate-y-[0.06em]">
                 <Burst className="spin-slow h-full w-full" />
               </span>
             </span>
-            <span style={rev(3)}>une</span> <span className="text-orange" style={rev(4)}>image</span>
-            <span className="mx-[0.18em] align-middle" style={rev(5)}>
+            <Mask i={3}>une</Mask>{" "}
+            <Mask i={4}>
+              <span className="text-orange">image</span>
+            </Mask>
+            <span className="mx-[0.18em] align-middle" style={markStyle(5)}>
               <span className="inline-block h-[0.62em] w-[1.05em] -translate-y-[0.05em] -rotate-6">
                 <Eye className="eye-blink h-full w-full" />
               </span>
             </span>
-            <span style={rev(6)}>aux</span>{" "}
-            {/* « marques » + « à » restent collés (le À ne s'orpheline plus) */}
+            <Mask i={6}>aux</Mask>{" "}
+            {/* « marques » + « à » restent collés */}
             <span className="inline-block whitespace-nowrap">
-              <span style={rev(7)}>
+              <Mask i={7}>
                 <span className="relative inline-block">
                   marques
                   <span aria-hidden className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange" />
                 </span>
-              </span>{" "}
-              <span style={rev(8)}>à</span>
+              </Mask>{" "}
+              <Mask i={8}>à</Mask>
             </span>{" "}
-            {/* votre + histoire restent sur la même ligne */}
+            {/* « votre histoire » sur la même ligne */}
             <span className="inline-block whitespace-nowrap">
-              <span style={rev(9)}>votre</span>{" "}
-              <span style={rev(10)}>
+              <Mask i={9}>votre</Mask>{" "}
+              <Mask i={10}>
                 histoire<span className="text-orange">.</span>
-              </span>
-              <span className="ml-[0.2em] align-middle" style={rev(11)}>
+              </Mask>
+              <span className="ml-[0.2em] align-middle" style={markStyle(11)}>
                 <span className="inline-block h-[0.92em] w-[0.5em] -translate-y-[0.02em] rotate-[8deg]">
                   <Bolt className="h-full w-full" />
                 </span>
