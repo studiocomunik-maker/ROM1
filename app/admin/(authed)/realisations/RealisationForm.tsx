@@ -9,7 +9,7 @@ import { EXPS, UNIVERS } from "../../../data";
 export type GalleryImage = { url: string; w?: number; h?: number };
 
 export type MediaItem = {
-  kind: "image" | "video" | "youtube" | "gallery";
+  kind: "image" | "video" | "youtube" | "gallery" | "text";
   url: string;
   w?: number;
   h?: number;
@@ -18,6 +18,20 @@ export type MediaItem = {
   images?: GalleryImage[]; // pour kind === "gallery"
   pad?: number; // padding autour du média (px)
   bg?: string; // couleur de fond
+  // pour kind === "text" :
+  eyebrow?: string;
+  text?: string;
+  align?: "left" | "center";
+  size?: "s" | "m" | "l";
+  color?: string;
+};
+
+const KIND_LABEL: Record<MediaItem["kind"], string> = {
+  image: "image",
+  video: "vidéo",
+  youtube: "youtube",
+  gallery: "galerie",
+  text: "bandeau",
 };
 
 // Lit les dimensions natives d'un fichier (pour next/image, sans déformation).
@@ -109,6 +123,16 @@ const ytId = (url: string): string | null => {
 
 function MediaThumb({ m }: { m: MediaItem }) {
   const box = "h-14 w-20 shrink-0 bg-white/5 object-cover";
+  if (m.kind === "text") {
+    return (
+      <div
+        className="flex h-14 w-20 shrink-0 items-center justify-center text-center font-display text-[9px] uppercase leading-tight text-paper/70"
+        style={{ background: m.bg || "rgba(255,255,255,0.05)", color: m.color || undefined }}
+      >
+        {m.text ? m.text.slice(0, 18) : "Aa"}
+      </div>
+    );
+  }
   if (m.kind === "gallery") {
     const first = m.images?.[0];
     return (
@@ -229,7 +253,16 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
 
   // ----- builder médias -----
   const addMedia = (kind: MediaItem["kind"]) =>
-    setMedia((m) => [...m, kind === "gallery" ? { kind, url: "", images: [] } : { kind, url: "" }]);
+    setMedia((m) => [
+      ...m,
+      kind === "gallery"
+        ? { kind, url: "", images: [] }
+        : kind === "text"
+          ? { kind, url: "", text: "", align: "left" as const, size: "m" as const }
+          : { kind, url: "" },
+    ]);
+  const patchMedia = (i: number, patch: Partial<MediaItem>) =>
+    setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
   const removeMedia = (i: number) => setMedia((m) => m.filter((_, idx) => idx !== i));
   const moveMedia = (i: number, dir: -1 | 1) =>
     setMedia((m) => {
@@ -336,7 +369,11 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       return;
     }
     const isEmpty = (m: MediaItem) =>
-      m.kind === "gallery" ? (m.images?.length ?? 0) === 0 : m.url.trim() === "";
+      m.kind === "gallery"
+        ? (m.images?.length ?? 0) === 0
+        : m.kind === "text"
+          ? !m.text?.trim()
+          : m.url.trim() === "";
     const emptyIdx = media.findIndex(isEmpty);
     if (emptyIdx !== -1) {
       setError(
@@ -569,10 +606,17 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                   <button type="button" onClick={() => moveMedia(i, 1)} className="px-1 text-paper/40 hover:text-paper">▼</button>
                 </div>
                 <span className="w-14 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-orange">
-                  {m.kind}
+                  {KIND_LABEL[m.kind]}
                 </span>
                 <MediaThumb m={m} />
-                {m.kind === "youtube" ? (
+                {m.kind === "text" ? (
+                  <input
+                    className={`${field} mt-0 flex-1`}
+                    placeholder="Texte du bandeau…"
+                    value={m.text ?? ""}
+                    onChange={(e) => patchMedia(i, { text: e.target.value })}
+                  />
+                ) : m.kind === "youtube" ? (
                   <input
                     className={`${field} mt-0 flex-1`}
                     placeholder="https://youtube.com/watch?v=…"
@@ -672,6 +716,56 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                 )}
               </div>
 
+              {/* Options du bandeau texte */}
+              {m.kind === "text" && (
+                <div className="mt-3 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-3 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
+                  <label className="flex items-center gap-2">
+                    Eyebrow
+                    <input
+                      value={m.eyebrow ?? ""}
+                      onChange={(e) => patchMedia(i, { eyebrow: e.target.value })}
+                      placeholder="01 · Identité"
+                      className="w-44 border border-paper/20 bg-transparent px-2 py-1 normal-case tracking-normal text-paper"
+                    />
+                  </label>
+                  <div className="flex items-center gap-1">
+                    Align
+                    {(["left", "center"] as const).map((a) => (
+                      <button
+                        type="button"
+                        key={a}
+                        onClick={() => patchMedia(i, { align: a })}
+                        className={`border px-2 py-1 ${m.align === a ? "border-orange bg-orange text-coal" : "border-paper/25 text-paper/60"}`}
+                      >
+                        {a === "left" ? "Gauche" : "Centre"}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    Taille
+                    {(["s", "m", "l"] as const).map((s) => (
+                      <button
+                        type="button"
+                        key={s}
+                        onClick={() => patchMedia(i, { size: s })}
+                        className={`border px-2 py-1 ${(m.size ?? "m") === s ? "border-orange bg-orange text-coal" : "border-paper/25 text-paper/60"}`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                  <label className="flex items-center gap-2">
+                    Texte
+                    <input
+                      type="color"
+                      value={m.color ?? "#f5f4f2"}
+                      onChange={(e) => patchMedia(i, { color: e.target.value })}
+                      className="h-6 w-8 cursor-pointer border border-paper/20 bg-transparent"
+                    />
+                  </label>
+                </div>
+              )}
+
               {/* Sous-builder galerie : grille d'images réordonnables */}
               {m.kind === "gallery" && (
                 <div className="mt-3 flex flex-wrap gap-2 border-t border-paper/10 pt-3">
@@ -696,14 +790,14 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
           ))}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {(["image", "video", "youtube", "gallery"] as const).map((k) => (
+          {(["image", "video", "youtube", "gallery", "text"] as const).map((k) => (
             <button
               type="button"
               key={k}
               onClick={() => addMedia(k)}
               className="border border-dashed border-paper/30 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange"
             >
-              + {k}
+              + {KIND_LABEL[k]}
             </button>
           ))}
         </div>

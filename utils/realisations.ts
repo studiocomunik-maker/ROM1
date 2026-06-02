@@ -3,7 +3,7 @@ import { supabasePublic } from "./supabase/public";
 export type GalleryImage = { url: string; w?: number; h?: number };
 
 export type Media = {
-  kind: "image" | "video" | "youtube" | "gallery";
+  kind: "image" | "video" | "youtube" | "gallery" | "text";
   url: string; // image / video / youtube
   w?: number; // dimensions natives (images/vidéos) → next/image sans déformation
   h?: number;
@@ -12,6 +12,12 @@ export type Media = {
   images?: GalleryImage[]; // pour kind === "gallery" (slider)
   pad?: number; // padding autour du média (px) — défaut 0
   bg?: string; // couleur de fond autour du média — défaut aucun
+  // pour kind === "text" (bandeau de respiration) :
+  eyebrow?: string;
+  text?: string;
+  align?: "left" | "center";
+  size?: "s" | "m" | "l";
+  color?: string; // couleur du texte
 };
 
 export type Realisation = {
