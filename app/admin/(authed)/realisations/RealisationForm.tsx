@@ -16,7 +16,7 @@ export type MediaItem = {
   poster?: string; // image d'overlay pour une vidéo (frame capturée)
   posterTime?: number; // seconde de la frame
   images?: GalleryImage[]; // pour kind === "gallery"
-  pad?: number; // padding autour du média (px)
+  pad?: number | string; // padding façon CSS : "20" ou "20 0 40 0" (h d b g), px
   bg?: string; // couleur de fond
   // pour kind === "text" :
   eyebrow?: string;
@@ -316,8 +316,8 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
   const removeMedia = (i: number) => setMedia((m) => m.filter((_, idx) => idx !== i));
   const setMediaUrl = (i: number, url: string) =>
     setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, url } : it)));
-  const setPad = (i: number, v: number) =>
-    setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, pad: v > 0 ? v : undefined } : it)));
+  const setPad = (i: number, v: string) =>
+    setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, pad: v.trim() || undefined } : it)));
   const setBg = (i: number, v: string | undefined) =>
     setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, bg: v || undefined } : it)));
 
@@ -743,14 +743,15 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
 
               {/* Options communes : padding + couleur de fond */}
               <div className="mt-2 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-2 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2" title="1 valeur = tous les côtés · 4 = haut droite bas gauche (en px)">
                   Padding
                   <input
-                    type="number"
-                    min={0}
-                    value={m.pad ?? 0}
-                    onChange={(e) => setPad(i, Number(e.target.value))}
-                    className="w-16 border border-paper/20 bg-transparent px-2 py-1 text-paper"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="0  ou  20 0 40 0"
+                    value={m.pad == null ? "" : String(m.pad)}
+                    onChange={(e) => setPad(i, e.target.value)}
+                    className="w-32 border border-paper/20 bg-transparent px-2 py-1 normal-case tracking-normal text-paper"
                   />
                   px
                 </label>

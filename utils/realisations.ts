@@ -10,7 +10,7 @@ export type Media = {
   poster?: string; // image d'overlay d'une vidéo (frame capturée)
   posterTime?: number; // seconde de la frame utilisée comme cover
   images?: GalleryImage[]; // pour kind === "gallery" (slider)
-  pad?: number; // padding autour du média (px) — défaut 0
+  pad?: number | string; // padding façon CSS : "20" (tous côtés) ou "20 0 40 0" (h d b g), en px
   bg?: string; // couleur de fond autour du média — défaut aucun
   // pour kind === "text" (bandeau de respiration) :
   eyebrow?: string;
@@ -67,6 +67,15 @@ export async function getRealisationsByMetier(key: string): Promise<Realisation[
     .contains("exps", [key])
     .order("position", { ascending: true });
   return (data ?? []) as Realisation[];
+}
+
+// Padding façon CSS : nombres bruts → px. 1 valeur = tous côtés, 4 = h d b g.
+export function padCss(pad?: number | string): string | undefined {
+  if (pad === undefined || pad === null || pad === "") return undefined;
+  if (typeof pad === "number") return pad > 0 ? `${pad}px` : undefined;
+  const parts = pad.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return undefined;
+  return parts.map((p) => (/^-?\d*\.?\d+$/.test(p) ? `${p}px` : p)).join(" ");
 }
 
 // Extrait l'ID d'une URL YouTube (watch, youtu.be, embed, shorts).

@@ -11,6 +11,7 @@ import {
   getRealisation,
   getRealisations,
   youtubeId,
+  padCss,
   type Media,
 } from "../../../utils/realisations";
 
@@ -172,8 +173,8 @@ export default async function RealisationPage({
               <div
                 key={i}
                 style={{
-                  // pad fixe (px) plafonné en vw → reste raisonnable sur smartphone
-                  padding: m.pad ? `min(${m.pad}px, 8vw)` : undefined,
+                  // padding façon CSS : "20" (tous côtés) ou "20 0 40 0" (h d b g)
+                  padding: padCss(m.pad),
                   background: m.bg || undefined,
                 }}
               >
