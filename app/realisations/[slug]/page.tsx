@@ -40,66 +40,46 @@ export async function generateMetadata({
   };
 }
 
-// Chaque visuel est centré sur fond noir et plafonné en hauteur (max-h-[88vh]) :
-// le paysage remplit la largeur, le portrait (ex. vidéo 1080×1920) reste dans
-// une taille raisonnable avec letterbox latéral, sans déformation.
+// Scroll plein cadre : chaque visuel occupe toute la largeur de la colonne,
+// la hauteur s'adapte au ratio (pas de plafond ni de letterbox).
+const SIZES = "(min-width: 1024px) 64vw, 100vw";
+
 function Visual({ m, titre }: { m: Media; titre: string }) {
   if (m.kind === "youtube") {
     const id = youtubeId(m.url);
     if (!id) return null;
     return (
-      <div className="flex justify-center bg-black">
-        <div className="aspect-video w-full">
-          <iframe
-            className="h-full w-full"
-            src={`https://www.youtube.com/embed/${id}`}
-            title={titre}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
+      <div className="aspect-video w-full bg-black">
+        <iframe
+          className="h-full w-full"
+          src={`https://www.youtube.com/embed/${id}`}
+          title={titre}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
       </div>
     );
   }
   if (m.kind === "video") {
-    return (
-      <div className="flex justify-center bg-black">
-        <video
-          className="max-h-[88vh] w-auto max-w-full object-contain"
-          src={m.url}
-          controls
-          playsInline
-          preload="metadata"
-        />
-      </div>
-    );
+    return <video className="block h-auto w-full" src={m.url} controls playsInline preload="metadata" />;
   }
-  // Image avec dimensions connues → next/image (optimisé, sans déformation).
+  // Image avec dimensions connues → next/image (optimisé), pleine largeur.
   if (m.w && m.h) {
     return (
-      <div className="flex justify-center bg-black">
-        <Image
-          src={m.url}
-          alt={titre}
-          width={m.w}
-          height={m.h}
-          sizes="(min-width: 1024px) 66vw, 100vw"
-          className="h-auto max-h-[88vh] w-auto max-w-full object-contain"
-        />
-      </div>
-    );
-  }
-  // Fallback (médias sans dimensions, ex. anciens uploads).
-  return (
-    <div className="flex justify-center bg-black">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={m.url}
         alt={titre}
-        loading="lazy"
-        className="max-h-[88vh] w-auto max-w-full object-contain"
+        width={m.w}
+        height={m.h}
+        sizes={SIZES}
+        className="block h-auto w-full"
       />
-    </div>
+    );
+  }
+  // Fallback (médias sans dimensions).
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={m.url} alt={titre} loading="lazy" className="block h-auto w-full" />
   );
 }
 
