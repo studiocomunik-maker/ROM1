@@ -113,6 +113,10 @@ export default async function RealisationPage({
   const list = await getRealisations();
   const idx = list.findIndex((x) => x.slug === p.slug);
   const next = list.length > 1 ? list[(idx + 1) % list.length] : null;
+  // Autres réalisations (les suivantes, en cyclique) pour relier les projets
+  const related = [...list.slice(idx + 1), ...list.slice(0, idx)]
+    .filter((x) => x.slug !== p.slug)
+    .slice(0, 3);
 
   // Colonne gauche = UNIQUEMENT les médias uploadés (la cover sert de vignette
   // dans les listings). Si aucun média, on retombe sur la cover en secours.
@@ -257,6 +261,56 @@ export default async function RealisationPage({
           </div>
         </aside>
       </div>
+
+      {/* Autres réalisations — passerelle entre les projets */}
+      {related.length > 0 && (
+        <section className="bg-coal px-6 py-20 text-paper md:px-12 md:py-24">
+          <Reveal>
+            <p className="mb-10 text-center font-display text-xs uppercase tracking-[0.3em] text-orange">
+              ★ Autres réalisations
+            </p>
+          </Reveal>
+          <div
+            className={`mx-auto grid gap-3 ${
+              related.length === 1
+                ? "max-w-[480px]"
+                : related.length === 2
+                  ? "max-w-[780px] sm:grid-cols-2"
+                  : "sm:grid-cols-3"
+            }`}
+          >
+            {related.map((o) => (
+              <Link
+                key={o.slug}
+                href={`/realisations/${o.slug}`}
+                className="group relative block aspect-[4/3] overflow-hidden bg-coal"
+              >
+                {o.cover_url ? (
+                  <Image
+                    src={o.cover_url}
+                    alt={o.titre}
+                    fill
+                    sizes="(min-width: 640px) 33vw, 100vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-coal to-night">
+                    <span className="font-display text-2xl uppercase tracking-tight text-paper/15">rom1</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
+                    {UNIVERS[o.univers] ?? o.univers}
+                  </span>
+                  <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
+                    {o.titre}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* CTA de fin de page projet */}
       <section className="grain relative overflow-hidden bg-orange px-6 py-24 text-center text-coal md:px-12 md:py-32">
