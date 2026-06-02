@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
+import Reveal from "../../components/Reveal";
 import Gallery from "./Gallery";
 import VideoPlayer from "./VideoPlayer";
 import TextBand from "./TextBand";
@@ -256,6 +257,34 @@ export default async function RealisationPage({
           </div>
         </aside>
       </div>
+
+      {/* CTA de fin de page projet */}
+      <section className="grain relative overflow-hidden bg-orange px-6 py-24 text-center text-coal md:px-12 md:py-32">
+        <Reveal>
+          <p className="mb-5 font-display text-xs uppercase tracking-[0.25em]">
+            Une histoire à raconter ?
+          </p>
+          <h2 className="font-display uppercase leading-[0.9] tracking-tight text-[clamp(2.4rem,8vw,5.5rem)]">
+            Parlons de la vôtre.
+          </h2>
+          <a
+            href="mailto:rom1@rom1.fr"
+            className="mt-8 inline-block bg-coal px-6 py-3 font-display text-sm uppercase tracking-[0.12em] text-paper transition-transform hover:scale-[1.03]"
+          >
+            rom1@rom1.fr
+          </a>
+        </Reveal>
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-xs uppercase tracking-[0.15em]">
+          <Link href="/#portfolio" className="text-coal/70 transition-colors hover:text-coal">
+            ← Toutes les réalisations
+          </Link>
+          {next && (
+            <Link href={`/realisations/${next.slug}`} className="text-coal/70 transition-colors hover:text-coal">
+              Projet suivant · {next.titre} →
+            </Link>
+          )}
+        </div>
+      </section>
     </main>
   );
 }
