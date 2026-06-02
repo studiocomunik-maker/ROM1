@@ -15,7 +15,8 @@ export type Media = {
   // pour kind === "text" (bandeau de respiration) :
   eyebrow?: string;
   text?: string;
-  align?: "left" | "center";
+  body?: string; // corps (texte normal) sous le titre
+  align?: "left" | "center" | "right";
   size?: "s" | "m" | "l";
   color?: string; // couleur du texte
 };

@@ -50,7 +50,14 @@ const SIZES = "(min-width: 1024px) 64vw, 100vw";
 function Visual({ m, titre }: { m: Media; titre: string }) {
   if (m.kind === "text") {
     return (
-      <TextBand eyebrow={m.eyebrow} text={m.text} align={m.align} size={m.size} color={m.color} />
+      <TextBand
+        eyebrow={m.eyebrow}
+        text={m.text}
+        body={m.body}
+        align={m.align}
+        size={m.size}
+        color={m.color}
+      />
     );
   }
   if (m.kind === "gallery") {

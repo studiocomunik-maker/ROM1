@@ -21,7 +21,8 @@ export type MediaItem = {
   // pour kind === "text" :
   eyebrow?: string;
   text?: string;
-  align?: "left" | "center";
+  body?: string;
+  align?: "left" | "center" | "right";
   size?: "s" | "m" | "l";
   color?: string;
 };
@@ -263,6 +264,19 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     ]);
   const patchMedia = (i: number, patch: Partial<MediaItem>) =>
     setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+
+  // Rafraîchit immédiatement le front (ISR on-demand) après une modif.
+  const revalidateFront = async (s?: string) => {
+    try {
+      await fetch("/api/revalidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: s }),
+      });
+    } catch {
+      /* non bloquant */
+    }
+  };
   const removeMedia = (i: number) => setMedia((m) => m.filter((_, idx) => idx !== i));
   const moveMedia = (i: number, dir: -1 | 1) =>
     setMedia((m) => {
@@ -405,6 +419,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         setError(error.message);
         return;
       }
+      await revalidateFront(payload.slug);
       setSaved(true);
       router.refresh();
     } else {
@@ -419,6 +434,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         setError(error.message);
         return;
       }
+      await revalidateFront(payload.slug);
       router.replace(`/admin/realisations/${data.id}`);
       router.refresh();
     }
@@ -433,6 +449,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       setError(error.message);
       return;
     }
+    await revalidateFront(initial.slug);
     router.push("/admin");
     router.refresh();
   }
@@ -730,14 +747,14 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                   </label>
                   <div className="flex items-center gap-1">
                     Align
-                    {(["left", "center"] as const).map((a) => (
+                    {(["left", "center", "right"] as const).map((a) => (
                       <button
                         type="button"
                         key={a}
                         onClick={() => patchMedia(i, { align: a })}
-                        className={`border px-2 py-1 ${m.align === a ? "border-orange bg-orange text-coal" : "border-paper/25 text-paper/60"}`}
+                        className={`border px-2 py-1 ${(m.align ?? "left") === a ? "border-orange bg-orange text-coal" : "border-paper/25 text-paper/60"}`}
                       >
-                        {a === "left" ? "Gauche" : "Centre"}
+                        {a === "left" ? "Gauche" : a === "center" ? "Centre" : "Droite"}
                       </button>
                     ))}
                   </div>
@@ -761,6 +778,15 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                       value={m.color ?? "#f5f4f2"}
                       onChange={(e) => patchMedia(i, { color: e.target.value })}
                       className="h-6 w-8 cursor-pointer border border-paper/20 bg-transparent"
+                    />
+                  </label>
+                  <label className="flex w-full flex-col gap-1">
+                    Corps (texte normal, optionnel)
+                    <textarea
+                      value={m.body ?? ""}
+                      onChange={(e) => patchMedia(i, { body: e.target.value })}
+                      placeholder="Paragraphe sous le titre…"
+                      className="min-h-[70px] w-full resize-y border border-paper/20 bg-transparent px-2 py-2 normal-case tracking-normal text-paper"
                     />
                   </label>
                 </div>
