@@ -1,9 +1,7 @@
-"use client";
-
 /* Accueil — registre PANGRAMS. Chaque mot se révèle EN MASQUE (rise from mask)
-   au chargement, en cascade (gros délai). */
+   au chargement, en cascade (gros délai). Animations 100% CSS (jouent au montage). */
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 function Eye({ className = "" }: { className?: string }) {
   return (
@@ -39,46 +37,24 @@ function Burst({ className = "" }: { className?: string }) {
 }
 
 const STEP = 0.16; // gros délai entre chaque mot (s)
+const d = (i: number) => ({ animationDelay: `${i * STEP}s` });
 
-export default function Accueil() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const t = requestAnimationFrame(() => setShow(true));
-    return () => cancelAnimationFrame(t);
-  }, []);
-
-  // Mot en MASQUE : le bord clippe, la lettre monte depuis le bas.
-  // pt/-mt : marge haute pour ne pas rogner les accents (À, É, le point).
-  const Mask = ({ i, children }: { i: number; children: ReactNode }) => (
+// Mot en MASQUE : le bord clippe, la lettre monte depuis le bas (CSS heroRise).
+// pt/-mt + lineHeight : marge haute pour ne pas rogner les accents (À, É, le point).
+function Mask({ i, children }: { i: number; children: ReactNode }) {
+  return (
     <span
       className="inline-block overflow-hidden align-bottom"
-      style={{ lineHeight: 1, paddingTop: "0.12em", marginTop: "-0.12em" }}
+      style={{ lineHeight: 1, paddingTop: "0.14em", marginTop: "-0.14em" }}
     >
-      <span
-        className="inline-block will-change-transform"
-        style={{
-          transitionProperty: "transform",
-          transitionDuration: "0.9s",
-          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-          transitionDelay: `${i * STEP}s`,
-          transform: show ? "translateY(0)" : "translateY(115%)",
-        }}
-      >
+      <span className="hero-rise inline-block will-change-transform" style={d(i)}>
         {children}
       </span>
     </span>
   );
+}
 
-  // Marque (étoile/œil/éclair) : simple fade-in (pas de masque).
-  const markStyle = (i: number): CSSProperties => ({
-    transitionProperty: "transform, opacity",
-    transitionDuration: "0.9s",
-    transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-    transitionDelay: `${i * STEP}s`,
-    transform: show ? "translateY(0)" : "translateY(0.4em)",
-    opacity: show ? 1 : 0,
-  });
-
+export default function Accueil() {
   return (
     <section className="grain sticky top-0 z-0 flex h-screen w-full flex-col overflow-hidden bg-coal text-paper">
       <header className="flex items-start justify-end px-6 pt-7 md:px-12">
@@ -97,7 +73,7 @@ export default function Accueil() {
               <Mask i={0}>Je</Mask> <Mask i={1}>donne</Mask>
             </span>
             <span className="block">
-              <span className="mr-[0.18em] align-middle" style={markStyle(2)}>
+              <span className="hero-fade mr-[0.18em] inline-block align-middle" style={d(2)}>
                 <span className="inline-block h-[0.78em] w-[0.78em] -translate-y-[0.06em]">
                   <Burst className="spin-slow h-full w-full" />
                 </span>
@@ -108,7 +84,7 @@ export default function Accueil() {
               <Mask i={4}>
                 <span className="text-orange">image</span>
               </Mask>
-              <span className="ml-[0.18em] align-middle" style={markStyle(5)}>
+              <span className="hero-fade ml-[0.18em] inline-block align-middle" style={d(5)}>
                 <span className="inline-block h-[0.62em] w-[1.05em] -translate-y-[0.05em] -rotate-6">
                   <Eye className="eye-blink h-full w-full" />
                 </span>
@@ -133,7 +109,7 @@ export default function Accueil() {
               <Mask i={10}>
                 histoire<span className="text-orange">.</span>
               </Mask>
-              <span className="ml-[0.2em] align-middle" style={markStyle(11)}>
+              <span className="hero-fade ml-[0.2em] inline-block align-middle" style={d(11)}>
                 <span className="inline-block h-[0.92em] w-[0.5em] -translate-y-[0.02em] rotate-[8deg]">
                   <Bolt className="h-full w-full" />
                 </span>
@@ -144,7 +120,7 @@ export default function Accueil() {
           {/* DESKTOP — flux inline */}
           <span className="hidden md:block">
             <Mask i={0}>Je</Mask> <Mask i={1}>donne</Mask>
-            <span className="mx-[0.18em] align-middle" style={markStyle(2)}>
+            <span className="hero-fade mx-[0.18em] inline-block align-middle" style={d(2)}>
               <span className="inline-block h-[0.78em] w-[0.78em] -translate-y-[0.06em]">
                 <Burst className="spin-slow h-full w-full" />
               </span>
@@ -153,7 +129,7 @@ export default function Accueil() {
             <Mask i={4}>
               <span className="text-orange">image</span>
             </Mask>
-            <span className="mx-[0.18em] align-middle" style={markStyle(5)}>
+            <span className="hero-fade mx-[0.18em] inline-block align-middle" style={d(5)}>
               <span className="inline-block h-[0.62em] w-[1.05em] -translate-y-[0.05em] -rotate-6">
                 <Eye className="eye-blink h-full w-full" />
               </span>
@@ -175,7 +151,7 @@ export default function Accueil() {
               <Mask i={10}>
                 histoire<span className="text-orange">.</span>
               </Mask>
-              <span className="ml-[0.2em] align-middle" style={markStyle(11)}>
+              <span className="hero-fade ml-[0.2em] inline-block align-middle" style={d(11)}>
                 <span className="inline-block h-[0.92em] w-[0.5em] -translate-y-[0.02em] rotate-[8deg]">
                   <Bolt className="h-full w-full" />
                 </span>
