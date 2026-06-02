@@ -479,12 +479,14 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     router.refresh();
   }
 
-  const label = "font-mono text-[10px] uppercase tracking-[0.15em] text-paper/50";
+  const label = "mb-1.5 block font-mono text-[11px] uppercase tracking-[0.18em] text-paper/55";
   const field =
-    "mt-1 w-full border border-paper/20 bg-transparent px-4 py-3 font-mono text-sm text-paper outline-none focus:border-orange";
+    "mt-1 w-full border border-paper/15 bg-white/[0.04] px-4 py-3 text-[15px] text-paper outline-none transition-colors placeholder:text-paper/25 focus:border-orange focus:bg-white/[0.07]";
+  const card = "border border-paper/10 bg-white/[0.02] p-5 md:p-7";
+  const sectionTitle = "mb-6 font-display text-base uppercase tracking-[0.18em] text-orange";
 
   return (
-    <form onSubmit={onSubmit} className="max-w-[760px] space-y-8">
+    <form onSubmit={onSubmit} className="mx-auto max-w-[820px] space-y-6 pb-10">
       <div className="flex justify-end">
         <Link
           href="/admin"
@@ -494,37 +496,13 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         </Link>
       </div>
 
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="font-display text-3xl uppercase tracking-tight">
-          {editing ? "Éditer" : "Nouvelle réalisation"}
-        </h1>
-        <div className="flex items-center gap-5">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-paper/45">
-              Descriptif
-            </span>
-            {(["dark", "light"] as const).map((t) => (
-              <button
-                type="button"
-                key={t}
-                onClick={() => setPanelTheme(t)}
-                className={`border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors ${
-                  panelTheme === t
-                    ? "border-orange bg-orange text-coal"
-                    : "border-paper/25 text-paper/70 hover:border-paper/60"
-                }`}
-              >
-                {t === "dark" ? "Sombre" : "Clair"}
-              </button>
-            ))}
-          </div>
-          <label className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-paper/60">
-            <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
-            Publiée
-          </label>
-        </div>
-      </div>
+      <h1 className="font-display text-4xl uppercase tracking-tight">
+        {editing ? "Éditer la réalisation" : "Nouvelle réalisation"}
+      </h1>
 
+      <section className={card}>
+        <h2 className={sectionTitle}>Informations</h2>
+        <div className="space-y-5">
       {/* Titre + slug */}
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block">
@@ -603,11 +581,13 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
           </div>
         </div>
       </div>
+        </div>
+      </section>
 
       {/* Image de mise en avant */}
-      <div>
-        <span className={label}>Image de mise en avant</span>
-        <div className="mt-2 flex items-center gap-4">
+      <section className={card}>
+        <h2 className={sectionTitle}>Image de mise en avant</h2>
+        <div className="flex items-center gap-4">
           <div
             className="h-20 w-28 shrink-0 bg-cover bg-center bg-white/5"
             style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined}
@@ -632,14 +612,15 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
             )}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Médias (scroll de gauche) */}
-      <div>
-        <div className="flex items-center justify-between">
-          <span className={label}>Médias — colonne qui scrolle (ordre = ordre d&apos;affichage)</span>
-        </div>
-        <div className="mt-3 space-y-3">
+      <section className={card}>
+        <h2 className={sectionTitle}>Médias</h2>
+        <p className="-mt-4 mb-5 font-mono text-[11px] normal-case tracking-normal text-paper/40">
+          Colonne qui scrolle — l&apos;ordre ci-dessous = l&apos;ordre d&apos;affichage.
+        </p>
+        <div className="space-y-3">
           {media.map((m, i) => (
             <div key={i} className="border border-paper/15 p-3">
               <div className="flex items-center gap-3">
@@ -852,22 +833,67 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
             </button>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Position */}
-      <label className="block w-40">
-        <span className={label}>Ordre (position)</span>
-        <input
-          type="number"
-          className={field}
-          value={position}
-          onChange={(e) => setPosition(Number(e.target.value))}
-        />
-      </label>
+      {/* Réglages */}
+      <section className={card}>
+        <h2 className={sectionTitle}>Réglages</h2>
+        <div className="grid gap-6 sm:grid-cols-3">
+          <div>
+            <span className={label}>Statut</span>
+            <button
+              type="button"
+              onClick={() => setPublished(!published)}
+              className={`flex items-center gap-2 border px-4 py-3 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors ${
+                published
+                  ? "border-[#3ddc84]/50 text-[#3ddc84]"
+                  : "border-paper/25 text-paper/60 hover:border-paper/50"
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full ${published ? "bg-[#3ddc84]" : "bg-paper/40"}`} />
+              {published ? "Publiée" : "Brouillon"}
+            </button>
+          </div>
 
-      {error && <p className="font-mono text-xs text-orange">{error}</p>}
+          <div>
+            <span className={label}>Fond du descriptif</span>
+            <div className="flex gap-2">
+              {(["dark", "light"] as const).map((t) => (
+                <button
+                  type="button"
+                  key={t}
+                  onClick={() => setPanelTheme(t)}
+                  className={`border px-4 py-3 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors ${
+                    panelTheme === t
+                      ? "border-orange bg-orange text-coal"
+                      : "border-paper/25 text-paper/70 hover:border-paper/60"
+                  }`}
+                >
+                  {t === "dark" ? "Sombre" : "Clair"}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      <div className="flex items-center gap-4 border-t border-paper/10 pt-6">
+          <label className="block">
+            <span className={label}>Ordre (position)</span>
+            <input
+              type="number"
+              className={field}
+              value={position}
+              onChange={(e) => setPosition(Number(e.target.value))}
+            />
+          </label>
+        </div>
+      </section>
+
+      {error && (
+        <p className="border border-orange/40 bg-orange/10 p-4 font-mono text-xs leading-relaxed text-orange">
+          {error}
+        </p>
+      )}
+
+      <div className="sticky bottom-0 z-10 flex items-center gap-4 border-t border-paper/10 bg-coal/95 py-5 backdrop-blur">
         <button
           type="submit"
           disabled={busy || uploading !== null}

@@ -13,9 +13,9 @@ export default async function AuthedLayout({ children }: { children: React.React
 
   return (
     <div className="min-h-screen bg-coal text-paper">
-      <header className="flex items-center justify-between border-b border-paper/10 px-6 py-4 md:px-10">
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-paper/10 bg-coal/90 px-6 py-4 backdrop-blur md:px-10">
         <Link href="/admin" className="font-display text-sm uppercase tracking-[0.2em]">
-          ROM1 · Admin
+          ROM<span className="text-orange">1</span> · Admin
         </Link>
         <div className="flex items-center gap-5 font-mono text-[11px] uppercase tracking-[0.12em] text-paper/60">
           <span className="hidden sm:inline">{user.email}</span>
@@ -25,7 +25,7 @@ export default async function AuthedLayout({ children }: { children: React.React
           <LogoutButton />
         </div>
       </header>
-      <main className="px-6 py-10 md:px-10">{children}</main>
+      <main className="px-6 py-12 md:px-10 md:py-14">{children}</main>
     </div>
   );
 }

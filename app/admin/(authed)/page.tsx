@@ -36,11 +36,11 @@ export default async function AdminHome() {
   const rows = (data ?? []) as Row[];
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-[900px] space-y-8">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl uppercase tracking-tight">Réalisations</h1>
-          <p className="mt-1 font-mono text-xs uppercase tracking-[0.15em] text-paper/45">
+          <h1 className="font-display text-4xl uppercase tracking-tight">Réalisations</h1>
+          <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-paper/45">
             {rows.length} projet{rows.length > 1 ? "s" : ""}
           </p>
         </div>
@@ -53,35 +53,38 @@ export default async function AdminHome() {
       </div>
 
       {rows.length === 0 ? (
-        <p className="border border-paper/15 p-6 font-mono text-xs uppercase tracking-[0.15em] text-paper/40">
+        <p className="border border-paper/15 bg-white/[0.02] p-8 text-center font-mono text-xs uppercase tracking-[0.15em] text-paper/40">
           Aucune réalisation pour l&apos;instant.
         </p>
       ) : (
-        <ul className="divide-y divide-paper/10 border-y border-paper/10">
+        <ul className="space-y-2">
           {rows.map((p) => (
             <li key={p.id}>
               <Link
                 href={`/admin/realisations/${p.id}`}
-                className="group flex items-center gap-4 py-4 transition-colors hover:bg-white/[0.03]"
+                className="group flex items-center gap-5 border border-paper/10 bg-white/[0.02] p-3 transition-colors hover:border-paper/25 hover:bg-white/[0.05]"
               >
                 <span
-                  className="h-12 w-16 shrink-0 bg-cover bg-center bg-white/5"
+                  className="h-16 w-24 shrink-0 bg-cover bg-center bg-white/5"
                   style={p.cover_url ? { backgroundImage: `url(${p.cover_url})` } : undefined}
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-display text-lg uppercase tracking-tight">
+                  <span className="block truncate font-display text-xl uppercase tracking-tight">
                     {p.titre}
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-paper/45">
+                  <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.12em] text-paper/45">
                     {UNIVERS[p.univers] ?? p.univers} · {p.exps.map((e) => EXPS[e] ?? e).join(" · ")}
                   </span>
                 </span>
-                {!p.published && (
-                  <span className="border border-paper/30 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-paper/50">
-                    brouillon
-                  </span>
-                )}
-                <span className="font-mono text-xs text-paper/30 transition-colors group-hover:text-orange">
+                <span
+                  className={`flex shrink-0 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.1em] ${
+                    p.published ? "text-[#3ddc84]" : "text-paper/45"
+                  }`}
+                >
+                  <span className={`h-2 w-2 rounded-full ${p.published ? "bg-[#3ddc84]" : "bg-paper/40"}`} />
+                  {p.published ? "En ligne" : "Brouillon"}
+                </span>
+                <span className="ml-2 shrink-0 font-mono text-xs text-paper/30 transition-colors group-hover:text-orange">
                   éditer →
                 </span>
               </Link>
