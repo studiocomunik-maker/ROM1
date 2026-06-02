@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { EXPS, UNIVERS } from "../data";
 
 export type PortfolioItem = {
@@ -105,10 +106,21 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
             href={`/realisations/${p.slug}`}
             className="group relative block aspect-[4/3] overflow-hidden bg-coal"
           >
-            <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-              style={p.cover_url ? { backgroundImage: `url(${p.cover_url})` } : undefined}
-            />
+            {p.cover_url ? (
+              <Image
+                src={p.cover_url}
+                alt={p.titre}
+                fill
+                sizes="(min-width: 640px) 33vw, 50vw"
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-coal to-night">
+                <span className="font-display text-2xl uppercase tracking-tight text-paper/15">
+                  rom1
+                </span>
+              </div>
+            )}
             {/* calque noir 50% + texte (titre + expertises), apparaît au survol */}
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">

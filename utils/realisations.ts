@@ -1,6 +1,11 @@
 import { supabasePublic } from "./supabase/public";
 
-export type Media = { kind: "image" | "video" | "youtube"; url: string };
+export type Media = {
+  kind: "image" | "video" | "youtube";
+  url: string;
+  w?: number; // dimensions natives (images/vidéos) → next/image sans déformation
+  h?: number;
+};
 
 export type Realisation = {
   id: string;

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
@@ -73,6 +74,22 @@ function Visual({ m, titre }: { m: Media; titre: string }) {
       </div>
     );
   }
+  // Image avec dimensions connues → next/image (optimisé, sans déformation).
+  if (m.w && m.h) {
+    return (
+      <div className="flex justify-center bg-black">
+        <Image
+          src={m.url}
+          alt={titre}
+          width={m.w}
+          height={m.h}
+          sizes="(min-width: 1024px) 66vw, 100vw"
+          className="h-auto max-h-[88vh] w-auto max-w-full object-contain"
+        />
+      </div>
+    );
+  }
+  // Fallback (médias sans dimensions, ex. anciens uploads).
   return (
     <div className="flex justify-center bg-black">
       {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -5,7 +5,37 @@ import { useRouter } from "next/navigation";
 import { createClient } from "../../../../utils/supabase/client";
 import { EXPS, UNIVERS } from "../../../data";
 
-export type MediaItem = { kind: "image" | "video" | "youtube"; url: string };
+export type MediaItem = {
+  kind: "image" | "video" | "youtube";
+  url: string;
+  w?: number;
+  h?: number;
+};
+
+// Lit les dimensions natives d'un fichier (pour next/image, sans déformation).
+function readDims(file: File, kind: MediaItem["kind"]): Promise<{ w?: number; h?: number }> {
+  return new Promise((resolve) => {
+    const src = URL.createObjectURL(file);
+    if (kind === "video") {
+      const v = document.createElement("video");
+      v.preload = "metadata";
+      v.onloadedmetadata = () => {
+        resolve({ w: v.videoWidth || undefined, h: v.videoHeight || undefined });
+        URL.revokeObjectURL(src);
+      };
+      v.onerror = () => resolve({});
+      v.src = src;
+    } else {
+      const img = new window.Image();
+      img.onload = () => {
+        resolve({ w: img.naturalWidth || undefined, h: img.naturalHeight || undefined });
+        URL.revokeObjectURL(src);
+      };
+      img.onerror = () => resolve({});
+      img.src = src;
+    }
+  });
+}
 
 export type RealisationData = {
   id?: string;
@@ -105,7 +135,10 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     setUploading(`media-${i}`);
     setError(null);
     try {
-      setMediaUrl(i, await uploadFile(file));
+      const kind = media[i].kind;
+      const dims = await readDims(file, kind);
+      const url = await uploadFile(file);
+      setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, url, ...dims } : it)));
     } catch (err) {
       setError(`Upload média : ${(err as Error).message}`);
     } finally {
