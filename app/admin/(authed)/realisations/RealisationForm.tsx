@@ -198,6 +198,17 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
   const [exps, setExps] = useState<string[]>(initial.exps);
   const [coverUrl, setCoverUrl] = useState<string | null>(initial.cover_url);
   const [media, setMedia] = useState<MediaItem[]>(initial.media);
+  // Drag-to-order des médias
+  const [dragI, setDragI] = useState<number | null>(null);
+  const [overI, setOverI] = useState<number | null>(null);
+  const moveTo = (from: number | null, to: number | null) =>
+    setMedia((m) => {
+      if (from === null || to === null || from === to) return m;
+      const copy = [...m];
+      const [it] = copy.splice(from, 1);
+      copy.splice(to, 0, it);
+      return copy;
+    });
   const [published, setPublished] = useState(initial.published);
   const [position, setPosition] = useState(initial.position);
   const [panelTheme, setPanelTheme] = useState<"dark" | "light">(initial.panel_theme);
@@ -303,14 +314,6 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     }
   };
   const removeMedia = (i: number) => setMedia((m) => m.filter((_, idx) => idx !== i));
-  const moveMedia = (i: number, dir: -1 | 1) =>
-    setMedia((m) => {
-      const j = i + dir;
-      if (j < 0 || j >= m.length) return m;
-      const copy = [...m];
-      [copy[i], copy[j]] = [copy[j], copy[i]];
-      return copy;
-    });
   const setMediaUrl = (i: number, url: string) =>
     setMedia((m) => m.map((it, idx) => (idx === i ? { ...it, url } : it)));
   const setPad = (i: number, v: number) =>
@@ -622,12 +625,40 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         </p>
         <div className="space-y-3">
           {media.map((m, i) => (
-            <div key={i} className="border border-paper/15 p-3">
+            <div
+              key={i}
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (overI !== i) setOverI(i);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                moveTo(dragI, i);
+                setDragI(null);
+                setOverI(null);
+              }}
+              className={`border bg-[#161619] p-3 transition-colors ${
+                overI === i && dragI !== null ? "border-orange" : "border-paper/10"
+              } ${dragI === i ? "opacity-40" : ""}`}
+            >
               <div className="flex items-center gap-3">
-                <div className="flex flex-col">
-                  <button type="button" onClick={() => moveMedia(i, -1)} className="px-1 text-paper/40 hover:text-paper">▲</button>
-                  <button type="button" onClick={() => moveMedia(i, 1)} className="px-1 text-paper/40 hover:text-paper">▼</button>
-                </div>
+                {/* Poignée : glisser pour réordonner */}
+                <span
+                  draggable
+                  onDragStart={(e) => {
+                    setDragI(i);
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragEnd={() => {
+                    setDragI(null);
+                    setOverI(null);
+                  }}
+                  title="Glisser pour réordonner"
+                  aria-label="Glisser pour réordonner"
+                  className="shrink-0 cursor-grab select-none px-1 text-base leading-none text-paper/35 hover:text-paper active:cursor-grabbing"
+                >
+                  ⠿
+                </span>
                 <span className="w-14 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-orange">
                   {KIND_LABEL[m.kind]}
                 </span>
