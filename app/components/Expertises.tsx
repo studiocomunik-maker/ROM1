@@ -202,33 +202,35 @@ export default function Expertises() {
       style={{ marginLeft: e.off, willChange: "transform" }}
       className="group flex cursor-none items-center py-1"
     >
-      {/* wrapper de révélation (translateY/opacity) — le li garde sa parallaxe translateX */}
-      <span
-        className="flex items-center gap-4"
-        style={{
-          transitionProperty: "transform, opacity",
-          transitionDuration: "0.7s",
-          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-          transitionDelay: `${gi * 0.08}s`,
-          transform: shown ? "translateY(0)" : "translateY(0.6em)",
-          opacity: shown ? 1 : 0,
-        }}
-      >
-        {href ? (
-          <Link href={href} className={titleCls} style={titleStyle}>
-            {inner}
-          </Link>
-        ) : (
-          <span className={titleCls} style={titleStyle}>
-            {inner}
-          </span>
-        )}
-        {/* description sur le côté */}
+      {/* MASQUE : la ligne monte depuis un bord clippé (le li garde sa parallaxe translateX).
+         pt/-mt + lineHeight : marge pour ne pas rogner les accents (É, À). */}
+      <span className="block overflow-hidden" style={{ lineHeight: 1, paddingTop: "0.14em", marginTop: "-0.14em" }}>
         <span
-          className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.15em] text-paper/45 transition-opacity duration-300 sm:block"
-          style={{ opacity: dim(e.key) ? 0.18 : hov === e.key ? 1 : 0.5 }}
+          className="flex items-center gap-4 will-change-transform"
+          style={{
+            transitionProperty: "transform",
+            transitionDuration: "0.8s",
+            transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+            transitionDelay: `${gi * 0.08}s`,
+            transform: shown ? "translateY(0)" : "translateY(110%)",
+          }}
         >
-          {e.sub}
+          {href ? (
+            <Link href={href} className={titleCls} style={titleStyle}>
+              {inner}
+            </Link>
+          ) : (
+            <span className={titleCls} style={titleStyle}>
+              {inner}
+            </span>
+          )}
+          {/* description sur le côté */}
+          <span
+            className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.15em] text-paper/45 transition-opacity duration-300 sm:block"
+            style={{ opacity: dim(e.key) ? 0.18 : hov === e.key ? 1 : 0.5 }}
+          >
+            {e.sub}
+          </span>
         </span>
       </span>
     </li>
