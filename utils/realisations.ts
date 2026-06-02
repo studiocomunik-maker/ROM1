@@ -1,10 +1,13 @@
 import { supabasePublic } from "./supabase/public";
 
+export type GalleryImage = { url: string; w?: number; h?: number };
+
 export type Media = {
-  kind: "image" | "video" | "youtube";
-  url: string;
+  kind: "image" | "video" | "youtube" | "gallery";
+  url: string; // image / video / youtube
   w?: number; // dimensions natives (images/vidéos) → next/image sans déformation
   h?: number;
+  images?: GalleryImage[]; // pour kind === "gallery" (slider)
 };
 
 export type Realisation = {

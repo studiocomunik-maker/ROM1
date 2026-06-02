@@ -5,11 +5,14 @@ import { useRouter } from "next/navigation";
 import { createClient } from "../../../../utils/supabase/client";
 import { EXPS, UNIVERS } from "../../../data";
 
+export type GalleryImage = { url: string; w?: number; h?: number };
+
 export type MediaItem = {
-  kind: "image" | "video" | "youtube";
+  kind: "image" | "video" | "youtube" | "gallery";
   url: string;
   w?: number;
   h?: number;
+  images?: GalleryImage[]; // pour kind === "gallery"
 };
 
 // Lit les dimensions natives d'un fichier (pour next/image, sans déformation).
@@ -71,6 +74,20 @@ const ytId = (url: string): string | null => {
 
 function MediaThumb({ m }: { m: MediaItem }) {
   const box = "h-14 w-20 shrink-0 bg-white/5 object-cover";
+  if (m.kind === "gallery") {
+    const first = m.images?.[0];
+    return (
+      <div className={`relative ${box}`}>
+        {first && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={first.url} alt="" className="h-full w-full object-cover" />
+        )}
+        <span className="absolute bottom-0 right-0 bg-orange px-1 font-mono text-[9px] text-coal">
+          {m.images?.length ?? 0}
+        </span>
+      </div>
+    );
+  }
   if (m.kind === "youtube") {
     const id = ytId(m.url);
     // eslint-disable-next-line @next/next/no-img-element
@@ -139,7 +156,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
 
   // ----- builder médias -----
   const addMedia = (kind: MediaItem["kind"]) =>
-    setMedia((m) => [...m, { kind, url: "" }]);
+    setMedia((m) => [...m, kind === "gallery" ? { kind, url: "", images: [] } : { kind, url: "" }]);
   const removeMedia = (i: number) => setMedia((m) => m.filter((_, idx) => idx !== i));
   const moveMedia = (i: number, dir: -1 | 1) =>
     setMedia((m) => {
@@ -169,6 +186,49 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     }
   }
 
+  // ----- sous-builder galerie (plusieurs images dans un même bloc) -----
+  async function onGalleryAdd(i: number, e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    e.target.value = "";
+    setUploading(`media-${i}`);
+    setError(null);
+    try {
+      const added: GalleryImage[] = [];
+      for (const file of files) {
+        const dims = await readDims(file, "image");
+        const url = await uploadFile(file);
+        added.push({ url, ...dims });
+      }
+      setMedia((m) =>
+        m.map((it, idx) =>
+          idx === i ? { ...it, images: [...(it.images ?? []), ...added] } : it,
+        ),
+      );
+    } catch (err) {
+      setError(`Upload galerie : ${(err as Error).message}`);
+    } finally {
+      setUploading(null);
+    }
+  }
+  const removeGalleryImage = (i: number, j: number) =>
+    setMedia((m) =>
+      m.map((it, idx) =>
+        idx === i ? { ...it, images: (it.images ?? []).filter((_, k) => k !== j) } : it,
+      ),
+    );
+  const moveGalleryImage = (i: number, j: number, dir: -1 | 1) =>
+    setMedia((m) =>
+      m.map((it, idx) => {
+        if (idx !== i) return it;
+        const imgs = [...(it.images ?? [])];
+        const k = j + dir;
+        if (k < 0 || k >= imgs.length) return it;
+        [imgs[j], imgs[k]] = [imgs[k], imgs[j]];
+        return { ...it, images: imgs };
+      }),
+    );
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -180,10 +240,12 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       setError("Choisis au moins une expertise.");
       return;
     }
-    const emptyIdx = media.findIndex((m) => m.url.trim() === "");
+    const isEmpty = (m: MediaItem) =>
+      m.kind === "gallery" ? (m.images?.length ?? 0) === 0 : m.url.trim() === "";
+    const emptyIdx = media.findIndex(isEmpty);
     if (emptyIdx !== -1) {
       setError(
-        `Le média n°${emptyIdx + 1} (${media[emptyIdx].kind}) n'a pas de contenu — upload échoué (fichier trop lourd ? limite 50 Mo) ou URL manquante. Retire-le ou corrige-le avant d'enregistrer.`,
+        `Le média n°${emptyIdx + 1} (${media[emptyIdx].kind}) est vide — upload échoué (fichier trop lourd ? limite 50 Mo), URL manquante, ou galerie sans image. Retire-le ou corrige-le avant d'enregistrer.`,
       );
       return;
     }
@@ -195,7 +257,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       univers,
       exps,
       cover_url: coverUrl,
-      media: media.filter((m) => m.url.trim() !== ""),
+      media: media.filter((m) => !isEmpty(m)),
       published,
       position,
       panel_theme: panelTheme,
@@ -363,52 +425,79 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         </div>
         <div className="mt-3 space-y-3">
           {media.map((m, i) => (
-            <div key={i} className="flex items-center gap-3 border border-paper/15 p-3">
-              <div className="flex flex-col">
-                <button type="button" onClick={() => moveMedia(i, -1)} className="px-1 text-paper/40 hover:text-paper">▲</button>
-                <button type="button" onClick={() => moveMedia(i, 1)} className="px-1 text-paper/40 hover:text-paper">▼</button>
+            <div key={i} className="border border-paper/15 p-3">
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col">
+                  <button type="button" onClick={() => moveMedia(i, -1)} className="px-1 text-paper/40 hover:text-paper">▲</button>
+                  <button type="button" onClick={() => moveMedia(i, 1)} className="px-1 text-paper/40 hover:text-paper">▼</button>
+                </div>
+                <span className="w-14 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-orange">
+                  {m.kind}
+                </span>
+                <MediaThumb m={m} />
+                {m.kind === "youtube" ? (
+                  <input
+                    className={`${field} mt-0 flex-1`}
+                    placeholder="https://youtube.com/watch?v=…"
+                    value={m.url}
+                    onChange={(e) => setMediaUrl(i, e.target.value)}
+                  />
+                ) : m.kind === "gallery" ? (
+                  <span className="flex-1 font-mono text-[11px] text-paper/50">
+                    {m.images?.length ?? 0} image(s) — slider à flèches
+                  </span>
+                ) : (
+                  <div className="flex flex-1 items-center gap-3">
+                    {m.url ? (
+                      <span className="truncate font-mono text-[11px] text-paper/50">{m.url.split("/").pop()}</span>
+                    ) : (
+                      <span className="font-mono text-[11px] text-paper/30">— aucun fichier —</span>
+                    )}
+                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
+                      {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer" : "Choisir"}
+                      <input
+                        type="file"
+                        accept={m.kind === "video" ? "video/*" : "image/*"}
+                        onChange={(e) => onMediaFile(i, e)}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeMedia(i)}
+                  className="shrink-0 font-mono text-[11px] uppercase tracking-[0.1em] text-orange"
+                >
+                  Suppr.
+                </button>
               </div>
-              <span className="w-14 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-orange">
-                {m.kind}
-              </span>
-              <MediaThumb m={m} />
-              {m.kind === "youtube" ? (
-                <input
-                  className={`${field} mt-0 flex-1`}
-                  placeholder="https://youtube.com/watch?v=…"
-                  value={m.url}
-                  onChange={(e) => setMediaUrl(i, e.target.value)}
-                />
-              ) : (
-                <div className="flex flex-1 items-center gap-3">
-                  {m.url ? (
-                    <span className="truncate font-mono text-[11px] text-paper/50">{m.url.split("/").pop()}</span>
-                  ) : (
-                    <span className="font-mono text-[11px] text-paper/30">— aucun fichier —</span>
-                  )}
-                  <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
-                    {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer" : "Choisir"}
-                    <input
-                      type="file"
-                      accept={m.kind === "video" ? "video/*" : "image/*"}
-                      onChange={(e) => onMediaFile(i, e)}
-                      className="hidden"
-                    />
+
+              {/* Sous-builder galerie : grille d'images réordonnables */}
+              {m.kind === "gallery" && (
+                <div className="mt-3 flex flex-wrap gap-2 border-t border-paper/10 pt-3">
+                  {(m.images ?? []).map((img, j) => (
+                    <div key={j} className="relative h-16 w-24 overflow-hidden bg-white/5">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img.url} alt="" className="h-full w-full object-cover" />
+                      <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-coal/70 px-1 text-[11px] leading-none text-paper">
+                        <button type="button" onClick={() => moveGalleryImage(i, j, -1)} className="px-1 hover:text-orange">◀</button>
+                        <button type="button" onClick={() => removeGalleryImage(i, j)} className="px-1 text-orange">×</button>
+                        <button type="button" onClick={() => moveGalleryImage(i, j, 1)} className="px-1 hover:text-orange">▶</button>
+                      </div>
+                    </div>
+                  ))}
+                  <label className="flex h-16 w-24 cursor-pointer items-center justify-center border border-dashed border-paper/30 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange">
+                    {uploading === `media-${i}` ? "Upload…" : "+ images"}
+                    <input type="file" accept="image/*" multiple onChange={(e) => onGalleryAdd(i, e)} className="hidden" />
                   </label>
                 </div>
               )}
-              <button
-                type="button"
-                onClick={() => removeMedia(i)}
-                className="shrink-0 font-mono text-[11px] uppercase tracking-[0.1em] text-orange"
-              >
-                Suppr.
-              </button>
             </div>
           ))}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {(["image", "video", "youtube"] as const).map((k) => (
+          {(["image", "video", "youtube", "gallery"] as const).map((k) => (
             <button
               type="button"
               key={k}

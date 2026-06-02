@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
+import Gallery from "./Gallery";
 import { EXPS, UNIVERS, SITE_URL } from "../../data";
 import {
   getRealisation,
@@ -45,6 +46,9 @@ export async function generateMetadata({
 const SIZES = "(min-width: 1024px) 64vw, 100vw";
 
 function Visual({ m, titre }: { m: Media; titre: string }) {
+  if (m.kind === "gallery") {
+    return <Gallery images={m.images ?? []} titre={titre} />;
+  }
   if (m.kind === "youtube") {
     const id = youtubeId(m.url);
     if (!id) return null;
