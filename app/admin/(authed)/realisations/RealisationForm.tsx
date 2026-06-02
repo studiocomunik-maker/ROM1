@@ -124,6 +124,13 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       setError("Choisis au moins une expertise.");
       return;
     }
+    const emptyIdx = media.findIndex((m) => m.url.trim() === "");
+    if (emptyIdx !== -1) {
+      setError(
+        `Le média n°${emptyIdx + 1} (${media[emptyIdx].kind}) n'a pas de contenu — upload échoué (fichier trop lourd ? limite 50 Mo) ou URL manquante. Retire-le ou corrige-le avant d'enregistrer.`,
+      );
+      return;
+    }
     setBusy(true);
     const payload = {
       slug: slug.trim(),
