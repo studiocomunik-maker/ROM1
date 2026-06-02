@@ -1,0 +1,112 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import PageNav from "../../components/PageNav";
+import { EXPS, getMetier, metiers, projetsByMetier } from "../../data";
+
+export function generateStaticParams() {
+  return metiers.map((m) => ({ slug: m.key }));
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/metiers/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const m = getMetier(slug);
+  if (!m) return {};
+  return {
+    title: `${m.t} — Romain Renoux`,
+    description: m.intro,
+  };
+}
+
+export default async function MetierPage({ params }: PageProps<"/metiers/[slug]">) {
+  const { slug } = await params;
+  const metier = getMetier(slug);
+  if (!metier) notFound();
+
+  const refs = projetsByMetier(metier.key);
+  const idx = metiers.findIndex((m) => m.key === metier.key);
+  const next = metiers[(idx + 1) % metiers.length];
+
+  return (
+    <main className="bg-coal text-paper">
+      <PageNav back="/" backLabel="Accueil" />
+
+      {/* HERO métier — explique l'expertise */}
+      <section className="grain relative flex min-h-screen flex-col justify-center overflow-hidden px-6 py-32 md:px-12">
+        <p className="mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
+          ★ Métier · {metier.sub}
+        </p>
+        <h1 className="max-w-[14ch] font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.6rem,9vw,7rem)]">
+          {metier.t}
+          <span className="text-orange">.</span>
+        </h1>
+        <p className="mt-8 max-w-[60ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
+          {metier.intro}
+        </p>
+        <p className="mt-16 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
+          {refs.length} réalisation{refs.length > 1 ? "s" : ""} ↓
+        </p>
+      </section>
+
+      {/* RÉALISATIONS liées à ce métier */}
+      <section className="relative z-10 bg-white text-coal">
+        <div className="px-6 py-16 text-center md:px-12">
+          <p className="mb-3 font-display text-xs uppercase tracking-[0.3em] text-orange">
+            ★ Réalisations
+          </p>
+          <h2 className="font-display uppercase leading-[0.9] tracking-tight text-[clamp(2rem,6vw,4.5rem)]">
+            En {metier.t.toLowerCase()}
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-2 gap-px bg-coal/10 sm:grid-cols-3">
+          {refs.map((p) => (
+            <Link
+              key={p.slug}
+              href={`/realisations/${p.slug}`}
+              className="group relative block aspect-[4/3] overflow-hidden bg-coal"
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
+                style={p.img ? { backgroundImage: `url(${p.img})` } : { background: p.bg }}
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
+                  {p.t}
+                </h3>
+                <div className="flex flex-wrap justify-center gap-1.5">
+                  {p.exps.map((x) => (
+                    <span
+                      key={x}
+                      className="border border-paper/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-paper"
+                    >
+                      {EXPS[x]}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* lien métier suivant */}
+        <div className="flex items-center justify-between px-6 py-12 md:px-12">
+          <Link
+            href="/"
+            className="font-mono text-xs uppercase tracking-[0.15em] text-coal/60 transition-colors hover:text-coal"
+          >
+            ← Tous les métiers
+          </Link>
+          <Link
+            href={`/metiers/${next.key}`}
+            className="font-display text-sm uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-60"
+          >
+            {next.t} →
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}
