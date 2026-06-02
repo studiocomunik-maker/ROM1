@@ -119,13 +119,13 @@ function captureVideoFrame(src: string, time: number): Promise<Blob> {
 
     video.onseeked = () => {
       const v = video as RVFC;
+      // rVFC fire quand la frame est présentée ; mais sur vidéo en pause il ne
+      // se déclenche pas toujours → on ajoute un fallback temporisé (la frame
+      // seekée est décodée passivement par le navigateur en ~quelques centaines de ms).
       if (typeof v.requestVideoFrameCallback === "function") {
-        // fire quand la frame seekée est présentée → jamais noire
         v.requestVideoFrameCallback(() => draw());
-      } else {
-        // fallback : laisser 2 frames d'affichage avant de dessiner
-        requestAnimationFrame(() => requestAnimationFrame(draw));
       }
+      setTimeout(draw, 600);
     };
     video.onloadeddata = () => {
       const dur = video.duration || 1;

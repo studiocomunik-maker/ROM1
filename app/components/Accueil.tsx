@@ -48,25 +48,35 @@ export default function Accueil() {
 
       {/* Centre — grosse phrase ; les marques coulent entre les mots */}
       <div className="relative flex flex-1 items-center px-6 py-8 md:px-12">
-        <h1 className="mx-auto w-full max-w-[920px] font-display uppercase leading-[0.86] tracking-[-0.015em] text-paper text-[clamp(2.3rem,6.5vw,5.6rem)]">
-          Je donne
-          <span className="mx-[0.18em] inline-block h-[0.78em] w-[0.78em] -translate-y-[0.06em] align-middle">
-            <Burst className="spin-slow h-full w-full" />
+        <h1 className="mx-auto w-full max-w-[920px] font-display uppercase leading-[0.86] tracking-[-0.015em] text-paper text-[clamp(3.6rem,10.5vw,5.6rem)]">
+          <span className="block">Je donne</span>
+          <span className="block">
+            <span className="mr-[0.18em] inline-block h-[0.78em] w-[0.78em] -translate-y-[0.06em] align-middle">
+              <Burst className="spin-slow h-full w-full" />
+            </span>
+            une
           </span>
-          une <span className="text-orange">image</span>
-          <span className="mx-[0.18em] inline-block h-[0.62em] w-[1.05em] -translate-y-[0.05em] -rotate-6 align-middle">
-            <Eye className="eye-blink h-full w-full" />
+          <span className="block">
+            <span className="text-orange">image</span>
+            <span className="mx-[0.18em] inline-block h-[0.62em] w-[1.05em] -translate-y-[0.05em] -rotate-6 align-middle">
+              <Eye className="eye-blink h-full w-full" />
+            </span>
           </span>
-          aux{" "}
-          <span className="relative inline-block">
-            marques
-            <span
-              aria-hidden
-              className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange"
-            />
-          </span>{" "}
-          à votre histoire<span className="text-orange">.</span>
-          <Bolt className="ml-[0.2em] inline-block h-[0.92em] w-[0.5em] -translate-y-[0.02em] rotate-[8deg] align-middle" />
+          <span className="block">aux</span>
+          <span className="block">
+            <span className="relative inline-block">
+              marques
+              <span
+                aria-hidden
+                className="absolute inset-x-0 top-[50%] h-[0.055em] -rotate-2 bg-orange"
+              />
+            </span>
+          </span>
+          <span className="block">à votre</span>
+          <span className="block">
+            histoire<span className="text-orange">.</span>
+            <Bolt className="ml-[0.2em] inline-block h-[0.92em] w-[0.5em] -translate-y-[0.02em] rotate-[8deg] align-middle" />
+          </span>
         </h1>
       </div>
 
