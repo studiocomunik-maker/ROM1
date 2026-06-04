@@ -61,12 +61,26 @@ function readDims(file: File, kind: MediaItem["kind"]): Promise<{ w?: number; h?
 }
 
 // Compression navigateur avant upload : downscale au grand côté + ré-encodage
-// WebP (garde l'alpha des logos PNG). On ne touche que le JPEG/PNG/WebP raster
-// (SVG, GIF animé, vidéos passent intacts), et on garde l'original s'il est déjà
-// léger ou si la version compressée ne fait pas mieux.
+// WebP. On ne touche que le JPEG/PNG/WebP raster (SVG, GIF animé, vidéos passent
+// intacts). On garde l'original tel quel si : déjà léger, version compressée pas
+// meilleure, OU si l'image a de la transparence (logos PNG → on préserve l'alpha
+// sans risque d'artefact de bord du WebP lossy).
 const COMPRESS_MAX_EDGE = 2560;
 const COMPRESS_QUALITY = 0.82;
 const COMPRESSIBLE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+// Détecte un canal alpha réellement utilisé (échantillonnage 1 px sur 16).
+function hasTransparency(ctx: CanvasRenderingContext2D, w: number, h: number): boolean {
+  try {
+    const { data } = ctx.getImageData(0, 0, w, h);
+    for (let i = 3; i < data.length; i += 4 * 16) {
+      if (data[i] < 255) return true;
+    }
+    return false;
+  } catch {
+    return true; // lecture impossible → on suppose alpha et on garde l'original (sûr)
+  }
+}
 
 function compressImageFile(file: File): Promise<{ blob: Blob; name: string }> {
   return new Promise((resolve) => {
@@ -90,9 +104,15 @@ function compressImageFile(file: File): Promise<{ blob: Blob; name: string }> {
       const ctx = canvas.getContext("2d");
       if (!ctx) return keep();
       ctx.drawImage(img, 0, 0, cw, ch);
+
+      // Transparence → on garde l'original intact (le JPEG n'a jamais d'alpha).
+      if (file.type !== "image/jpeg" && hasTransparency(ctx, cw, ch)) return keep();
+
       canvas.toBlob(
         (blob) => {
-          if (!blob || blob.size >= file.size) return keep();
+          if (!blob || blob.type !== "image/webp" || blob.size >= file.size) {
+            return keep();
+          }
           const base = file.name.replace(/\.[^.]+$/, "");
           resolve({ blob, name: `${base}.webp` });
         },
