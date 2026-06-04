@@ -6,6 +6,7 @@ import PageNav from "../../components/PageNav";
 import Reveal from "../../components/Reveal";
 import Gallery from "./Gallery";
 import VideoPlayer from "./VideoPlayer";
+import YouTubeFacade from "./YouTubeFacade";
 import TextBand from "./TextBand";
 import { EXPS, UNIVERS, SITE_URL } from "../../data";
 import {
@@ -68,17 +69,7 @@ function Visual({ m, titre }: { m: Media; titre: string }) {
   if (m.kind === "youtube") {
     const id = youtubeId(m.url);
     if (!id) return null;
-    return (
-      <div className="aspect-video w-full bg-black">
-        <iframe
-          className="h-full w-full"
-          src={`https://www.youtube.com/embed/${id}`}
-          title={titre}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
-    );
+    return <YouTubeFacade id={id} titre={titre} />;
   }
   if (m.kind === "video") {
     return <VideoPlayer url={m.url} poster={m.poster} w={m.w} h={m.h} titre={titre} />;
