@@ -307,22 +307,28 @@ export default async function RealisationPage({
               <Link
                 key={o.slug}
                 href={`/realisations/${o.slug}`}
-                className="group relative block aspect-[4/3] overflow-hidden bg-coal"
+                className="group relative block aspect-[4/3] overflow-hidden bg-coal text-paper"
               >
+                {/* Image (base, toujours visible) */}
                 {o.cover_url ? (
                   <Image
                     src={o.cover_url}
                     alt={o.titre}
                     fill
                     sizes="(min-width: 640px) 33vw, 100vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-coal to-night">
                     <span className="font-display text-2xl uppercase tracking-tight text-paper/15">rom1</span>
                   </div>
                 )}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+
+                {/* Voile sombre : assombrit par défaut → transparent au survol */}
+                <div className="absolute inset-0 bg-coal/60 transition-colors duration-300 group-hover:bg-coal/0" />
+
+                {/* Univers + titre : par défaut → s'effacent au survol */}
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 p-5 text-center transition-opacity duration-300 group-hover:opacity-0">
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
                     {UNIVERS[o.univers] ?? o.univers}
                   </span>
