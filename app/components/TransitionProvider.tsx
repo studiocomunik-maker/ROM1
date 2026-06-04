@@ -94,7 +94,14 @@ export default function TransitionProvider({ children }: { children: React.React
       >
         <div className="flex flex-col items-center gap-6">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-blanc.png" alt="" className="h-12 w-auto md:h-16" />
+          <img
+            src="/logo-blanc-128.png"
+            srcSet="/logo-blanc-64.png 1x, /logo-blanc-128.png 2x, /logo-blanc-192.png 3x"
+            width={179}
+            height={128}
+            alt=""
+            className="h-12 w-auto md:h-16"
+          />
           <div className="h-px w-32 overflow-hidden bg-paper/20">
             <div className="loadbar h-full w-full bg-orange" />
           </div>

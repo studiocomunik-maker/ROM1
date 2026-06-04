@@ -15,7 +15,14 @@ export default function PageNav({
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 pt-7 mix-blend-difference md:px-12">
       <Link href="/" className="pointer-events-auto">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-blanc.png" alt="Romain Renoux" className="h-11 w-auto md:h-14" />
+        <img
+          src="/logo-blanc-128.png"
+          srcSet="/logo-blanc-64.png 1x, /logo-blanc-128.png 2x, /logo-blanc-192.png 3x"
+          width={179}
+          height={128}
+          alt="Romain Renoux"
+          className="h-11 w-auto md:h-14"
+        />
       </Link>
       <Link
         href={back}
