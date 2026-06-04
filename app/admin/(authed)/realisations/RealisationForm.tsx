@@ -60,6 +60,54 @@ function readDims(file: File, kind: MediaItem["kind"]): Promise<{ w?: number; h?
   });
 }
 
+// Compression navigateur avant upload : downscale au grand côté + ré-encodage
+// WebP (garde l'alpha des logos PNG). On ne touche que le JPEG/PNG/WebP raster
+// (SVG, GIF animé, vidéos passent intacts), et on garde l'original s'il est déjà
+// léger ou si la version compressée ne fait pas mieux.
+const COMPRESS_MAX_EDGE = 2560;
+const COMPRESS_QUALITY = 0.82;
+const COMPRESSIBLE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+function compressImageFile(file: File): Promise<{ blob: Blob; name: string }> {
+  return new Promise((resolve) => {
+    const keep = () => resolve({ blob: file, name: file.name });
+    if (!COMPRESSIBLE_TYPES.includes(file.type)) return keep();
+
+    const src = URL.createObjectURL(file);
+    const img = new window.Image();
+    img.onload = () => {
+      URL.revokeObjectURL(src);
+      const { naturalWidth: w, naturalHeight: h } = img;
+      const scale = Math.min(1, COMPRESS_MAX_EDGE / Math.max(w, h));
+      // Déjà petit et pas de redimensionnement → rien à gagner.
+      if (scale === 1 && file.size < 500_000) return keep();
+
+      const cw = Math.max(1, Math.round(w * scale));
+      const ch = Math.max(1, Math.round(h * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = cw;
+      canvas.height = ch;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return keep();
+      ctx.drawImage(img, 0, 0, cw, ch);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob || blob.size >= file.size) return keep();
+          const base = file.name.replace(/\.[^.]+$/, "");
+          resolve({ blob, name: `${base}.webp` });
+        },
+        "image/webp",
+        COMPRESS_QUALITY,
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(src);
+      keep();
+    };
+    img.src = src;
+  });
+}
+
 export type Partner = { name: string; url?: string; logo?: string };
 
 export type RealisationData = {
@@ -245,7 +293,10 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     if (error) throw error;
     return supabase.storage.from("realisations").getPublicUrl(path).data.publicUrl;
   }
-  const uploadFile = (file: File) => uploadBlob(file, file.name);
+  const uploadFile = async (file: File) => {
+    const { blob, name } = await compressImageFile(file);
+    return uploadBlob(blob, name);
+  };
 
   // Capture + upload la cover d'une vidéo (depuis une source blob/objet, sans CORS).
   async function makeCoverFromVideoSrc(i: number, src: string, time: number) {
