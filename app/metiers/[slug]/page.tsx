@@ -77,15 +77,16 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
               <Link
                 key={p.slug}
                 href={`/realisations/${p.slug}`}
-                className="group relative block aspect-[4/3] overflow-hidden bg-coal"
+                className="group relative block aspect-[4/3] overflow-hidden bg-coal text-paper"
               >
+                {/* Image (base, toujours visible) */}
                 {p.cover_url ? (
                   <Image
                     src={p.cover_url}
                     alt={p.titre}
                     fill
                     sizes="(min-width: 640px) 33vw, 50vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-coal to-night">
@@ -94,7 +95,12 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
                     </span>
                   </div>
                 )}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/50 p-5 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+
+                {/* Voile sombre : assombrit par défaut → transparent au survol */}
+                <div className="absolute inset-0 bg-coal/60 transition-colors duration-300 group-hover:bg-coal/0" />
+
+                {/* Titre + expertises : par défaut → s'effacent au survol */}
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 p-5 text-center transition-opacity duration-300 group-hover:opacity-0">
                   <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
                     {p.titre}
                   </h3>
