@@ -226,8 +226,8 @@ export default function Expertises() {
           )}
           {/* description sur le côté */}
           <span
-            className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.15em] text-paper/45 transition-opacity duration-300 sm:block"
-            style={{ opacity: dim(e.key) ? 0.18 : hov === e.key ? 1 : 0.5 }}
+            className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.15em] text-paper/70 transition-opacity duration-300 sm:block"
+            style={{ opacity: dim(e.key) ? 0.25 : hov === e.key ? 1 : 0.8 }}
           >
             {e.sub}
           </span>
@@ -263,7 +263,7 @@ export default function Expertises() {
           <ul>{univers.map((e, i) => row(e, false, metiers.length + i))}</ul>
         </div>
 
-        <p className="pointer-events-none absolute bottom-6 right-6 z-10 text-right font-mono text-[10px] uppercase leading-[1.4] tracking-[0.1em] text-paper/45 md:right-12">
+        <p className="pointer-events-none absolute bottom-6 right-6 z-10 text-right font-mono text-[10px] uppercase leading-[1.4] tracking-[0.1em] text-paper/60 md:right-12">
           rom1.fr
           <br />
           est. 2005

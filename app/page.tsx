@@ -16,7 +16,7 @@ export default async function Home() {
     cover_url: r.cover_url,
   }));
   return (
-    <>
+    <main>
       {/* Logo fixe — mix-blend difference => s'inverse en négatif selon le fond */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -28,6 +28,6 @@ export default async function Home() {
       <Expertises />
       <Portfolio items={items} />
       <Contact />
-    </>
+    </main>
   );
 }

@@ -54,6 +54,7 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
       <select
         value={value}
         onChange={(ev) => onChange(ev.target.value)}
+        aria-label={allLabel}
         className="cursor-pointer appearance-none border border-coal bg-white py-2.5 pl-4 pr-10 font-mono text-[11px] uppercase tracking-[0.1em] text-coal transition-colors group-hover:bg-coal group-hover:text-white"
       >
         <option value="all">{allLabel}</option>
