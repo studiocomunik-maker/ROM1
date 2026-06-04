@@ -168,11 +168,16 @@ export default async function RealisationPage({
             visuals.map((m, i) => (
               <div
                 key={i}
-                style={{
-                  // padding façon CSS : "20" (tous côtés) ou "20 0 40 0" (h d b g)
-                  padding: padCss(m.pad),
-                  background: m.bg || undefined,
-                }}
+                className="media-pad"
+                style={
+                  {
+                    // padding façon CSS : "20" (tous côtés) ou "20 0 40 0" (h d b g)
+                    // plein dès 768px (--pad-d), ÷4 sur smartphone (--pad-m)
+                    "--pad-d": padCss(m.pad) ?? "0",
+                    "--pad-m": padCss(m.pad, 0.25) ?? "0",
+                    background: m.bg || undefined,
+                  } as React.CSSProperties
+                }
               >
                 <Visual m={m} titre={p.titre} />
               </div>

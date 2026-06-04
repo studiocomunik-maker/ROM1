@@ -73,12 +73,26 @@ export async function getRealisationsByMetier(key: string): Promise<Realisation[
 }
 
 // Padding façon CSS : nombres bruts → px. 1 valeur = tous côtés, 4 = h d b g.
-export function padCss(pad?: number | string): string | undefined {
+// `scale` permet de réduire le padding (ex. 0.25 = ÷4 sur smartphone).
+// Les nombres nus deviennent des px ; les valeurs avec unité (rem, %, …)
+// sont mises à l'échelle en gardant leur unité.
+export function padCss(pad?: number | string, scale = 1): string | undefined {
+  const sc = (n: number) => {
+    const v = n * scale;
+    return Number.isInteger(v) ? v : Math.round(v * 100) / 100;
+  };
   if (pad === undefined || pad === null || pad === "") return undefined;
-  if (typeof pad === "number") return pad > 0 ? `${pad}px` : undefined;
+  if (typeof pad === "number") return pad > 0 ? `${sc(pad)}px` : undefined;
   const parts = pad.trim().split(/\s+/).filter(Boolean);
   if (!parts.length) return undefined;
-  return parts.map((p) => (/^-?\d*\.?\d+$/.test(p) ? `${p}px` : p)).join(" ");
+  return parts
+    .map((p) => {
+      if (/^-?\d*\.?\d+$/.test(p)) return `${sc(parseFloat(p))}px`;
+      const m = p.match(/^(-?\d*\.?\d+)([a-z%]+)$/i);
+      if (m) return `${sc(parseFloat(m[1]))}${m[2]}`;
+      return p;
+    })
+    .join(" ");
 }
 
 // Extrait l'ID d'une URL YouTube (watch, youtu.be, embed, shorts).

@@ -58,6 +58,18 @@
   transform-origin: 50% 50%;
 }
 
+/* Padding média des pages projet : valeur réduite sur smartphone (÷4),
+   valeur pleine à partir de 768px. Les deux valeurs sont injectées en
+   variables car un media-query est impossible en style inline. */
+.media-pad {
+  padding: var(--pad-m, 0);
+}
+@media (min-width: 768px) {
+  .media-pad {
+    padding: var(--pad-d, 0);
+  }
+}
+
 html {
   background: transparent;
 }
