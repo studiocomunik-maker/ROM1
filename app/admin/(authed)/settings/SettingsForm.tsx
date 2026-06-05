@@ -118,7 +118,7 @@ export default function SettingsForm({
               playsInline
               className="aspect-video w-full grayscale"
             />
-            <div className="pointer-events-none absolute inset-0 bg-coal/65" />
+            <div className="pointer-events-none absolute inset-0 bg-coal/80" />
             <span className="absolute bottom-2 left-2 bg-coal/80 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.15em] text-paper/70">
               Aperçu (N&amp;B + voile)
             </span>

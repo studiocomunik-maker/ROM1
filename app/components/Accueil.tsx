@@ -79,7 +79,7 @@ export default function Accueil({
             preload="auto"
             aria-hidden
           />
-          <div className="pointer-events-none absolute inset-0 z-0 bg-coal/65" />
+          <div className="pointer-events-none absolute inset-0 z-0 bg-coal/80" />
         </>
       )}
 
