@@ -1,7 +1,7 @@
 /* Données fixes du site : métiers + univers + libellés.
    Les RÉALISATIONS vivent désormais dans Supabase (voir utils/realisations.ts). */
 
-export const SITE_URL = "https://rom-1.vercel.app"; // ← remplacer par rom1.fr le moment venu
+export const SITE_URL = "https://rom1.fr";
 
 export const EXPS: Record<string, string> = {
   identite: "Identité",
