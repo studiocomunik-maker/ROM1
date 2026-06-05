@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
 import Reveal from "../../components/Reveal";
-import { EXPS, SITE_URL, getMetier, metiers } from "../../data";
+import { EXPS, UNIVERS, SITE_URL, getMetier, metiers } from "../../data";
 import { getRealisationsByMetier } from "../../../utils/realisations";
 
 export const revalidate = 60;
@@ -99,12 +99,15 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
                 {/* Voile sombre : assombrit par défaut → transparent au survol */}
                 <div className="absolute inset-0 bg-coal/60 transition-colors duration-300 group-hover:bg-coal/0" />
 
-                {/* Titre + expertises : par défaut → s'effacent au survol */}
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 p-5 text-center transition-opacity duration-300 group-hover:opacity-0">
+                {/* Univers + titre + métiers : par défaut → s'effacent au survol */}
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 p-5 text-center transition-opacity duration-300 group-hover:opacity-0">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
+                    {UNIVERS[p.univers] ?? p.univers}
+                  </span>
                   <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
                     {p.titre}
                   </h3>
-                  <div className="flex flex-wrap justify-center gap-1.5">
+                  <div className="mt-1 flex flex-wrap justify-center gap-1.5">
                     {p.exps.map((x) => (
                       <span
                         key={x}

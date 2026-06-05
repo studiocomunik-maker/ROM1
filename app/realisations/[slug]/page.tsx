@@ -332,7 +332,7 @@ export default async function RealisationPage({
                 {/* Voile sombre : assombrit par défaut → transparent au survol */}
                 <div className="absolute inset-0 bg-coal/60 transition-colors duration-300 group-hover:bg-coal/0" />
 
-                {/* Univers + titre : par défaut → s'effacent au survol */}
+                {/* Univers + titre + métiers : par défaut → s'effacent au survol */}
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 p-5 text-center transition-opacity duration-300 group-hover:opacity-0">
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
                     {UNIVERS[o.univers] ?? o.univers}
@@ -340,6 +340,16 @@ export default async function RealisationPage({
                   <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
                     {o.titre}
                   </h3>
+                  <div className="mt-1 flex flex-wrap justify-center gap-1.5">
+                    {o.exps.map((x) => (
+                      <span
+                        key={x}
+                        className="border border-paper/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-paper"
+                      >
+                        {EXPS[x] ?? x}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </Link>
             ))}
