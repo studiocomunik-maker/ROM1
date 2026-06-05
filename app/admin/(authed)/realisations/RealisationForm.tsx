@@ -15,6 +15,7 @@ export type MediaItem = {
   h?: number;
   poster?: string; // image d'overlay pour une vidéo (frame capturée)
   posterTime?: number; // seconde de la frame
+  loop?: boolean; // vidéo : autoplay + boucle + muet (mini-vidéo de scroll)
   images?: GalleryImage[]; // pour kind === "gallery"
   pad?: number | string; // padding façon CSS : "20" ou "20 0 40 0" (h d b g), px
   bg?: string; // couleur de fond
@@ -797,32 +798,53 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                       {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer vidéo" : "Choisir vidéo"}
                       <input type="file" accept="video/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
                     </label>
-                    {/* Cover auto = frame de la vidéo */}
-                    <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-paper/40">Cover</span>
-                    {m.poster && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={m.poster} alt="" className="h-8 w-12 shrink-0 object-cover" />
-                    )}
-                    <label className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
-                      à
-                      <input
-                        type="number"
-                        min={0}
-                        step={0.1}
-                        value={m.posterTime ?? 1}
-                        onChange={(e) => setPosterTime(i, Number(e.target.value))}
-                        className="w-14 border border-paper/20 bg-transparent px-2 py-1 text-paper"
-                      />
-                      s
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => regenPoster(i)}
-                      disabled={!m.url}
-                      className="border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-orange hover:text-orange disabled:opacity-40"
+                    {/* Mini-vidéo de scroll : autoplay + boucle + muet */}
+                    <label
+                      className={`flex cursor-pointer select-none items-center gap-1.5 border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors ${
+                        m.loop
+                          ? "border-orange text-orange"
+                          : "border-paper/25 text-paper/70 hover:border-paper/60"
+                      }`}
+                      title="Lecture auto + boucle, sans son (mini-vidéo de présentation)"
                     >
-                      {uploading === `poster-${i}` ? "…" : "Régénérer"}
-                    </button>
+                      <input
+                        type="checkbox"
+                        checked={!!m.loop}
+                        onChange={(e) => patchMedia(i, { loop: e.target.checked })}
+                        className="accent-orange"
+                      />
+                      ▶ Play + Loop
+                    </label>
+                    {/* Cover : inutile en mode autoplay/loop */}
+                    {!m.loop && (
+                      <>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-paper/40">Cover</span>
+                        {m.poster && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={m.poster} alt="" className="h-8 w-12 shrink-0 object-cover" />
+                        )}
+                        <label className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
+                          à
+                          <input
+                            type="number"
+                            min={0}
+                            step={0.1}
+                            value={m.posterTime ?? 1}
+                            onChange={(e) => setPosterTime(i, Number(e.target.value))}
+                            className="w-14 border border-paper/20 bg-transparent px-2 py-1 text-paper"
+                          />
+                          s
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => regenPoster(i)}
+                          disabled={!m.url}
+                          className="border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-orange hover:text-orange disabled:opacity-40"
+                        >
+                          {uploading === `poster-${i}` ? "…" : "Régénérer"}
+                        </button>
+                      </>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-1 items-center gap-3">

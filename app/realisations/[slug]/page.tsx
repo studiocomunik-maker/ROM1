@@ -73,7 +73,7 @@ function Visual({ m, titre }: { m: Media; titre: string }) {
     return <YouTubeFacade id={id} titre={titre} />;
   }
   if (m.kind === "video") {
-    return <VideoPlayer url={m.url} poster={m.poster} w={m.w} h={m.h} titre={titre} />;
+    return <VideoPlayer url={m.url} poster={m.poster} w={m.w} h={m.h} titre={titre} loop={m.loop} />;
   }
   // Image avec dimensions connues → next/image (optimisé), pleine largeur.
   if (m.w && m.h) {

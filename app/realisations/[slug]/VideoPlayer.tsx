@@ -8,12 +8,14 @@ export default function VideoPlayer({
   w,
   h,
   titre,
+  loop,
 }: {
   url: string;
   poster?: string;
   w?: number;
   h?: number;
   titre: string;
+  loop?: boolean;
 }) {
   const [playing, setPlaying] = useState(false);
   const vertical = !!(w && h && h > w);
@@ -22,6 +24,24 @@ export default function VideoPlayer({
   // Paysage : pleine largeur.
   const outer = vertical ? "flex justify-center bg-black py-[15px]" : "block";
   const media = vertical ? "max-h-[600px] w-auto" : "block h-auto w-full";
+
+  // Mini-vidéo de scroll : lecture auto + boucle + muet, sans contrôles ni cover.
+  if (loop) {
+    return (
+      <div className={outer}>
+        <video
+          className={media}
+          src={url}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          aria-label={titre}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={outer}>

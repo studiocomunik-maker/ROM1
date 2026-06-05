@@ -11,6 +11,7 @@ export type Media = {
   h?: number;
   poster?: string; // image d'overlay d'une vidéo (frame capturée)
   posterTime?: number; // seconde de la frame utilisée comme cover
+  loop?: boolean; // vidéo : autoplay + boucle + muet (mini-vidéo de scroll)
   images?: GalleryImage[]; // pour kind === "gallery" (slider)
   pad?: number | string; // padding façon CSS : "20" (tous côtés) ou "20 0 40 0" (h d b g), en px
   bg?: string; // couleur de fond autour du média — défaut aucun
