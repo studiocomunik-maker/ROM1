@@ -64,6 +64,10 @@ const siteJsonLd = {
       image: `${SITE_URL}/opengraph-image.png`,
       description: DESCRIPTION,
       areaServed: ["Beaujolais", "Lyon", "Rhône", "France"],
+      sameAs: [
+        "https://www.instagram.com/rom1unik/",
+        "https://www.youtube.com/@rom1unik",
+      ],
       knowsAbout: [
         "Direction artistique",
         "Photographie",
