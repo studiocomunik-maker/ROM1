@@ -39,7 +39,26 @@ export default function Contact() {
           rom1@rom1.fr
         </a>
       </Reveal>
-      <p className="mt-10 font-mono text-xs uppercase leading-[1.6] tracking-[0.15em] text-coal/60">
+      <div className="mt-9 flex items-center justify-center gap-5 font-mono text-xs uppercase tracking-[0.15em] text-coal/70">
+        <a
+          href="https://www.instagram.com/rom1unik/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="transition-colors hover:text-coal"
+        >
+          Instagram ↗
+        </a>
+        <span aria-hidden>·</span>
+        <a
+          href="https://www.youtube.com/@rom1unik"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="transition-colors hover:text-coal"
+        >
+          YouTube ↗
+        </a>
+      </div>
+      <p className="mt-8 font-mono text-xs uppercase leading-[1.6] tracking-[0.15em] text-coal/60">
         © Romain Renoux — rom1.fr
         <br />
         Côté web → pixelstore.fr
