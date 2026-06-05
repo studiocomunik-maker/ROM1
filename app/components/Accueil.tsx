@@ -55,10 +55,35 @@ function Mask({ i, children }: { i: number; children: ReactNode }) {
   );
 }
 
-export default function Accueil() {
+export default function Accueil({
+  heroVideoUrl,
+  heroVideoPoster,
+}: {
+  heroVideoUrl?: string | null;
+  heroVideoPoster?: string | null;
+} = {}) {
   return (
     <section className="grain sticky top-0 z-0 flex h-screen w-full flex-col overflow-hidden bg-coal text-paper">
-      <header className="flex items-start justify-end px-6 pt-7 md:px-12">
+      {/* Vidéo de fond (optionnelle) : monochrome + voile sombre pour la
+          lisibilité de la punchline. Réglée depuis le back-office. */}
+      {heroVideoUrl && (
+        <>
+          <video
+            className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover grayscale"
+            src={heroVideoUrl}
+            poster={heroVideoPoster ?? undefined}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden
+          />
+          <div className="pointer-events-none absolute inset-0 z-0 bg-coal/65" />
+        </>
+      )}
+
+      <header className="relative z-10 flex items-start justify-end px-6 pt-7 md:px-12">
         <p className="text-right font-display text-[10px] uppercase leading-[1.1] tracking-[0.04em] text-paper/60 sm:text-xs md:text-sm">
           Direction artistique
           <br />
@@ -66,7 +91,7 @@ export default function Accueil() {
         </p>
       </header>
 
-      <div className="relative flex flex-1 items-center px-6 py-8 md:px-12">
+      <div className="relative z-10 flex flex-1 items-center px-6 py-8 md:px-12">
         <h1 className="mx-auto w-full max-w-[1000px] font-display uppercase leading-[0.94] tracking-[-0.015em] text-paper text-[clamp(3.4rem,11vw,5.4rem)] md:text-[clamp(2.6rem,6.4vw,6rem)]">
           {/* MOBILE — lignes forcées */}
           <span className="block md:hidden">
@@ -172,7 +197,7 @@ export default function Accueil() {
         </h1>
       </div>
 
-      <footer className="flex items-center justify-between px-6 pb-7 font-display text-[10px] uppercase tracking-[0.08em] text-paper/60 sm:text-xs md:px-12">
+      <footer className="relative z-10 flex items-center justify-between px-6 pb-7 font-display text-[10px] uppercase tracking-[0.08em] text-paper/60 sm:text-xs md:px-12">
         <span>20 ans de métier</span>
         <span className="animate-pulse text-orange">↓ Faites défiler</span>
         <span className="hidden sm:inline">Vin · Spectacle · Industrie</span>

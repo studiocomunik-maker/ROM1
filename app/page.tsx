@@ -3,11 +3,15 @@ import Expertises from "./components/Expertises";
 import Portfolio from "./components/Portfolio";
 import Contact from "./components/Contact";
 import { getRealisations } from "../utils/realisations";
+import { getSiteSettings } from "../utils/settings";
 
 export const revalidate = 60;
 
 export default async function Home() {
-  const realisations = await getRealisations();
+  const [realisations, settings] = await Promise.all([
+    getRealisations(),
+    getSiteSettings(),
+  ]);
   const items = realisations.map((r) => ({
     slug: r.slug,
     titre: r.titre,
@@ -27,7 +31,10 @@ export default async function Home() {
         alt="Romain Renoux"
         className="fixed left-6 top-7 z-50 h-11 w-auto mix-blend-difference md:left-12 md:h-14"
       />
-      <Accueil />
+      <Accueil
+        heroVideoUrl={settings.heroVideoUrl}
+        heroVideoPoster={settings.heroVideoPoster}
+      />
       <Expertises />
       <Portfolio items={items} />
       <Contact />

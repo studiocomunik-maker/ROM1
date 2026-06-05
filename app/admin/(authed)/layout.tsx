@@ -19,6 +19,12 @@ export default async function AuthedLayout({ children }: { children: React.React
         </Link>
         <div className="flex items-center gap-5 font-mono text-[11px] uppercase tracking-[0.12em] text-paper/60">
           <span className="hidden sm:inline">{user.email}</span>
+          <Link href="/admin" className="hidden transition-colors hover:text-paper sm:inline">
+            Réalisations
+          </Link>
+          <Link href="/admin/settings" className="transition-colors hover:text-paper">
+            Réglages
+          </Link>
           <Link href="/" className="transition-colors hover:text-paper">
             Voir le site ↗
           </Link>

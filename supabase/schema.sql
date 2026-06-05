@@ -80,3 +80,29 @@ create policy "médias : admin met à jour"
 create policy "médias : admin supprime"
   on storage.objects for delete to authenticated
   using (bucket_id = 'realisations');
+
+-- 4) Réglages du site (ligne unique) : vidéo de fond du hero, etc. ------
+create table if not exists public.site_settings (
+  id                text primary key default 'global' check (id = 'global'),
+  hero_video_url    text,   -- URL Storage de la vidéo de fond du hero (optionnelle)
+  hero_video_poster text,   -- image de remplacement / premier plan (optionnelle)
+  updated_at        timestamptz not null default now()
+);
+
+-- garantit la présence de la ligne unique
+insert into public.site_settings (id) values ('global')
+on conflict (id) do nothing;
+
+drop trigger if exists trg_site_settings_updated on public.site_settings;
+create trigger trg_site_settings_updated
+  before update on public.site_settings
+  for each row execute function public.touch_updated_at();
+
+alter table public.site_settings enable row level security;
+
+create policy "réglages lisibles par tous"
+  on public.site_settings for select to anon, authenticated using (true);
+create policy "réglages : admin insère"
+  on public.site_settings for insert to authenticated with check (true);
+create policy "réglages : admin met à jour"
+  on public.site_settings for update to authenticated using (true) with check (true);
