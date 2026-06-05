@@ -101,7 +101,7 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
       </div>
 
       {/* Grille full-wide, angles francs — texte au survol sur calque noir 50% */}
-      <div className="grid grid-cols-1 gap-0 bg-coal/10 sm:grid-cols-3 sm:gap-px">
+      <div className="grid grid-cols-1 gap-0 bg-coal/10 sm:grid-cols-3 sm:gap-px 2xl:grid-cols-4">
         {list.map((p) => (
           <Link
             key={p.slug}
