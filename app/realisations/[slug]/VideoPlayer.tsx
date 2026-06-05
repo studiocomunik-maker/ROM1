@@ -18,6 +18,8 @@ export default function VideoPlayer({
   loop?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const userMuted = useRef(false); // l'utilisateur a coupé le son volontairement
+  const raf = useRef(0);
   const vertical = !!(w && h && h > w);
 
   // Vertical : recadré dans un wrapper 600px max + 15px de padding haut/bas.
@@ -25,22 +27,73 @@ export default function VideoPlayer({
   const outer = vertical ? "flex justify-center bg-black py-[15px]" : "block";
   const media = vertical ? "max-h-[600px] w-auto" : "block h-auto w-full";
 
-  // Lecture auto quand la vidéo entre à l'écran, pause quand elle en sort.
-  // L'autoplay navigateur impose le muet au départ ; pour les films (non-loop)
-  // les contrôles permettent d'activer le son et de naviguer.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // LOOP : mini-vidéo de scroll, lecture auto muette à l'entrée, pause à la sortie.
+    if (loop) {
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (e.isIntersecting) el.play().catch(() => {});
+          else el.pause();
+        },
+        { threshold: 0.25 },
+      );
+      io.observe(el);
+      return () => io.disconnect();
+    }
+
+    // FILM : à l'entrée → lecture + fondu entrant du son (si le navigateur
+    // l'autorise et si l'utilisateur n'a pas coupé). À la sortie → fondu sortant
+    // puis pause. L'utilisateur garde la main via les contrôles (bouton muet).
+    const fade = (to: number, after?: () => void) => {
+      cancelAnimationFrame(raf.current);
+      const from = el.volume;
+      const t0 = performance.now();
+      const tick = (now: number) => {
+        const k = Math.min(1, (now - t0) / 1100); // ~1,1 s, discret
+        el.volume = from + (to - from) * k;
+        if (k < 1) raf.current = requestAnimationFrame(tick);
+        else after?.();
+      };
+      raf.current = requestAnimationFrame(tick);
+    };
+
+    // On ne mute jamais nous-mêmes → muted=true ne peut venir que de l'utilisateur.
+    const onVol = () => {
+      userMuted.current = el.muted;
+    };
+    el.addEventListener("volumechange", onVol);
+
     const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) el.play().catch(() => {});
-        else el.pause();
+      ([e]) => {
+        if (e.isIntersecting) {
+          el.play().catch(() => {});
+          const active = (
+            navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }
+          ).userActivation?.hasBeenActive;
+          if (!userMuted.current && active) {
+            el.muted = false;
+            el.volume = 0;
+            fade(1); // le son monte doucement
+          }
+        } else if (!el.muted) {
+          fade(0, () => el.pause()); // le son redescend puis pause
+        } else {
+          el.pause();
+        }
       },
-      { threshold: 0.25 },
+      { threshold: 0.5 },
     );
     io.observe(el);
-    return () => io.disconnect();
-  }, []);
+
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf.current);
+      el.removeEventListener("volumechange", onVol);
+    };
+  }, [loop]);
 
   return (
     <div className={outer}>
