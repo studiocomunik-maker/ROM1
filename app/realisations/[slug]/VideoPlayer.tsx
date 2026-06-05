@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function VideoPlayer({
   url,
@@ -18,7 +18,25 @@ export default function VideoPlayer({
   loop?: boolean;
 }) {
   const [playing, setPlaying] = useState(false);
+  const loopRef = useRef<HTMLVideoElement>(null);
   const vertical = !!(w && h && h > w);
+
+  // Mode loop : lecture auto quand la vidéo entre à l'écran, pause quand elle
+  // en sort (économise CPU/batterie, surtout avec plusieurs vidéos).
+  useEffect(() => {
+    if (!loop) return;
+    const el = loopRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) el.play().catch(() => {});
+        else el.pause();
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loop]);
 
   // Vertical : recadré dans un wrapper 600px max + 15px de padding haut/bas.
   // Paysage : pleine largeur.
@@ -30,9 +48,9 @@ export default function VideoPlayer({
     return (
       <div className={outer}>
         <video
+          ref={loopRef}
           className={media}
           src={url}
-          autoPlay
           loop
           muted
           playsInline
