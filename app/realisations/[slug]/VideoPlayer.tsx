@@ -60,24 +60,41 @@ export default function VideoPlayer({
       raf.current = requestAnimationFrame(tick);
     };
 
+    const enableSound = () => {
+      el.play().catch(() => {});
+      el.muted = false;
+      el.volume = 0;
+      fade(1); // le son monte doucement
+    };
+
     // On ne mute jamais nous-mêmes → muted=true ne peut venir que de l'utilisateur.
     const onVol = () => {
       userMuted.current = el.muted;
     };
     el.addEventListener("volumechange", onVol);
 
+    let inView = false;
+    const hasActivation = () =>
+      !!(navigator as Navigator & { userActivation?: { hasBeenActive: boolean } })
+        .userActivation?.hasBeenActive;
+
+    // Filet de sécurité : si le navigateur n'a pas encore l'autorisation audio,
+    // on débloque le son au TOUT PREMIER geste (clic / tap / touche) — sans
+    // overlay. Si un film est déjà à l'écran, son son monte immédiatement.
+    const onFirstGesture = () => {
+      window.removeEventListener("pointerdown", onFirstGesture);
+      window.removeEventListener("keydown", onFirstGesture);
+      if (inView && !userMuted.current) enableSound();
+    };
+    window.addEventListener("pointerdown", onFirstGesture);
+    window.addEventListener("keydown", onFirstGesture);
+
     const io = new IntersectionObserver(
       ([e]) => {
+        inView = e.isIntersecting;
         if (e.isIntersecting) {
           el.play().catch(() => {});
-          const active = (
-            navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }
-          ).userActivation?.hasBeenActive;
-          if (!userMuted.current && active) {
-            el.muted = false;
-            el.volume = 0;
-            fade(1); // le son monte doucement
-          }
+          if (!userMuted.current && hasActivation()) enableSound();
         } else if (!el.muted) {
           fade(0, () => el.pause()); // le son redescend puis pause
         } else {
@@ -92,6 +109,8 @@ export default function VideoPlayer({
       io.disconnect();
       cancelAnimationFrame(raf.current);
       el.removeEventListener("volumechange", onVol);
+      window.removeEventListener("pointerdown", onFirstGesture);
+      window.removeEventListener("keydown", onFirstGesture);
     };
   }, [loop]);
 
