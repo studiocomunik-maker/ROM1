@@ -86,19 +86,19 @@ export default function SettingsForm({
   }
 
   const btn =
-    "cursor-pointer border border-paper/25 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-paper/70 transition-colors hover:border-paper/60";
+    "cursor-pointer border border-paper/25 px-4 py-2 font-mono text-sm uppercase tracking-[0.1em] text-paper/70 transition-colors hover:border-paper/60";
 
   return (
     <div className="mx-auto max-w-[760px] space-y-10">
       <div>
         <h1 className="font-display text-4xl uppercase tracking-tight">Réglages</h1>
-        <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-paper/45">
+        <p className="mt-2 font-mono text-sm uppercase tracking-[0.15em] text-paper/45">
           Vidéo de fond du hero
         </p>
       </div>
 
       <section className="space-y-5 border border-paper/10 bg-white/[0.02] p-6">
-        <p className="font-mono text-[11px] leading-relaxed text-paper/55">
+        <p className="font-mono text-sm leading-relaxed text-paper/55">
           Vidéo de fond de la grande accroche. Affichée automatiquement en{" "}
           <strong className="text-paper/80">noir &amp; blanc</strong> avec un{" "}
           <strong className="text-paper/80">voile sombre</strong> pour garder la
@@ -119,12 +119,12 @@ export default function SettingsForm({
               className="aspect-video w-full grayscale"
             />
             <div className="pointer-events-none absolute inset-0 bg-coal/80" />
-            <span className="absolute bottom-2 left-2 bg-coal/80 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.15em] text-paper/70">
+            <span className="absolute bottom-2 left-2 bg-coal/80 px-2 py-1 font-mono text-xs uppercase tracking-[0.15em] text-paper/70">
               Aperçu (N&amp;B + voile)
             </span>
           </div>
         ) : (
-          <div className="flex aspect-video w-full items-center justify-center border border-dashed border-paper/15 bg-coal font-mono text-[11px] uppercase tracking-[0.15em] text-paper/35">
+          <div className="flex aspect-video w-full items-center justify-center border border-dashed border-paper/15 bg-coal font-mono text-sm uppercase tracking-[0.15em] text-paper/35">
             Aucune vidéo — fond noir uni
           </div>
         )}
@@ -162,7 +162,7 @@ export default function SettingsForm({
                 setPoster("");
                 setSaved(false);
               }}
-              className="border border-paper/15 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-paper/45 transition-colors hover:border-orange hover:text-orange"
+              className="border border-paper/15 px-4 py-2 font-mono text-sm uppercase tracking-[0.1em] text-paper/45 transition-colors hover:border-orange hover:text-orange"
             >
               Retirer
             </button>
@@ -171,7 +171,7 @@ export default function SettingsForm({
       </section>
 
       {error && (
-        <p className="border border-orange/40 bg-orange/5 p-4 font-mono text-[11px] leading-relaxed text-orange">
+        <p className="border border-orange/40 bg-orange/5 p-4 font-mono text-sm leading-relaxed text-orange">
           {error}
         </p>
       )}
@@ -181,12 +181,12 @@ export default function SettingsForm({
           type="button"
           onClick={save}
           disabled={busy || uploading !== null}
-          className="bg-orange px-6 py-3 font-display text-sm uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90 disabled:opacity-40"
+          className="bg-orange px-6 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90 disabled:opacity-40"
         >
           {busy ? "Enregistrement…" : "Enregistrer"}
         </button>
         {saved && (
-          <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#3ddc84]">
+          <span className="font-mono text-sm uppercase tracking-[0.12em] text-[#3ddc84]">
             ✓ Enregistré
           </span>
         )}

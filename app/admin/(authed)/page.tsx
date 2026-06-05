@@ -25,7 +25,7 @@ export default async function AdminHome() {
     return (
       <div className="max-w-[640px] space-y-4">
         <h1 className="font-display text-3xl uppercase tracking-tight">Réalisations</h1>
-        <div className="border border-orange/40 bg-orange/5 p-5 font-mono text-xs leading-relaxed text-paper/70">
+        <div className="border border-orange/40 bg-orange/5 p-5 font-mono text-sm leading-relaxed text-paper/70">
           La table <code>realisations</code> n&apos;existe pas encore. Exécute le script{" "}
           <code>supabase/schema.sql</code> dans le SQL Editor du projet Supabase, puis recharge.
         </div>
@@ -40,20 +40,20 @@ export default async function AdminHome() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-4xl uppercase tracking-tight">Réalisations</h1>
-          <p className="mt-2 font-mono text-xs uppercase tracking-[0.15em] text-paper/45">
+          <p className="mt-2 font-mono text-sm uppercase tracking-[0.15em] text-paper/45">
             {rows.length} projet{rows.length > 1 ? "s" : ""}
           </p>
         </div>
         <Link
           href="/admin/realisations/new"
-          className="bg-orange px-5 py-3 font-display text-sm uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90"
+          className="bg-orange px-5 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90"
         >
           + Nouvelle réalisation
         </Link>
       </div>
 
       {rows.length === 0 ? (
-        <p className="border border-paper/15 bg-white/[0.02] p-8 text-center font-mono text-xs uppercase tracking-[0.15em] text-paper/40">
+        <p className="border border-paper/15 bg-white/[0.02] p-8 text-center font-mono text-sm uppercase tracking-[0.15em] text-paper/40">
           Aucune réalisation pour l&apos;instant.
         </p>
       ) : (
@@ -72,19 +72,19 @@ export default async function AdminHome() {
                   <span className="block truncate font-display text-xl uppercase tracking-tight">
                     {p.titre}
                   </span>
-                  <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.12em] text-paper/45">
+                  <span className="mt-1 block font-mono text-xs uppercase tracking-[0.12em] text-paper/45">
                     {UNIVERS[p.univers] ?? p.univers} · {p.exps.map((e) => EXPS[e] ?? e).join(" · ")}
                   </span>
                 </span>
                 <span
-                  className={`flex shrink-0 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.1em] ${
+                  className={`flex shrink-0 items-center gap-2 font-mono text-xs uppercase tracking-[0.1em] ${
                     p.published ? "text-[#3ddc84]" : "text-paper/45"
                   }`}
                 >
                   <span className={`h-2 w-2 rounded-full ${p.published ? "bg-[#3ddc84]" : "bg-paper/40"}`} />
                   {p.published ? "En ligne" : "Brouillon"}
                 </span>
-                <span className="ml-2 shrink-0 font-mono text-xs text-paper/30 transition-colors group-hover:text-orange">
+                <span className="ml-2 shrink-0 font-mono text-sm text-paper/30 transition-colors group-hover:text-orange">
                   éditer →
                 </span>
               </Link>

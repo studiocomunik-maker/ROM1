@@ -224,7 +224,7 @@ function MediaThumb({ m }: { m: MediaItem }) {
   if (m.kind === "text") {
     return (
       <div
-        className="flex h-14 w-20 shrink-0 items-center justify-center text-center font-display text-[9px] uppercase leading-tight text-paper/70"
+        className="flex h-14 w-20 shrink-0 items-center justify-center text-center font-display text-xs uppercase leading-tight text-paper/70"
         style={{ background: m.bg || "rgba(255,255,255,0.05)", color: m.color || undefined }}
       >
         {m.text ? m.text.slice(0, 18) : "Aa"}
@@ -239,7 +239,7 @@ function MediaThumb({ m }: { m: MediaItem }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={first.url} alt="" className="h-full w-full object-cover" />
         )}
-        <span className="absolute bottom-0 right-0 bg-orange px-1 font-mono text-[9px] text-coal">
+        <span className="absolute bottom-0 right-0 bg-orange px-1 font-mono text-xs text-coal">
           {m.images?.length ?? 0}
         </span>
       </div>
@@ -588,18 +588,18 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     router.refresh();
   }
 
-  const label = "mb-1.5 block font-mono text-[11px] uppercase tracking-[0.18em] text-paper/55";
+  const label = "mb-1.5 block font-mono text-sm uppercase tracking-[0.18em] text-paper/55";
   const field =
-    "mt-1 w-full border border-paper/15 bg-white/[0.04] px-4 py-3 text-[15px] text-paper outline-none transition-colors placeholder:text-paper/25 focus:border-orange focus:bg-white/[0.07]";
+    "mt-1 w-full border border-paper/15 bg-white/[0.04] px-4 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/25 focus:border-orange focus:bg-white/[0.07]";
   const card = "border border-paper/10 bg-white/[0.02] p-5 md:p-7";
-  const sectionTitle = "mb-6 font-display text-base uppercase tracking-[0.18em] text-orange";
+  const sectionTitle = "mb-6 font-display text-lg uppercase tracking-[0.18em] text-orange";
 
   return (
     <form onSubmit={onSubmit} className="mx-auto max-w-[820px] space-y-6 pb-10">
       <div className="flex justify-end">
         <Link
           href="/admin"
-          className="font-mono text-[11px] uppercase tracking-[0.15em] text-paper/55 transition-colors hover:text-paper"
+          className="font-mono text-sm uppercase tracking-[0.15em] text-paper/55 transition-colors hover:text-paper"
         >
           ← Réalisations
         </Link>
@@ -652,7 +652,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
         />
-        <span className="mt-1 block font-mono text-[10px] text-paper/35">
+        <span className="mt-1 block font-mono text-xs text-paper/35">
           Affiche un bouton « Voir le site » sur la fiche. Vide = pas de bouton.
         </span>
       </label>
@@ -679,7 +679,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                   type="button"
                   key={k}
                   onClick={() => toggleExp(k)}
-                  className={`border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors ${
+                  className={`border px-3 py-1.5 font-mono text-sm uppercase tracking-[0.1em] transition-colors ${
                     on ? "border-orange bg-orange text-coal" : "border-paper/25 text-paper/70 hover:border-paper/60"
                   }`}
                 >
@@ -706,7 +706,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
             <button
               type="button"
               onClick={() => coverInput.current?.click()}
-              className="border border-paper/25 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60"
+              className="border border-paper/25 px-4 py-2 font-mono text-sm uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60"
             >
               {uploading === "cover" ? "Upload…" : coverUrl ? "Remplacer" : "Choisir une image"}
             </button>
@@ -714,7 +714,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
               <button
                 type="button"
                 onClick={() => setCoverUrl(null)}
-                className="ml-2 font-mono text-[11px] uppercase tracking-[0.1em] text-orange"
+                className="ml-2 font-mono text-sm uppercase tracking-[0.1em] text-orange"
               >
                 Retirer
               </button>
@@ -726,7 +726,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       {/* Médias (scroll de gauche) */}
       <section className={card}>
         <h2 className={sectionTitle}>Médias</h2>
-        <p className="-mt-4 mb-5 font-mono text-[11px] normal-case tracking-normal text-paper/40">
+        <p className="-mt-4 mb-5 font-mono text-sm normal-case tracking-normal text-paper/40">
           Colonne qui scrolle — l&apos;ordre ci-dessous = l&apos;ordre d&apos;affichage.
         </p>
         <div className="space-y-3">
@@ -761,11 +761,11 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                   }}
                   title="Glisser pour réordonner"
                   aria-label="Glisser pour réordonner"
-                  className="shrink-0 cursor-grab select-none px-1 text-base leading-none text-paper/35 hover:text-paper active:cursor-grabbing"
+                  className="shrink-0 cursor-grab select-none px-1 text-lg leading-none text-paper/35 hover:text-paper active:cursor-grabbing"
                 >
                   ⠿
                 </span>
-                <span className="w-14 shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-orange">
+                <span className="w-14 shrink-0 font-mono text-xs uppercase tracking-[0.1em] text-orange">
                   {KIND_LABEL[m.kind]}
                 </span>
                 <MediaThumb m={m} />
@@ -784,23 +784,23 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                     onChange={(e) => setMediaUrl(i, e.target.value)}
                   />
                 ) : m.kind === "gallery" ? (
-                  <span className="flex-1 font-mono text-[11px] text-paper/50">
+                  <span className="flex-1 font-mono text-sm text-paper/50">
                     {m.images?.length ?? 0} image(s) — slider à flèches
                   </span>
                 ) : m.kind === "video" ? (
                   <div className="flex flex-1 flex-wrap items-center gap-3">
                     {m.url ? (
-                      <span className="max-w-[130px] truncate font-mono text-[11px] text-paper/50">{m.url.split("/").pop()}</span>
+                      <span className="max-w-[130px] truncate font-mono text-sm text-paper/50">{m.url.split("/").pop()}</span>
                     ) : (
-                      <span className="font-mono text-[11px] text-paper/30">— aucune vidéo —</span>
+                      <span className="font-mono text-sm text-paper/30">— aucune vidéo —</span>
                     )}
-                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
+                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
                       {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer vidéo" : "Choisir vidéo"}
                       <input type="file" accept="video/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
                     </label>
                     {/* Mini-vidéo de scroll : autoplay + boucle + muet */}
                     <label
-                      className={`flex cursor-pointer select-none items-center gap-1.5 border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors ${
+                      className={`flex cursor-pointer select-none items-center gap-1.5 border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
                         m.loop
                           ? "border-orange text-orange"
                           : "border-paper/25 text-paper/70 hover:border-paper/60"
@@ -818,12 +818,12 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                     {/* Cover : inutile en mode autoplay/loop */}
                     {!m.loop && (
                       <>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-paper/40">Cover</span>
+                        <span className="font-mono text-xs uppercase tracking-[0.1em] text-paper/40">Cover</span>
                         {m.poster && (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={m.poster} alt="" className="h-8 w-12 shrink-0 object-cover" />
                         )}
-                        <label className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
+                        <label className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
                           à
                           <input
                             type="number"
@@ -839,7 +839,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                           type="button"
                           onClick={() => regenPoster(i)}
                           disabled={!m.url}
-                          className="border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-orange hover:text-orange disabled:opacity-40"
+                          className="border border-paper/25 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 hover:border-orange hover:text-orange disabled:opacity-40"
                         >
                           {uploading === `poster-${i}` ? "…" : "Régénérer"}
                         </button>
@@ -849,11 +849,11 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                 ) : (
                   <div className="flex flex-1 items-center gap-3">
                     {m.url ? (
-                      <span className="truncate font-mono text-[11px] text-paper/50">{m.url.split("/").pop()}</span>
+                      <span className="truncate font-mono text-sm text-paper/50">{m.url.split("/").pop()}</span>
                     ) : (
-                      <span className="font-mono text-[11px] text-paper/30">— aucun fichier —</span>
+                      <span className="font-mono text-sm text-paper/30">— aucun fichier —</span>
                     )}
-                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
+                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
                       {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer" : "Choisir"}
                       <input type="file" accept="image/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
                     </label>
@@ -862,14 +862,14 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                 <button
                   type="button"
                   onClick={() => removeMedia(i)}
-                  className="shrink-0 font-mono text-[11px] uppercase tracking-[0.1em] text-orange"
+                  className="shrink-0 font-mono text-sm uppercase tracking-[0.1em] text-orange"
                 >
                   Suppr.
                 </button>
               </div>
 
               {/* Options communes : padding + couleur de fond */}
-              <div className="mt-2 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-2 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
+              <div className="mt-2 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-2 font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
                 <label className="flex items-center gap-2" title="1 valeur = tous les côtés · 4 = haut droite bas gauche (en px)">
                   Padding
                   <input
@@ -900,7 +900,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
 
               {/* Options du bandeau texte */}
               {m.kind === "text" && (
-                <div className="mt-3 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-3 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/45">
+                <div className="mt-3 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-3 font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
                   <label className="flex items-center gap-2">
                     Eyebrow
                     <input
@@ -964,14 +964,14 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                     <div key={j} className="relative h-16 w-24 overflow-hidden bg-white/5">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={img.url} alt="" className="h-full w-full object-cover" />
-                      <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-coal/70 px-1 text-[11px] leading-none text-paper">
+                      <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-coal/70 px-1 text-sm leading-none text-paper">
                         <button type="button" onClick={() => moveGalleryImage(i, j, -1)} className="px-1 hover:text-orange">◀</button>
                         <button type="button" onClick={() => removeGalleryImage(i, j)} className="px-1 text-orange">×</button>
                         <button type="button" onClick={() => moveGalleryImage(i, j, 1)} className="px-1 hover:text-orange">▶</button>
                       </div>
                     </div>
                   ))}
-                  <label className="flex h-16 w-24 cursor-pointer items-center justify-center border border-dashed border-paper/30 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange">
+                  <label className="flex h-16 w-24 cursor-pointer items-center justify-center border border-dashed border-paper/30 font-mono text-xs uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange">
                     {uploading === `media-${i}` ? "Upload…" : "+ images"}
                     <input type="file" accept="image/*" multiple onChange={(e) => onGalleryAdd(i, e)} className="hidden" />
                   </label>
@@ -986,7 +986,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
               type="button"
               key={k}
               onClick={() => addMedia(k)}
-              className="border border-dashed border-paper/30 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange"
+              className="border border-dashed border-paper/30 px-4 py-2 font-mono text-sm uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange"
             >
               + {KIND_LABEL[k]}
             </button>
@@ -1016,7 +1016,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                 value={pt.url ?? ""}
                 onChange={(e) => patchPartner(i, { url: e.target.value })}
               />
-              <label className="cursor-pointer border border-paper/25 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
+              <label className="cursor-pointer border border-paper/25 px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
                 {uploading === `partner-${i}` ? "Upload…" : pt.logo ? "Logo ✓" : "Logo"}
                 <input type="file" accept="image/*" onChange={(e) => onPartnerLogo(i, e)} className="hidden" />
               </label>
@@ -1024,7 +1024,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                 <button
                   type="button"
                   onClick={() => patchPartner(i, { logo: undefined })}
-                  className="font-mono text-[11px] text-orange"
+                  className="font-mono text-sm text-orange"
                 >
                   ×
                 </button>
@@ -1032,7 +1032,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
               <button
                 type="button"
                 onClick={() => removePartner(i)}
-                className="font-mono text-[11px] uppercase tracking-[0.1em] text-orange"
+                className="font-mono text-sm uppercase tracking-[0.1em] text-orange"
               >
                 Suppr.
               </button>
@@ -1042,7 +1042,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         <button
           type="button"
           onClick={addPartner}
-          className="mt-3 border border-dashed border-paper/30 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange"
+          className="mt-3 border border-dashed border-paper/30 px-4 py-2 font-mono text-sm uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange"
         >
           + partenaire
         </button>
@@ -1057,7 +1057,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
             <button
               type="button"
               onClick={() => setPublished(!published)}
-              className={`flex items-center gap-2 border px-4 py-3 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors ${
+              className={`flex items-center gap-2 border px-4 py-3 font-mono text-sm uppercase tracking-[0.1em] transition-colors ${
                 published
                   ? "border-[#3ddc84]/50 text-[#3ddc84]"
                   : "border-paper/25 text-paper/60 hover:border-paper/50"
@@ -1076,7 +1076,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                   type="button"
                   key={t}
                   onClick={() => setPanelTheme(t)}
-                  className={`border px-4 py-3 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors ${
+                  className={`border px-4 py-3 font-mono text-sm uppercase tracking-[0.1em] transition-colors ${
                     panelTheme === t
                       ? "border-orange bg-orange text-coal"
                       : "border-paper/25 text-paper/70 hover:border-paper/60"
@@ -1101,7 +1101,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       </section>
 
       {error && (
-        <p className="border border-orange/40 bg-orange/10 p-4 font-mono text-xs leading-relaxed text-orange">
+        <p className="border border-orange/40 bg-orange/10 p-4 font-mono text-sm leading-relaxed text-orange">
           {error}
         </p>
       )}
@@ -1110,19 +1110,19 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         <button
           type="submit"
           disabled={busy || uploading !== null}
-          className="bg-orange px-6 py-3 font-display text-sm uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="bg-orange px-6 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {busy ? "Enregistrement…" : editing ? "Mettre à jour" : "Créer"}
         </button>
         <button
           type="button"
           onClick={() => router.push("/admin")}
-          className="font-mono text-xs uppercase tracking-[0.12em] text-paper/50 hover:text-paper"
+          className="font-mono text-sm uppercase tracking-[0.12em] text-paper/50 hover:text-paper"
         >
           Annuler
         </button>
         {saved && (
-          <span className="font-mono text-xs uppercase tracking-[0.12em] text-[#3ddc84]">
+          <span className="font-mono text-sm uppercase tracking-[0.12em] text-[#3ddc84]">
             Enregistré ✓
           </span>
         )}
@@ -1131,7 +1131,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
             type="button"
             onClick={onDelete}
             disabled={busy}
-            className="ml-auto font-mono text-xs uppercase tracking-[0.12em] text-orange hover:underline"
+            className="ml-auto font-mono text-sm uppercase tracking-[0.12em] text-orange hover:underline"
           >
             Supprimer
           </button>
