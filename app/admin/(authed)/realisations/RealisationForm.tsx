@@ -281,6 +281,9 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
       copy.splice(to, 0, it);
       return copy;
     });
+  // Drag-to-order des images d'un bloc galerie ({ b: bloc, j: image })
+  const [galDrag, setGalDrag] = useState<{ b: number; j: number } | null>(null);
+  const [galOver, setGalOver] = useState<{ b: number; j: number } | null>(null);
   const [published, setPublished] = useState(initial.published);
   const [position, setPosition] = useState(initial.position);
   const [panelTheme, setPanelTheme] = useState<"dark" | "light">(initial.panel_theme);
@@ -481,14 +484,15 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         idx === i ? { ...it, images: (it.images ?? []).filter((_, k) => k !== j) } : it,
       ),
     );
-  const moveGalleryImage = (i: number, j: number, dir: -1 | 1) =>
+  // Réordonne par glisser-déposer : retire l'image `from` et la réinsère en `to`.
+  const moveGalleryImageTo = (i: number, from: number, to: number) =>
     setMedia((m) =>
       m.map((it, idx) => {
-        if (idx !== i) return it;
+        if (idx !== i || from === to) return it;
         const imgs = [...(it.images ?? [])];
-        const k = j + dir;
-        if (k < 0 || k >= imgs.length) return it;
-        [imgs[j], imgs[k]] = [imgs[k], imgs[j]];
+        if (from < 0 || from >= imgs.length || to < 0 || to >= imgs.length) return it;
+        const [moved] = imgs.splice(from, 1);
+        imgs.splice(to, 0, moved);
         return { ...it, images: imgs };
       }),
     );
@@ -957,24 +961,64 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                 </div>
               )}
 
-              {/* Sous-builder galerie : grille d'images réordonnables */}
+              {/* Sous-builder galerie : grille d'images glissables-déposables */}
               {m.kind === "gallery" && (
-                <div className="mt-3 flex flex-wrap gap-2 border-t border-paper/10 pt-3">
-                  {(m.images ?? []).map((img, j) => (
-                    <div key={j} className="relative h-16 w-24 overflow-hidden bg-white/5">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img.url} alt="" className="h-full w-full object-cover" />
-                      <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-coal/70 px-1 text-sm leading-none text-paper">
-                        <button type="button" onClick={() => moveGalleryImage(i, j, -1)} className="px-1 hover:text-orange">◀</button>
-                        <button type="button" onClick={() => removeGalleryImage(i, j)} className="px-1 text-orange">×</button>
-                        <button type="button" onClick={() => moveGalleryImage(i, j, 1)} className="px-1 hover:text-orange">▶</button>
-                      </div>
-                    </div>
-                  ))}
-                  <label className="flex h-16 w-24 cursor-pointer items-center justify-center border border-dashed border-paper/30 font-mono text-xs uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange">
-                    {uploading === `media-${i}` ? "Upload…" : "+ images"}
-                    <input type="file" accept="image/*" multiple onChange={(e) => onGalleryAdd(i, e)} className="hidden" />
-                  </label>
+                <div className="mt-3 border-t border-paper/10 pt-3">
+                  {(m.images?.length ?? 0) > 1 && (
+                    <p className="mb-2 font-mono text-xs normal-case tracking-normal text-paper/35">
+                      Glisse les vignettes pour les réordonner.
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    {(m.images ?? []).map((img, j) => {
+                      const dragged = galDrag?.b === i && galDrag.j === j;
+                      const target = !!galDrag && galDrag.b === i && galOver?.b === i && galOver.j === j && !dragged;
+                      return (
+                        <div
+                          key={j}
+                          draggable
+                          onDragStart={(e) => {
+                            setGalDrag({ b: i, j });
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          onDragEnd={() => {
+                            setGalDrag(null);
+                            setGalOver(null);
+                          }}
+                          onDragOver={(e) => {
+                            if (galDrag?.b !== i) return;
+                            e.preventDefault();
+                            if (!(galOver?.b === i && galOver.j === j)) setGalOver({ b: i, j });
+                          }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            if (galDrag?.b === i) moveGalleryImageTo(i, galDrag.j, j);
+                            setGalDrag(null);
+                            setGalOver(null);
+                          }}
+                          title="Glisser pour réordonner"
+                          className={`group relative h-16 w-24 cursor-grab overflow-hidden bg-white/5 transition-[box-shadow,opacity] active:cursor-grabbing ${
+                            target ? "ring-2 ring-orange" : ""
+                          } ${dragged ? "opacity-40" : ""}`}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={img.url} alt="" draggable={false} className="pointer-events-none h-full w-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeGalleryImage(i, j)}
+                            aria-label="Retirer l'image"
+                            className="absolute right-0 top-0 bg-coal/75 px-1.5 py-0.5 text-sm leading-none text-orange opacity-0 transition-opacity group-hover:opacity-100"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    })}
+                    <label className="flex h-16 w-24 cursor-pointer items-center justify-center border border-dashed border-paper/30 font-mono text-xs uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange">
+                      {uploading === `media-${i}` ? "Upload…" : "+ images"}
+                      <input type="file" accept="image/*" multiple onChange={(e) => onGalleryAdd(i, e)} className="hidden" />
+                    </label>
+                  </div>
                 </div>
               )}
             </div>
