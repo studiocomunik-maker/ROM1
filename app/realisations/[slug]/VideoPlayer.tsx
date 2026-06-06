@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function VideoPlayer({
   url,
@@ -17,117 +17,81 @@ export default function VideoPlayer({
   titre: string;
   loop?: boolean;
 }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const userMuted = useRef(false); // l'utilisateur a coupé le son volontairement
-  const raf = useRef(0);
+  const [playing, setPlaying] = useState(false);
+  const loopRef = useRef<HTMLVideoElement>(null);
   const vertical = !!(w && h && h > w);
+
+  // Mode loop : lecture auto muette quand la vidéo entre à l'écran, pause à la
+  // sortie (économise CPU/batterie). Pas de son.
+  useEffect(() => {
+    if (!loop) return;
+    const el = loopRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) el.play().catch(() => {});
+        else el.pause();
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loop]);
 
   // Vertical : recadré dans un wrapper 600px max + 15px de padding haut/bas.
   // Paysage : pleine largeur.
   const outer = vertical ? "flex justify-center bg-black py-[15px]" : "block";
   const media = vertical ? "max-h-[600px] w-auto" : "block h-auto w-full";
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    // LOOP : mini-vidéo de scroll, lecture auto muette à l'entrée, pause à la sortie.
-    if (loop) {
-      const io = new IntersectionObserver(
-        ([e]) => {
-          if (e.isIntersecting) el.play().catch(() => {});
-          else el.pause();
-        },
-        { threshold: 0.25 },
-      );
-      io.observe(el);
-      return () => io.disconnect();
-    }
-
-    // FILM : à l'entrée → lecture + fondu entrant du son (si le navigateur
-    // l'autorise et si l'utilisateur n'a pas coupé). À la sortie → fondu sortant
-    // puis pause. L'utilisateur garde la main via les contrôles (bouton muet).
-    const fade = (to: number, after?: () => void) => {
-      cancelAnimationFrame(raf.current);
-      const from = el.volume;
-      const t0 = performance.now();
-      const tick = (now: number) => {
-        const k = Math.min(1, (now - t0) / 1100); // ~1,1 s, discret
-        el.volume = from + (to - from) * k;
-        if (k < 1) raf.current = requestAnimationFrame(tick);
-        else after?.();
-      };
-      raf.current = requestAnimationFrame(tick);
-    };
-
-    const enableSound = () => {
-      el.play().catch(() => {});
-      el.muted = false;
-      el.volume = 0;
-      fade(1); // le son monte doucement
-    };
-
-    // On ne mute jamais nous-mêmes → muted=true ne peut venir que de l'utilisateur.
-    const onVol = () => {
-      userMuted.current = el.muted;
-    };
-    el.addEventListener("volumechange", onVol);
-
-    let inView = false;
-    const hasActivation = () =>
-      !!(navigator as Navigator & { userActivation?: { hasBeenActive: boolean } })
-        .userActivation?.hasBeenActive;
-
-    // Filet de sécurité : si le navigateur n'a pas encore l'autorisation audio,
-    // on débloque le son au TOUT PREMIER geste (clic / tap / touche) — sans
-    // overlay. Si un film est déjà à l'écran, son son monte immédiatement.
-    const onFirstGesture = () => {
-      window.removeEventListener("pointerdown", onFirstGesture);
-      window.removeEventListener("keydown", onFirstGesture);
-      if (inView && !userMuted.current) enableSound();
-    };
-    window.addEventListener("pointerdown", onFirstGesture);
-    window.addEventListener("keydown", onFirstGesture);
-
-    const io = new IntersectionObserver(
-      ([e]) => {
-        inView = e.isIntersecting;
-        if (e.isIntersecting) {
-          el.play().catch(() => {});
-          if (!userMuted.current && hasActivation()) enableSound();
-        } else if (!el.muted) {
-          fade(0, () => el.pause()); // le son redescend puis pause
-        } else {
-          el.pause();
-        }
-      },
-      { threshold: 0.5 },
+  // Mini-vidéo de scroll : lecture auto + boucle + muet, sans contrôles ni cover.
+  if (loop) {
+    return (
+      <div className={outer}>
+        <video
+          ref={loopRef}
+          className={media}
+          src={url}
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          aria-label={titre}
+        />
+      </div>
     );
-    io.observe(el);
+  }
 
-    return () => {
-      io.disconnect();
-      cancelAnimationFrame(raf.current);
-      el.removeEventListener("volumechange", onVol);
-      window.removeEventListener("pointerdown", onFirstGesture);
-      window.removeEventListener("keydown", onFirstGesture);
-    };
-  }, [loop]);
-
+  // Film : poster + bouton play, lecture au clic (avec son et contrôles).
   return (
     <div className={outer}>
-      <video
-        ref={ref}
-        className={media}
-        src={url}
-        poster={loop ? undefined : poster}
-        muted
-        loop={loop}
-        controls={!loop}
-        playsInline
-        preload="metadata"
-        aria-label={titre}
-      />
+      {playing || !poster ? (
+        <video
+          className={media}
+          src={url}
+          poster={poster}
+          controls
+          autoPlay={playing}
+          playsInline
+          preload="metadata"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPlaying(true)}
+          aria-label="Lire la vidéo"
+          className="group relative block"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={poster} alt={titre} draggable={false} className={media} />
+          <span className="absolute inset-0 flex items-center justify-center bg-coal/15 transition-colors group-hover:bg-coal/35">
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-coal/70 text-paper backdrop-blur transition-transform group-hover:scale-110">
+              <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6" fill="currentColor" aria-hidden>
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </span>
+        </button>
+      )}
     </div>
   );
 }

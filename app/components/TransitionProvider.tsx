@@ -21,29 +21,6 @@ const STYLES: Record<Phase, CSSProperties> = {
   revealing: { transform: "translateY(-100%)", transition: `transform ${DUR} ${EASE}`, pointerEvents: "auto" },
 };
 
-// Fade-out du son des médias en lecture (films dont l'utilisateur a activé le
-// son) pendant la transition, pour éviter une coupure brutale. Durée un peu
-// plus courte que le rideau → silence total avant le changement de page.
-const FADE_MS = 500;
-function fadeOutMedia(durationMs: number) {
-  if (typeof document === "undefined") return;
-  const medias = ([...document.querySelectorAll("video, audio")] as HTMLMediaElement[]).filter(
-    (m) => !m.paused && !m.muted && m.volume > 0,
-  );
-  if (!medias.length) return;
-  const start = performance.now();
-  const initial = medias.map((m) => m.volume);
-  const step = (now: number) => {
-    const t = Math.min(1, (now - start) / durationMs);
-    medias.forEach((m, i) => {
-      m.volume = initial[i] * (1 - t);
-    });
-    if (t < 1) requestAnimationFrame(step);
-    else medias.forEach((m) => m.pause());
-  };
-  requestAnimationFrame(step);
-}
-
 export default function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -56,7 +33,6 @@ export default function TransitionProvider({ children }: { children: React.React
       if (pending.current) return; // une transition à la fois
       pending.current = href;
       fromPath.current = window.location.pathname;
-      fadeOutMedia(FADE_MS); // estompe le son avant de couvrir/naviguer
       setPhase("covering");
     },
     []
