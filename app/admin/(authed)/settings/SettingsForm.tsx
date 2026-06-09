@@ -181,7 +181,7 @@ export default function SettingsForm({
           type="button"
           onClick={save}
           disabled={busy || uploading !== null}
-          className="bg-orange px-6 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90 disabled:opacity-40"
+          className="bg-orange px-6 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
         >
           {busy ? "Enregistrement…" : "Enregistrer"}
         </button>

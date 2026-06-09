@@ -126,6 +126,14 @@ body {
   animation: loadbar 1s ease-in-out infinite;
 }
 
+/* Back-office : focus clavier visible et homogène sur tout le scope admin.
+   Une seule règle → tout élément interactif reçoit le même anneau orange,
+   au clavier uniquement (:focus-visible n'affecte pas le clic souris). */
+.admin :focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
 /* Title reveal on enter */
 @keyframes rise {
   from {

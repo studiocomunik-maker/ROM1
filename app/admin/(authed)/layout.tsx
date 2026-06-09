@@ -12,7 +12,7 @@ export default async function AuthedLayout({ children }: { children: React.React
   if (!user) redirect("/admin/login");
 
   return (
-    <div className="min-h-screen bg-coal text-paper">
+    <div className="admin min-h-screen bg-coal text-paper">
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-paper/10 bg-coal/90 px-6 py-4 backdrop-blur md:px-10">
         <Link href="/admin" className="font-display text-base uppercase tracking-[0.2em]">
           ROM<span className="text-orange">1</span> · Admin

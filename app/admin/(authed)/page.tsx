@@ -46,7 +46,7 @@ export default async function AdminHome() {
         </div>
         <Link
           href="/admin/realisations/new"
-          className="bg-orange px-5 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90"
+          className="bg-orange px-5 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition hover:opacity-90 active:scale-[0.99]"
         >
           + Nouvelle réalisation
         </Link>

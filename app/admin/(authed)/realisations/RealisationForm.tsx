@@ -1154,7 +1154,7 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
         <button
           type="submit"
           disabled={busy || uploading !== null}
-          className="bg-orange px-6 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="bg-orange px-6 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {busy ? "Enregistrement…" : editing ? "Mettre à jour" : "Créer"}
         </button>
