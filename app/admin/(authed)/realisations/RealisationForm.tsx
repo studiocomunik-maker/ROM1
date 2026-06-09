@@ -220,12 +220,12 @@ const ytId = (url: string): string | null => {
 };
 
 function MediaThumb({ m }: { m: MediaItem }) {
-  const box = "h-14 w-20 shrink-0 bg-white/5 object-cover";
+  const box = "h-14 w-20 shrink-0 rounded-md bg-ink/5 object-cover";
   if (m.kind === "text") {
     return (
       <div
-        className="flex h-14 w-20 shrink-0 items-center justify-center text-center font-display text-xs uppercase leading-tight text-paper/70"
-        style={{ background: m.bg || "rgba(255,255,255,0.05)", color: m.color || undefined }}
+        className="flex h-14 w-20 shrink-0 items-center justify-center rounded-md text-center font-display text-xs uppercase leading-tight text-ink/70"
+        style={{ background: m.bg || "rgba(12,12,14,0.05)", color: m.color || undefined }}
       >
         {m.text ? m.text.slice(0, 18) : "Aa"}
       </div>
@@ -592,581 +592,605 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
     router.refresh();
   }
 
-  const label = "mb-1.5 block font-mono text-sm uppercase tracking-[0.18em] text-paper/55";
+  const label = "mb-1.5 block font-mono text-[11px] uppercase tracking-[0.16em] text-ink/55";
   const field =
-    "mt-1 w-full border border-paper/15 bg-white/[0.04] px-4 py-3 text-base text-paper outline-none transition-colors placeholder:text-paper/25 focus:border-orange focus:bg-white/[0.07]";
-  const card = "border border-paper/10 bg-white/[0.02] p-5 md:p-7";
-  const sectionTitle = "mb-6 font-display text-lg uppercase tracking-[0.18em] text-orange";
+    "w-full rounded-lg border border-ink/15 bg-white px-3.5 py-2.5 text-[15px] text-ink outline-none transition-[border-color,box-shadow] placeholder:text-ink/30 focus:border-orange focus:ring-2 focus:ring-orange/25";
+  const card =
+    "rounded-2xl border border-ink/10 bg-white p-5 shadow-[0_1px_2px_rgba(12,12,14,0.04)] md:p-6";
+  const sectionTitle = "mb-5 font-display text-base uppercase tracking-[0.16em] text-ink";
+  // boutons secondaires (fichiers, options) sur fond clair
+  const ghost =
+    "cursor-pointer rounded-lg border border-ink/20 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-ink/70 transition-colors hover:border-ink/45 hover:bg-ink/[0.03]";
+
+  // Champs compacts pour les options des médias (fond clair)
+  const opt =
+    "rounded-md border border-ink/20 bg-white px-2 py-1 normal-case tracking-normal text-ink outline-none focus:border-orange";
+  const miniBtn = (on: boolean) =>
+    `rounded-md border px-2 py-1 transition-colors ${on ? "border-orange bg-orange text-coal" : "border-ink/20 text-ink/60 hover:border-ink/45"}`;
 
   return (
-    <form onSubmit={onSubmit} className="mx-auto max-w-[820px] space-y-6 pb-10">
-      <div className="flex justify-end">
-        <Link
-          href="/admin"
-          className="font-mono text-sm uppercase tracking-[0.15em] text-paper/55 transition-colors hover:text-paper"
-        >
-          ← Réalisations
-        </Link>
-      </div>
-
-      <h1 className="font-display text-4xl uppercase tracking-tight">
-        {editing ? "Éditer la réalisation" : "Nouvelle réalisation"}
-      </h1>
-
-      <section className={card}>
-        <h2 className={sectionTitle}>Informations</h2>
-        <div className="space-y-5">
-      {/* Titre + slug */}
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="block">
-          <span className={label}>Titre</span>
-          <input className={field} value={titre} onChange={(e) => onTitre(e.target.value)} required />
-        </label>
-        <label className="block">
-          <span className={label}>Slug (URL)</span>
-          <input
-            className={field}
-            value={slug}
-            onChange={(e) => {
-              setSlugTouched(true);
-              setSlug(slugify(e.target.value));
-            }}
-            required
-          />
-        </label>
-      </div>
-
-      {/* Description */}
-      <label className="block">
-        <span className={label}>Description</span>
-        <textarea
-          className={`${field} min-h-[120px] resize-y leading-relaxed`}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </label>
-
-      {/* Site internet (optionnel) */}
-      <label className="block">
-        <span className={label}>Site internet (optionnel)</span>
-        <input
-          className={field}
-          type="url"
-          placeholder="https://exemple.fr"
-          value={website}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-        <span className="mt-1 block font-mono text-xs text-paper/35">
-          Affiche un bouton « Voir le site » sur la fiche. Vide = pas de bouton.
-        </span>
-      </label>
-
-      {/* Univers (unique) + Expertises (multiple) */}
-      <div className="grid gap-6 sm:grid-cols-2">
-        <label className="block">
-          <span className={label}>Univers (un seul)</span>
-          <select className={`${field} appearance-none`} value={univers} onChange={(e) => setUnivers(e.target.value)}>
-            {UNIVERS_KEYS.map((k) => (
-              <option key={k} value={k} className="bg-coal">
-                {UNIVERS[k]}
-              </option>
-            ))}
-          </select>
-        </label>
+    <form
+      onSubmit={onSubmit}
+      className="-mx-6 -my-12 min-h-[calc(100vh-3.5rem)] bg-white px-6 py-9 text-ink md:-mx-10 md:-my-14 md:px-10 md:py-12"
+    >
+      {/* Barre de titre */}
+      <div className="mx-auto mb-8 flex max-w-[1400px] flex-wrap items-end justify-between gap-4">
         <div>
-          <span className={label}>Expertises (plusieurs)</span>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {EXPS_KEYS.map((k) => {
-              const on = exps.includes(k);
-              return (
-                <button
-                  type="button"
-                  key={k}
-                  onClick={() => toggleExp(k)}
-                  className={`border px-3 py-1.5 font-mono text-sm uppercase tracking-[0.1em] transition-colors ${
-                    on ? "border-orange bg-orange text-coal" : "border-paper/25 text-paper/70 hover:border-paper/60"
-                  }`}
-                >
-                  {EXPS[k]}
-                </button>
-              );
-            })}
-          </div>
+          <Link
+            href="/admin"
+            className="font-mono text-xs uppercase tracking-[0.15em] text-ink/45 transition-colors hover:text-ink"
+          >
+            ← Réalisations
+          </Link>
+          <h1 className="mt-2 font-display text-3xl uppercase tracking-tight md:text-4xl">
+            {editing ? "Éditer la réalisation" : "Nouvelle réalisation"}
+          </h1>
         </div>
+        {editing && slug && (
+          <a
+            href={`/realisations/${slug}`}
+            target="_blank"
+            rel="noreferrer"
+            className="font-mono text-xs uppercase tracking-[0.12em] text-ink/55 transition-colors hover:text-orange"
+          >
+            Voir la fiche ↗
+          </a>
+        )}
       </div>
-        </div>
-      </section>
 
-      {/* Image de mise en avant */}
-      <section className={card}>
-        <h2 className={sectionTitle}>Image de mise en avant</h2>
-        <div className="flex items-center gap-4">
-          <div
-            className="h-20 w-28 shrink-0 bg-cover bg-center bg-white/5"
-            style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined}
-          />
-          <div className="space-y-2">
-            <input ref={coverInput} type="file" accept="image/*" onChange={onCoverChange} className="hidden" />
-            <button
-              type="button"
-              onClick={() => coverInput.current?.click()}
-              className="border border-paper/25 px-4 py-2 font-mono text-sm uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60"
-            >
-              {uploading === "cover" ? "Upload…" : coverUrl ? "Remplacer" : "Choisir une image"}
-            </button>
-            {coverUrl && (
-              <button
-                type="button"
-                onClick={() => setCoverUrl(null)}
-                className="ml-2 font-mono text-sm uppercase tracking-[0.1em] text-orange"
-              >
-                Retirer
-              </button>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Médias (scroll de gauche) */}
-      <section className={card}>
-        <h2 className={sectionTitle}>Médias</h2>
-        <p className="-mt-4 mb-5 font-mono text-sm normal-case tracking-normal text-paper/40">
-          Colonne qui scrolle — l&apos;ordre ci-dessous = l&apos;ordre d&apos;affichage.
-        </p>
-        <div className="space-y-3">
-          {media.map((m, i) => (
-            <div
-              key={i}
-              onDragOver={(e) => {
-                e.preventDefault();
-                if (overI !== i) setOverI(i);
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                moveTo(dragI, i);
-                setDragI(null);
-                setOverI(null);
-              }}
-              className={`border bg-[#161619] p-3 transition-colors ${
-                overI === i && dragI !== null ? "border-orange" : "border-paper/10"
-              } ${dragI === i ? "opacity-40" : ""}`}
-            >
-              <div className="flex items-center gap-3">
-                {/* Poignée : glisser pour réordonner */}
-                <span
-                  draggable
-                  onDragStart={(e) => {
-                    setDragI(i);
-                    e.dataTransfer.effectAllowed = "move";
-                  }}
-                  onDragEnd={() => {
-                    setDragI(null);
-                    setOverI(null);
-                  }}
-                  title="Glisser pour réordonner"
-                  aria-label="Glisser pour réordonner"
-                  className="shrink-0 cursor-grab select-none px-1 text-lg leading-none text-paper/35 hover:text-paper active:cursor-grabbing"
-                >
-                  ⠿
-                </span>
-                <span className="w-14 shrink-0 font-mono text-xs uppercase tracking-[0.1em] text-orange">
-                  {KIND_LABEL[m.kind]}
-                </span>
-                <MediaThumb m={m} />
-                {m.kind === "text" ? (
+      {/* Éditeur 2 colonnes : données (gauche, sticky) · médias (droite, scroll) */}
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(340px,380px)_1fr] lg:gap-8">
+        {/* ───────── GAUCHE — données de la réalisation (sticky) ───────── */}
+        <div className="space-y-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-6.5rem)] lg:overflow-y-auto lg:pr-1 lg:pb-2">
+          {/* Informations */}
+          <section className={card}>
+            <h2 className={sectionTitle}>Informations</h2>
+            <div className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className={label}>Titre</span>
+                  <input className={field} value={titre} onChange={(e) => onTitre(e.target.value)} required />
+                </label>
+                <label className="block">
+                  <span className={label}>Slug (URL)</span>
                   <input
-                    className={`${field} mt-0 flex-1`}
-                    placeholder="Texte du bandeau…"
-                    value={m.text ?? ""}
-                    onChange={(e) => patchMedia(i, { text: e.target.value })}
+                    className={field}
+                    value={slug}
+                    onChange={(e) => {
+                      setSlugTouched(true);
+                      setSlug(slugify(e.target.value));
+                    }}
+                    required
                   />
-                ) : m.kind === "youtube" ? (
-                  <input
-                    className={`${field} mt-0 flex-1`}
-                    placeholder="https://youtube.com/watch?v=…"
-                    value={m.url}
-                    onChange={(e) => setMediaUrl(i, e.target.value)}
-                  />
-                ) : m.kind === "gallery" ? (
-                  <span className="flex-1 font-mono text-sm text-paper/50">
-                    {m.images?.length ?? 0} image(s) — slider à flèches
-                  </span>
-                ) : m.kind === "video" ? (
-                  <div className="flex flex-1 flex-wrap items-center gap-3">
-                    {m.url ? (
-                      <span className="max-w-[130px] truncate font-mono text-sm text-paper/50">{m.url.split("/").pop()}</span>
-                    ) : (
-                      <span className="font-mono text-sm text-paper/30">— aucune vidéo —</span>
-                    )}
-                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
-                      {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer vidéo" : "Choisir vidéo"}
-                      <input type="file" accept="video/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
-                    </label>
-                    {/* Mini-vidéo de scroll : autoplay + boucle + muet */}
-                    <label
-                      className={`flex cursor-pointer select-none items-center gap-1.5 border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
-                        m.loop
-                          ? "border-orange text-orange"
-                          : "border-paper/25 text-paper/70 hover:border-paper/60"
-                      }`}
-                      title="Lecture auto + boucle, sans son (mini-vidéo de présentation)"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={!!m.loop}
-                        onChange={(e) => patchMedia(i, { loop: e.target.checked })}
-                        className="accent-orange"
-                      />
-                      ▶ Play + Loop
-                    </label>
-                    {/* Cover : inutile en mode autoplay/loop */}
-                    {!m.loop && (
-                      <>
-                        <span className="font-mono text-xs uppercase tracking-[0.1em] text-paper/40">Cover</span>
-                        {m.poster && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={m.poster} alt="" className="h-8 w-12 shrink-0 object-cover" />
-                        )}
-                        <label className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
-                          à
-                          <input
-                            type="number"
-                            min={0}
-                            step={0.1}
-                            value={m.posterTime ?? 1}
-                            onChange={(e) => setPosterTime(i, Number(e.target.value))}
-                            className="w-14 border border-paper/20 bg-transparent px-2 py-1 text-paper"
-                          />
-                          s
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => regenPoster(i)}
-                          disabled={!m.url}
-                          className="border border-paper/25 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 hover:border-orange hover:text-orange disabled:opacity-40"
-                        >
-                          {uploading === `poster-${i}` ? "…" : "Régénérer"}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-1 items-center gap-3">
-                    {m.url ? (
-                      <span className="truncate font-mono text-sm text-paper/50">{m.url.split("/").pop()}</span>
-                    ) : (
-                      <span className="font-mono text-sm text-paper/30">— aucun fichier —</span>
-                    )}
-                    <label className="cursor-pointer border border-paper/25 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
-                      {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer" : "Choisir"}
-                      <input type="file" accept="image/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
-                    </label>
-                  </div>
-                )}
-                <button
-                  type="button"
-                  onClick={() => removeMedia(i)}
-                  className="shrink-0 font-mono text-sm uppercase tracking-[0.1em] text-orange"
-                >
-                  Suppr.
-                </button>
+                </label>
               </div>
 
-              {/* Options communes : padding + couleur de fond */}
-              <div className="mt-2 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-2 font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
-                <label className="flex items-center gap-2" title="1 valeur = tous les côtés · 4 = haut droite bas gauche (en px)">
-                  Padding
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="0  ou  20 0 40 0"
-                    value={m.pad == null ? "" : String(m.pad)}
-                    onChange={(e) => setPad(i, e.target.value)}
-                    className="w-32 border border-paper/20 bg-transparent px-2 py-1 normal-case tracking-normal text-paper"
-                  />
-                  px
-                </label>
-                <label className="flex items-center gap-2">
-                  Fond
-                  <input
-                    type="color"
-                    value={m.bg ?? "#0c0c0e"}
-                    onChange={(e) => setBg(i, e.target.value)}
-                    className="h-6 w-8 cursor-pointer border border-paper/20 bg-transparent"
-                  />
-                </label>
-                {m.bg && (
-                  <button type="button" onClick={() => setBg(i, undefined)} className="text-orange">
-                    aucun fond
+              <label className="block">
+                <span className={label}>Description</span>
+                <textarea
+                  className={`${field} min-h-[110px] resize-y leading-relaxed`}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </label>
+
+              <label className="block">
+                <span className={label}>Site internet (optionnel)</span>
+                <input
+                  className={field}
+                  type="url"
+                  placeholder="https://exemple.fr"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+                <span className="mt-1 block font-mono text-[11px] text-ink/40">
+                  Affiche un bouton « Voir le site » sur la fiche. Vide = pas de bouton.
+                </span>
+              </label>
+
+              <label className="block">
+                <span className={label}>Univers (un seul)</span>
+                <select className={`${field} appearance-none`} value={univers} onChange={(e) => setUnivers(e.target.value)}>
+                  {UNIVERS_KEYS.map((k) => (
+                    <option key={k} value={k}>
+                      {UNIVERS[k]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div>
+                <span className={label}>Expertises (plusieurs)</span>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {EXPS_KEYS.map((k) => {
+                    const on = exps.includes(k);
+                    return (
+                      <button
+                        type="button"
+                        key={k}
+                        onClick={() => toggleExp(k)}
+                        className={`rounded-lg border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
+                          on ? "border-orange bg-orange text-coal" : "border-ink/20 text-ink/65 hover:border-ink/45"
+                        }`}
+                      >
+                        {EXPS[k]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Image de mise en avant */}
+          <section className={card}>
+            <h2 className={sectionTitle}>Image de mise en avant</h2>
+            <div className="flex items-center gap-4">
+              <div
+                className="h-20 w-28 shrink-0 rounded-lg bg-cover bg-center bg-ink/5 ring-1 ring-inset ring-ink/10"
+                style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined}
+              />
+              <div className="flex flex-wrap items-center gap-2">
+                <input ref={coverInput} type="file" accept="image/*" onChange={onCoverChange} className="hidden" />
+                <button type="button" onClick={() => coverInput.current?.click()} className={ghost}>
+                  {uploading === "cover" ? "Upload…" : coverUrl ? "Remplacer" : "Choisir une image"}
+                </button>
+                {coverUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setCoverUrl(null)}
+                    className="font-mono text-xs uppercase tracking-[0.1em] text-orange hover:underline"
+                  >
+                    Retirer
                   </button>
                 )}
               </div>
-
-              {/* Options du bandeau texte */}
-              {m.kind === "text" && (
-                <div className="mt-3 flex flex-wrap items-center gap-4 border-t border-paper/10 pt-3 font-mono text-xs uppercase tracking-[0.1em] text-paper/45">
-                  <label className="flex items-center gap-2">
-                    Eyebrow
-                    <input
-                      value={m.eyebrow ?? ""}
-                      onChange={(e) => patchMedia(i, { eyebrow: e.target.value })}
-                      placeholder="01 · Identité"
-                      className="w-44 border border-paper/20 bg-transparent px-2 py-1 normal-case tracking-normal text-paper"
-                    />
-                  </label>
-                  <div className="flex items-center gap-1">
-                    Align
-                    {(["left", "center", "right"] as const).map((a) => (
-                      <button
-                        type="button"
-                        key={a}
-                        onClick={() => patchMedia(i, { align: a })}
-                        className={`border px-2 py-1 ${(m.align ?? "left") === a ? "border-orange bg-orange text-coal" : "border-paper/25 text-paper/60"}`}
-                      >
-                        {a === "left" ? "Gauche" : a === "center" ? "Centre" : "Droite"}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    Taille
-                    {(["s", "m", "l"] as const).map((s) => (
-                      <button
-                        type="button"
-                        key={s}
-                        onClick={() => patchMedia(i, { size: s })}
-                        className={`border px-2 py-1 ${(m.size ?? "m") === s ? "border-orange bg-orange text-coal" : "border-paper/25 text-paper/60"}`}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                  <label className="flex items-center gap-2">
-                    Texte
-                    <input
-                      type="color"
-                      value={m.color ?? "#f5f4f2"}
-                      onChange={(e) => patchMedia(i, { color: e.target.value })}
-                      className="h-6 w-8 cursor-pointer border border-paper/20 bg-transparent"
-                    />
-                  </label>
-                  <label className="flex w-full flex-col gap-1">
-                    Corps (texte normal, optionnel)
-                    <textarea
-                      value={m.body ?? ""}
-                      onChange={(e) => patchMedia(i, { body: e.target.value })}
-                      placeholder="Paragraphe sous le titre…"
-                      className="min-h-[70px] w-full resize-y border border-paper/20 bg-transparent px-2 py-2 normal-case tracking-normal text-paper"
-                    />
-                  </label>
-                </div>
-              )}
-
-              {/* Sous-builder galerie : grille d'images glissables-déposables */}
-              {m.kind === "gallery" && (
-                <div className="mt-3 border-t border-paper/10 pt-3">
-                  {(m.images?.length ?? 0) > 1 && (
-                    <p className="mb-2 font-mono text-xs normal-case tracking-normal text-paper/35">
-                      Glisse les vignettes pour les réordonner.
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-2">
-                    {(m.images ?? []).map((img, j) => {
-                      const dragged = galDrag?.b === i && galDrag.j === j;
-                      const target = !!galDrag && galDrag.b === i && galOver?.b === i && galOver.j === j && !dragged;
-                      return (
-                        <div
-                          key={j}
-                          draggable
-                          onDragStart={(e) => {
-                            setGalDrag({ b: i, j });
-                            e.dataTransfer.effectAllowed = "move";
-                          }}
-                          onDragEnd={() => {
-                            setGalDrag(null);
-                            setGalOver(null);
-                          }}
-                          onDragOver={(e) => {
-                            if (galDrag?.b !== i) return;
-                            e.preventDefault();
-                            if (!(galOver?.b === i && galOver.j === j)) setGalOver({ b: i, j });
-                          }}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            if (galDrag?.b === i) moveGalleryImageTo(i, galDrag.j, j);
-                            setGalDrag(null);
-                            setGalOver(null);
-                          }}
-                          title="Glisser pour réordonner"
-                          className={`group relative h-16 w-24 cursor-grab overflow-hidden bg-white/5 transition-[box-shadow,opacity] active:cursor-grabbing ${
-                            target ? "ring-2 ring-orange" : ""
-                          } ${dragged ? "opacity-40" : ""}`}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={img.url} alt="" draggable={false} className="pointer-events-none h-full w-full object-cover" />
-                          <button
-                            type="button"
-                            onClick={() => removeGalleryImage(i, j)}
-                            aria-label="Retirer l'image"
-                            className="absolute right-0 top-0 bg-coal/75 px-1.5 py-0.5 text-sm leading-none text-orange opacity-0 transition-opacity group-hover:opacity-100"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      );
-                    })}
-                    <label className="flex h-16 w-24 cursor-pointer items-center justify-center border border-dashed border-paper/30 font-mono text-xs uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange">
-                      {uploading === `media-${i}` ? "Upload…" : "+ images"}
-                      <input type="file" accept="image/*" multiple onChange={(e) => onGalleryAdd(i, e)} className="hidden" />
-                    </label>
-                  </div>
-                </div>
-              )}
             </div>
-          ))}
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {(["image", "video", "youtube", "gallery", "text"] as const).map((k) => (
-            <button
-              type="button"
-              key={k}
-              onClick={() => addMedia(k)}
-              className="border border-dashed border-paper/30 px-4 py-2 font-mono text-sm uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange"
-            >
-              + {KIND_LABEL[k]}
-            </button>
-          ))}
-        </div>
-      </section>
+          </section>
 
-      {/* Partenaires */}
-      <section className={card}>
-        <h2 className={sectionTitle}>Partenaires</h2>
-        <div className="space-y-3">
-          {partners.map((pt, i) => (
-            <div key={i} className="flex flex-wrap items-center gap-3 border border-paper/10 bg-[#161619] p-3">
-              {pt.logo && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={pt.logo} alt="" className="h-8 w-auto max-w-[90px] object-contain" />
-              )}
-              <input
-                className={`${field} mt-0 min-w-[140px] flex-1`}
-                placeholder="Nom du partenaire"
-                value={pt.name}
-                onChange={(e) => patchPartner(i, { name: e.target.value })}
-              />
-              <input
-                className={`${field} mt-0 min-w-[160px] flex-1`}
-                placeholder="https://… (lien, optionnel)"
-                value={pt.url ?? ""}
-                onChange={(e) => patchPartner(i, { url: e.target.value })}
-              />
-              <label className="cursor-pointer border border-paper/25 px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 hover:border-paper/60">
-                {uploading === `partner-${i}` ? "Upload…" : pt.logo ? "Logo ✓" : "Logo"}
-                <input type="file" accept="image/*" onChange={(e) => onPartnerLogo(i, e)} className="hidden" />
-              </label>
-              {pt.logo && (
+          {/* Réglages */}
+          <section className={card}>
+            <h2 className={sectionTitle}>Réglages</h2>
+            <div className="space-y-4">
+              <div>
+                <span className={label}>Statut</span>
                 <button
                   type="button"
-                  onClick={() => patchPartner(i, { logo: undefined })}
-                  className="font-mono text-sm text-orange"
-                >
-                  ×
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => removePartner(i)}
-                className="font-mono text-sm uppercase tracking-[0.1em] text-orange"
-              >
-                Suppr.
-              </button>
-            </div>
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={addPartner}
-          className="mt-3 border border-dashed border-paper/30 px-4 py-2 font-mono text-sm uppercase tracking-[0.1em] text-paper/60 hover:border-orange hover:text-orange"
-        >
-          + partenaire
-        </button>
-      </section>
-
-      {/* Réglages */}
-      <section className={card}>
-        <h2 className={sectionTitle}>Réglages</h2>
-        <div className="grid gap-6 sm:grid-cols-3">
-          <div>
-            <span className={label}>Statut</span>
-            <button
-              type="button"
-              onClick={() => setPublished(!published)}
-              className={`flex items-center gap-2 border px-4 py-3 font-mono text-sm uppercase tracking-[0.1em] transition-colors ${
-                published
-                  ? "border-[#3ddc84]/50 text-[#3ddc84]"
-                  : "border-paper/25 text-paper/60 hover:border-paper/50"
-              }`}
-            >
-              <span className={`h-2 w-2 rounded-full ${published ? "bg-[#3ddc84]" : "bg-paper/40"}`} />
-              {published ? "Publiée" : "Brouillon"}
-            </button>
-          </div>
-
-          <div>
-            <span className={label}>Fond du descriptif</span>
-            <div className="flex gap-2">
-              {(["dark", "light"] as const).map((t) => (
-                <button
-                  type="button"
-                  key={t}
-                  onClick={() => setPanelTheme(t)}
-                  className={`border px-4 py-3 font-mono text-sm uppercase tracking-[0.1em] transition-colors ${
-                    panelTheme === t
-                      ? "border-orange bg-orange text-coal"
-                      : "border-paper/25 text-paper/70 hover:border-paper/60"
+                  onClick={() => setPublished(!published)}
+                  className={`mt-1 flex items-center gap-2 rounded-lg border px-4 py-2.5 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
+                    published
+                      ? "border-emerald-600/40 bg-emerald-50 text-emerald-700"
+                      : "border-ink/20 text-ink/55 hover:border-ink/45"
                   }`}
                 >
-                  {t === "dark" ? "Sombre" : "Clair"}
+                  <span className={`h-2 w-2 rounded-full ${published ? "bg-emerald-500" : "bg-ink/30"}`} />
+                  {published ? "Publiée" : "Brouillon"}
                 </button>
+              </div>
+
+              <div>
+                <span className={label}>Fond du descriptif (fiche)</span>
+                <div className="mt-1 flex gap-2">
+                  {(["dark", "light"] as const).map((t) => (
+                    <button
+                      type="button"
+                      key={t}
+                      onClick={() => setPanelTheme(t)}
+                      className={`rounded-lg border px-4 py-2.5 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
+                        panelTheme === t
+                          ? "border-orange bg-orange text-coal"
+                          : "border-ink/20 text-ink/65 hover:border-ink/45"
+                      }`}
+                    >
+                      {t === "dark" ? "Sombre" : "Clair"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <label className="block">
+                <span className={label}>Ordre (position)</span>
+                <input
+                  type="number"
+                  className={field}
+                  value={position}
+                  onChange={(e) => setPosition(Number(e.target.value))}
+                />
+              </label>
+            </div>
+          </section>
+
+          {/* Partenaires */}
+          <section className={card}>
+            <h2 className={sectionTitle}>Partenaires</h2>
+            <div className="space-y-2.5">
+              {partners.map((pt, i) => (
+                <div key={i} className="flex flex-wrap items-center gap-2.5 rounded-xl border border-ink/10 bg-neutral-50 p-2.5">
+                  {pt.logo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={pt.logo} alt="" className="h-8 w-auto max-w-[80px] object-contain" />
+                  )}
+                  <input
+                    className={`${field} min-w-[120px] flex-1`}
+                    placeholder="Nom du partenaire"
+                    value={pt.name}
+                    onChange={(e) => patchPartner(i, { name: e.target.value })}
+                  />
+                  <input
+                    className={`${field} min-w-[140px] flex-1`}
+                    placeholder="https://… (lien, option.)"
+                    value={pt.url ?? ""}
+                    onChange={(e) => patchPartner(i, { url: e.target.value })}
+                  />
+                  <label className={ghost}>
+                    {uploading === `partner-${i}` ? "Upload…" : pt.logo ? "Logo ✓" : "Logo"}
+                    <input type="file" accept="image/*" onChange={(e) => onPartnerLogo(i, e)} className="hidden" />
+                  </label>
+                  {pt.logo && (
+                    <button type="button" onClick={() => patchPartner(i, { logo: undefined })} className="font-mono text-sm text-orange">
+                      ×
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removePartner(i)}
+                    className="font-mono text-xs uppercase tracking-[0.1em] text-orange hover:underline"
+                  >
+                    Suppr.
+                  </button>
+                </div>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={addPartner}
+              className="mt-3 rounded-lg border border-dashed border-ink/25 px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-ink/55 transition-colors hover:border-orange hover:text-orange"
+            >
+              + partenaire
+            </button>
+          </section>
+        </div>
+
+        {/* ───────── DROITE — médias (la colonne qui scrolle sur la fiche) ───────── */}
+        <section className={card}>
+          <div className="mb-1 flex items-baseline justify-between gap-3">
+            <h2 className="font-display text-base uppercase tracking-[0.16em] text-ink">Médias</h2>
+            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40">
+              {media.length} bloc{media.length > 1 ? "s" : ""}
+            </span>
+          </div>
+          <p className="mb-5 font-mono text-xs normal-case tracking-normal text-ink/45">
+            La colonne qui défile sur la fiche. Glisse les blocs par la poignée pour changer l&apos;ordre.
+          </p>
+
+          {media.length === 0 && (
+            <p className="mb-4 rounded-xl border border-dashed border-ink/15 bg-neutral-50 px-4 py-10 text-center font-mono text-xs uppercase tracking-[0.12em] text-ink/40">
+              Aucun média — ajoute un bloc ci-dessous.
+            </p>
+          )}
+
+          <div className="space-y-3">
+            {media.map((m, i) => (
+              <div
+                key={i}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (overI !== i) setOverI(i);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  moveTo(dragI, i);
+                  setDragI(null);
+                  setOverI(null);
+                }}
+                className={`rounded-xl border bg-neutral-50 p-3 transition-colors ${
+                  overI === i && dragI !== null ? "border-orange" : "border-ink/10"
+                } ${dragI === i ? "opacity-40" : ""}`}
+              >
+                <div className="flex items-center gap-3">
+                  {/* Poignée : glisser pour réordonner */}
+                  <span
+                    draggable
+                    onDragStart={(e) => {
+                      setDragI(i);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragEnd={() => {
+                      setDragI(null);
+                      setOverI(null);
+                    }}
+                    title="Glisser pour réordonner"
+                    aria-label="Glisser pour réordonner"
+                    className="shrink-0 cursor-grab select-none px-1 text-lg leading-none text-ink/30 hover:text-ink active:cursor-grabbing"
+                  >
+                    ⠿
+                  </span>
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ink/5 font-mono text-[11px] text-ink/45">
+                    {i + 1}
+                  </span>
+                  <span className="w-12 shrink-0 font-mono text-xs uppercase tracking-[0.1em] text-orange">
+                    {KIND_LABEL[m.kind]}
+                  </span>
+                  <MediaThumb m={m} />
+                  {m.kind === "text" ? (
+                    <input
+                      className={`${field} flex-1`}
+                      placeholder="Texte du bandeau…"
+                      value={m.text ?? ""}
+                      onChange={(e) => patchMedia(i, { text: e.target.value })}
+                    />
+                  ) : m.kind === "youtube" ? (
+                    <input
+                      className={`${field} flex-1`}
+                      placeholder="https://youtube.com/watch?v=…"
+                      value={m.url}
+                      onChange={(e) => setMediaUrl(i, e.target.value)}
+                    />
+                  ) : m.kind === "gallery" ? (
+                    <span className="flex-1 font-mono text-sm text-ink/50">
+                      {m.images?.length ?? 0} image(s) — slider
+                    </span>
+                  ) : m.kind === "video" ? (
+                    <div className="flex flex-1 flex-wrap items-center gap-3">
+                      {m.url ? (
+                        <span className="max-w-[130px] truncate font-mono text-sm text-ink/50">{m.url.split("/").pop()}</span>
+                      ) : (
+                        <span className="font-mono text-sm text-ink/35">— aucune vidéo —</span>
+                      )}
+                      <label className={ghost}>
+                        {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer vidéo" : "Choisir vidéo"}
+                        <input type="file" accept="video/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
+                      </label>
+                      {/* Mini-vidéo de scroll : autoplay + boucle + muet */}
+                      <label
+                        className={`flex cursor-pointer select-none items-center gap-1.5 rounded-lg border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] transition-colors ${
+                          m.loop ? "border-orange text-orange" : "border-ink/20 text-ink/65 hover:border-ink/45"
+                        }`}
+                        title="Lecture auto + boucle, sans son (mini-vidéo de présentation)"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={!!m.loop}
+                          onChange={(e) => patchMedia(i, { loop: e.target.checked })}
+                          className="accent-orange"
+                        />
+                        ▶ Play + Loop
+                      </label>
+                      {/* Cover : inutile en mode autoplay/loop */}
+                      {!m.loop && (
+                        <>
+                          <span className="font-mono text-xs uppercase tracking-[0.1em] text-ink/40">Cover</span>
+                          {m.poster && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={m.poster} alt="" className="h-8 w-12 shrink-0 rounded object-cover" />
+                          )}
+                          <label className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.1em] text-ink/45">
+                            à
+                            <input
+                              type="number"
+                              min={0}
+                              step={0.1}
+                              value={m.posterTime ?? 1}
+                              onChange={(e) => setPosterTime(i, Number(e.target.value))}
+                              className={`${opt} w-14`}
+                            />
+                            s
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => regenPoster(i)}
+                            disabled={!m.url}
+                            className="rounded-lg border border-ink/20 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-ink/65 transition-colors hover:border-orange hover:text-orange disabled:opacity-40"
+                          >
+                            {uploading === `poster-${i}` ? "…" : "Régénérer"}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-1 items-center gap-3">
+                      {m.url ? (
+                        <span className="truncate font-mono text-sm text-ink/50">{m.url.split("/").pop()}</span>
+                      ) : (
+                        <span className="font-mono text-sm text-ink/35">— aucun fichier —</span>
+                      )}
+                      <label className={ghost}>
+                        {uploading === `media-${i}` ? "Upload…" : m.url ? "Remplacer" : "Choisir"}
+                        <input type="file" accept="image/*" onChange={(e) => onMediaFile(i, e)} className="hidden" />
+                      </label>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeMedia(i)}
+                    className="shrink-0 font-mono text-xs uppercase tracking-[0.1em] text-orange hover:underline"
+                  >
+                    Suppr.
+                  </button>
+                </div>
+
+                {/* Options communes : padding + couleur de fond */}
+                <div className="mt-2 flex flex-wrap items-center gap-4 border-t border-ink/10 pt-2 font-mono text-xs uppercase tracking-[0.1em] text-ink/45">
+                  <label className="flex items-center gap-2" title="1 valeur = tous les côtés · 4 = haut droite bas gauche (en px)">
+                    Padding
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="0  ou  20 0 40 0"
+                      value={m.pad == null ? "" : String(m.pad)}
+                      onChange={(e) => setPad(i, e.target.value)}
+                      className={`${opt} w-32`}
+                    />
+                    px
+                  </label>
+                  <label className="flex items-center gap-2">
+                    Fond
+                    <input
+                      type="color"
+                      value={m.bg ?? "#ffffff"}
+                      onChange={(e) => setBg(i, e.target.value)}
+                      className="h-6 w-8 cursor-pointer rounded border border-ink/20 bg-white"
+                    />
+                  </label>
+                  {m.bg && (
+                    <button type="button" onClick={() => setBg(i, undefined)} className="text-orange hover:underline">
+                      aucun fond
+                    </button>
+                  )}
+                </div>
+
+                {/* Options du bandeau texte */}
+                {m.kind === "text" && (
+                  <div className="mt-3 flex flex-wrap items-center gap-4 border-t border-ink/10 pt-3 font-mono text-xs uppercase tracking-[0.1em] text-ink/45">
+                    <label className="flex items-center gap-2">
+                      Eyebrow
+                      <input
+                        value={m.eyebrow ?? ""}
+                        onChange={(e) => patchMedia(i, { eyebrow: e.target.value })}
+                        placeholder="01 · Identité"
+                        className={`${opt} w-44`}
+                      />
+                    </label>
+                    <div className="flex items-center gap-1">
+                      Align
+                      {(["left", "center", "right"] as const).map((a) => (
+                        <button type="button" key={a} onClick={() => patchMedia(i, { align: a })} className={miniBtn((m.align ?? "left") === a)}>
+                          {a === "left" ? "Gauche" : a === "center" ? "Centre" : "Droite"}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      Taille
+                      {(["s", "m", "l"] as const).map((s) => (
+                        <button type="button" key={s} onClick={() => patchMedia(i, { size: s })} className={miniBtn((m.size ?? "m") === s)}>
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                    <label className="flex items-center gap-2">
+                      Texte
+                      <input
+                        type="color"
+                        value={m.color ?? "#0c0c0e"}
+                        onChange={(e) => patchMedia(i, { color: e.target.value })}
+                        className="h-6 w-8 cursor-pointer rounded border border-ink/20 bg-white"
+                      />
+                    </label>
+                    <label className="flex w-full flex-col gap-1">
+                      Corps (texte normal, optionnel)
+                      <textarea
+                        value={m.body ?? ""}
+                        onChange={(e) => patchMedia(i, { body: e.target.value })}
+                        placeholder="Paragraphe sous le titre…"
+                        className={`${opt} min-h-[70px] w-full resize-y px-2 py-2`}
+                      />
+                    </label>
+                  </div>
+                )}
+
+                {/* Sous-builder galerie : grille d'images glissables-déposables */}
+                {m.kind === "gallery" && (
+                  <div className="mt-3 border-t border-ink/10 pt-3">
+                    {(m.images?.length ?? 0) > 1 && (
+                      <p className="mb-2 font-mono text-xs normal-case tracking-normal text-ink/40">
+                        Glisse les vignettes pour les réordonner.
+                      </p>
+                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {(m.images ?? []).map((img, j) => {
+                        const dragged = galDrag?.b === i && galDrag.j === j;
+                        const target = !!galDrag && galDrag.b === i && galOver?.b === i && galOver.j === j && !dragged;
+                        return (
+                          <div
+                            key={j}
+                            draggable
+                            onDragStart={(e) => {
+                              setGalDrag({ b: i, j });
+                              e.dataTransfer.effectAllowed = "move";
+                            }}
+                            onDragEnd={() => {
+                              setGalDrag(null);
+                              setGalOver(null);
+                            }}
+                            onDragOver={(e) => {
+                              if (galDrag?.b !== i) return;
+                              e.preventDefault();
+                              if (!(galOver?.b === i && galOver.j === j)) setGalOver({ b: i, j });
+                            }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              if (galDrag?.b === i) moveGalleryImageTo(i, galDrag.j, j);
+                              setGalDrag(null);
+                              setGalOver(null);
+                            }}
+                            title="Glisser pour réordonner"
+                            className={`group relative h-16 w-24 cursor-grab overflow-hidden rounded-md bg-ink/5 transition-[box-shadow,opacity] active:cursor-grabbing ${
+                              target ? "ring-2 ring-orange" : ""
+                            } ${dragged ? "opacity-40" : ""}`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={img.url} alt="" draggable={false} className="pointer-events-none h-full w-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => removeGalleryImage(i, j)}
+                              aria-label="Retirer l'image"
+                              className="absolute right-0 top-0 rounded-bl-md bg-coal/75 px-1.5 py-0.5 text-sm leading-none text-paper opacity-0 transition-opacity group-hover:opacity-100"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        );
+                      })}
+                      <label className="flex h-16 w-24 cursor-pointer items-center justify-center rounded-md border border-dashed border-ink/25 font-mono text-xs uppercase tracking-[0.1em] text-ink/55 hover:border-orange hover:text-orange">
+                        {uploading === `media-${i}` ? "Upload…" : "+ images"}
+                        <input type="file" accept="image/*" multiple onChange={(e) => onGalleryAdd(i, e)} className="hidden" />
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
-          <label className="block">
-            <span className={label}>Ordre (position)</span>
-            <input
-              type="number"
-              className={field}
-              value={position}
-              onChange={(e) => setPosition(Number(e.target.value))}
-            />
-          </label>
-        </div>
-      </section>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {(["image", "video", "youtube", "gallery", "text"] as const).map((k) => (
+              <button
+                type="button"
+                key={k}
+                onClick={() => addMedia(k)}
+                className="rounded-lg border border-dashed border-ink/25 px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-ink/55 transition-colors hover:border-orange hover:text-orange"
+              >
+                + {KIND_LABEL[k]}
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
 
       {error && (
-        <p className="border border-orange/40 bg-orange/10 p-4 font-mono text-sm leading-relaxed text-orange">
+        <p className="mx-auto mt-6 max-w-[1400px] rounded-xl border border-orange/40 bg-orange/5 p-4 font-mono text-sm leading-relaxed text-orange">
           {error}
         </p>
       )}
 
-      <div className="sticky bottom-0 z-10 flex items-center gap-4 border-t border-paper/10 bg-coal/95 py-5 backdrop-blur">
+      {/* Barre d'actions — collée en bas, toujours visible */}
+      <div className="sticky bottom-0 z-10 mx-auto mt-6 flex max-w-[1400px] items-center gap-4 border-t border-ink/10 bg-white/90 py-4 backdrop-blur">
         <button
           type="submit"
           disabled={busy || uploading !== null}
-          className="bg-orange px-6 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg bg-orange px-6 py-3 font-display text-base uppercase tracking-[0.12em] text-coal transition hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {busy ? "Enregistrement…" : editing ? "Mettre à jour" : "Créer"}
         </button>
         <button
           type="button"
           onClick={() => router.push("/admin")}
-          className="font-mono text-sm uppercase tracking-[0.12em] text-paper/50 hover:text-paper"
+          className="font-mono text-sm uppercase tracking-[0.12em] text-ink/50 transition-colors hover:text-ink"
         >
           Annuler
         </button>
         {saved && (
-          <span className="font-mono text-sm uppercase tracking-[0.12em] text-[#3ddc84]">
+          <span className="font-mono text-sm uppercase tracking-[0.12em] text-emerald-700">
             Enregistré ✓
           </span>
         )}
