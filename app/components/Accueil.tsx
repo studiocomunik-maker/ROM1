@@ -85,9 +85,9 @@ export default function Accueil({
 
       <header className="relative z-10 flex items-start justify-end px-6 pt-7 md:px-12">
         <p className="text-right font-display text-[10px] uppercase leading-[1.1] tracking-[0.04em] text-paper/60 sm:text-xs md:text-sm">
-          Direction artistique
+          Graphiste · direction artistique
           <br />
-          Image &amp; web · Beaujolais
+          Vin, image &amp; web · Beaujolais
         </p>
       </header>
 

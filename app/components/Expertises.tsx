@@ -260,7 +260,7 @@ export default function Expertises() {
           <p className="mb-5 text-center font-display text-xs uppercase tracking-[0.3em] text-orange">
             ★ Univers
           </p>
-          <ul>{univers.map((e, i) => row(e, false, metiers.length + i))}</ul>
+          <ul>{univers.map((e, i) => row(e, false, metiers.length + i, `/univers/${e.key}`))}</ul>
         </div>
 
         <p className="pointer-events-none absolute bottom-6 right-6 z-10 text-right font-mono text-[10px] uppercase leading-[1.4] tracking-[0.1em] text-paper/60 md:right-12">

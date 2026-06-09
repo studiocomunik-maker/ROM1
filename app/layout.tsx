@@ -21,20 +21,30 @@ const anton = Anton({
   weight: "400",
 });
 
+const TITLE = "Graphiste en Beaujolais — vin, image & web · Romain Renoux";
 const DESCRIPTION =
-  "20 ans à donner une image aux marques. Direction artistique, photo, vidéo & drone, motion design, print et web. Beaujolais · Lyon · Rhône.";
+  "Romain Renoux, graphiste en Beaujolais : identité visuelle, étiquettes de vin, packaging, photo et web pour domaines et vignerons. 20 ans de métier.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Romain Renoux — Direction artistique, image & web · Beaujolais",
+  title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: "/" },
+  keywords: [
+    "graphiste Beaujolais",
+    "graphiste vin",
+    "graphiste vigneron",
+    "étiquette de vin",
+    "identité domaine viticole",
+    "direction artistique Beaujolais",
+    "graphiste Lyon",
+  ],
   openGraph: {
     type: "website",
     siteName: "rom1 — Romain Renoux",
     locale: "fr_FR",
     url: SITE_URL,
-    title: "Romain Renoux — Direction artistique, image & web · Beaujolais",
+    title: TITLE,
     description: DESCRIPTION,
   },
   twitter: { card: "summary_large_image" },
@@ -56,20 +66,30 @@ const siteJsonLd = {
     {
       "@type": ["Organization", "ProfessionalService"],
       "@id": `${SITE_URL}/#org`,
-      name: "rom1",
-      alternateName: "Romain Renoux",
+      name: "rom1 — Romain Renoux, graphiste en Beaujolais",
+      alternateName: ["Romain Renoux", "rom1"],
       url: SITE_URL,
       email: "rom1@rom1.fr",
       logo: `${SITE_URL}/icon.png`,
       image: `${SITE_URL}/opengraph-image.png`,
       description: DESCRIPTION,
-      areaServed: ["Beaujolais", "Lyon", "Rhône", "France"],
+      slogan: "Graphiste spécialisé vin & domaines viticoles en Beaujolais.",
+      address: {
+        "@type": "PostalAddress",
+        addressRegion: "Beaujolais",
+        addressCountry: "FR",
+      },
+      areaServed: ["Beaujolais", "Lyon", "Rhône", "Mâconnais", "France"],
       sameAs: [
         "https://www.instagram.com/rom1unik/",
         "https://www.youtube.com/@rom1unik",
       ],
       knowsAbout: [
+        "Graphisme",
         "Direction artistique",
+        "Étiquette de vin",
+        "Identité visuelle de domaine viticole",
+        "Packaging vin",
         "Photographie",
         "Vidéo",
         "Drone",
@@ -77,7 +97,11 @@ const siteJsonLd = {
         "Print",
         "Web design",
       ],
-      founder: { "@type": "Person", name: "Romain Renoux" },
+      founder: {
+        "@type": "Person",
+        name: "Romain Renoux",
+        jobTitle: "Graphiste — Directeur artistique",
+      },
     },
   ],
 };

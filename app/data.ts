@@ -72,19 +72,57 @@ export const metiers: Metier[] = [
 ];
 
 export type Univers = {
-  key: string;
+  key: string; // sert aussi de slug d'URL (/univers/<key>) et matche realisation.univers
   t: string;
   sub: string;
+  intro: string;
   off: string;
   featured?: boolean;
 };
 
 export const univers: Univers[] = [
-  { key: "vin", t: "Univers du vin", sub: "Domaines, vignerons, étiquettes", featured: true, off: "20%" },
-  { key: "sceno", t: "Scénographie", sub: "Concerts, écrans — Blackmoon", off: "12%" },
-  { key: "art", t: "Culture & Art", sub: "Artistes, galeries, expositions", off: "30%" },
-  { key: "corporate", t: "Corporate", sub: "Industrie, robotisation, B2B", off: "16%" },
-  { key: "hotel", t: "Hôtellerie & Tables", sub: "Hôtels, restaurants, lieux", off: "24%" },
+  {
+    key: "vin",
+    t: "Univers du vin",
+    sub: "Domaines, vignerons, étiquettes",
+    intro:
+      "Graphiste installé au cœur du Beaujolais, je travaille pour les domaines et les vignerons : étiquettes, identité de cave, packaging, photo et site web. Une vigne se raconte autant dans le verre que sur la bouteille — c'est cette image-là que je fabrique.",
+    featured: true,
+    off: "20%",
+  },
+  {
+    key: "sceno",
+    t: "Scénographie",
+    sub: "Concerts, écrans — Blackmoon",
+    intro:
+      "Du concert à l'écran géant : scénographie, habillage visuel et contenus de scène. Une grammaire visuelle pensée pour le live, du teaser au mapping.",
+    off: "12%",
+  },
+  {
+    key: "art",
+    t: "Culture & Art",
+    sub: "Artistes, galeries, expositions",
+    intro:
+      "Artistes, galeries, expositions : identité, édition et signalétique au service de l'œuvre. Une direction artistique qui sert le propos sans le parasiter.",
+    off: "30%",
+  },
+  {
+    key: "corporate",
+    t: "Corporate",
+    sub: "Industrie, robotisation, B2B",
+    intro:
+      "Industrie, robotisation, B2B : rendre lisible et désirable un savoir-faire technique. Identité, image et web pour des entreprises qui ont des choses sérieuses à montrer.",
+    off: "16%",
+  },
+  {
+    key: "hotel",
+    t: "Hôtellerie & Tables",
+    sub: "Hôtels, restaurants, lieux",
+    intro:
+      "Hôtels, restaurants, lieux de réception : une identité qui se vit avant même d'avoir passé la porte. De la carte au site, l'expérience commence par l'image.",
+    off: "24%",
+  },
 ];
 
 export const getMetier = (key: string) => metiers.find((m) => m.key === key);
+export const getUnivers = (key: string) => univers.find((u) => u.key === key);

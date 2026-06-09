@@ -73,6 +73,16 @@ export async function getRealisationsByMetier(key: string): Promise<Realisation[
   return (data ?? []) as Realisation[];
 }
 
+export async function getRealisationsByUnivers(key: string): Promise<Realisation[]> {
+  const { data } = await supabasePublic
+    .from("realisations")
+    .select(COLS)
+    .eq("published", true)
+    .eq("univers", key)
+    .order("position", { ascending: true });
+  return (data ?? []) as Realisation[];
+}
+
 // Padding façon CSS : nombres bruts → px. 1 valeur = tous côtés, 4 = h d b g.
 // `scale` permet de réduire le padding (ex. 0.25 = ÷4 sur smartphone).
 // Les nombres nus deviennent des px ; les valeurs avec unité (rem, %, …)
