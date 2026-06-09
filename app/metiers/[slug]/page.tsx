@@ -4,8 +4,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
 import Contact from "../../components/Contact";
+import SectionHeroBg from "../../components/SectionHeroBg";
 import { EXPS, UNIVERS, SITE_URL, getMetier, metiers } from "../../data";
 import { getRealisationsByMetier } from "../../../utils/realisations";
+import { getSectionHero } from "../../../utils/sectionHeroes";
 
 export const revalidate = 60;
 
@@ -31,9 +33,15 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
   const metier = getMetier(slug);
   if (!metier) notFound();
 
-  const refs = await getRealisationsByMetier(metier.key);
+  const [refs, hero] = await Promise.all([
+    getRealisationsByMetier(metier.key),
+    getSectionHero(`metier:${metier.key}`),
+  ]);
   const idx = metiers.findIndex((m) => m.key === metier.key);
   const next = metiers[(idx + 1) % metiers.length];
+
+  const heroTitle = hero?.title?.trim() || metier.t;
+  const heroIntro = hero?.intro?.trim() || metier.intro;
 
   return (
     <main className="bg-coal text-paper">
@@ -41,19 +49,22 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
 
       {/* HERO métier — explique l'expertise */}
       <section className="grain relative flex min-h-screen flex-col justify-center overflow-hidden px-6 py-32 md:px-12">
-        <p className="mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
-          ★ Métier · {metier.sub}
-        </p>
-        <h1 className="max-w-[14ch] font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.6rem,9vw,7rem)]">
-          {metier.t}
-          <span className="text-orange">.</span>
-        </h1>
-        <p className="mt-8 max-w-[60ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
-          {metier.intro}
-        </p>
-        <p className="mt-16 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
-          {refs.length} réalisation{refs.length > 1 ? "s" : ""} ↓
-        </p>
+        <SectionHeroBg hero={hero} />
+        <div className="relative z-10">
+          <p className="mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
+            ★ Métier · {metier.sub}
+          </p>
+          <h1 className="max-w-[14ch] font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.6rem,9vw,7rem)]">
+            {heroTitle}
+            <span className="text-orange">.</span>
+          </h1>
+          <p className="mt-8 max-w-[60ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
+            {heroIntro}
+          </p>
+          <p className="mt-16 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
+            {refs.length} réalisation{refs.length > 1 ? "s" : ""} ↓
+          </p>
+        </div>
       </section>
 
       {/* RÉALISATIONS liées à ce métier */}

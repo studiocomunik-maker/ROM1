@@ -251,6 +251,11 @@ function MediaThumb({ m }: { m: MediaItem }) {
     return id ? <img src={`https://img.youtube.com/vi/${id}/mqdefault.jpg`} alt="" className={box} /> : <div className={box} />;
   }
   if (m.kind === "video") {
+    // Priorité à la cover générée (frame capturée) ; sinon la vidéo elle-même.
+    if (m.poster) {
+      // eslint-disable-next-line @next/next/no-img-element
+      return <img src={m.poster} alt="" className={box} />;
+    }
     return m.url ? <video src={m.url} muted playsInline preload="metadata" className={box} /> : <div className={box} />;
   }
   // eslint-disable-next-line @next/next/no-img-element
@@ -960,9 +965,17 @@ export default function RealisationForm({ initial }: { initial: RealisationData 
                       {!m.loop && (
                         <>
                           <span className="font-mono text-xs uppercase tracking-[0.1em] text-ink/40">Cover</span>
-                          {m.poster && (
+                          {m.poster ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={m.poster} alt="" className="h-8 w-12 shrink-0 rounded object-cover" />
+                            <img
+                              src={m.poster}
+                              alt="Aperçu de la cover générée"
+                              className="h-12 w-[72px] shrink-0 rounded-md object-cover ring-1 ring-inset ring-ink/15"
+                            />
+                          ) : (
+                            <span className="flex h-12 w-[72px] shrink-0 items-center justify-center rounded-md border border-dashed border-ink/20 text-center font-mono text-[9px] leading-tight text-ink/35">
+                              pas de cover
+                            </span>
                           )}
                           <label className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.1em] text-ink/45">
                             à

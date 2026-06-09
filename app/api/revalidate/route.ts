@@ -11,13 +11,17 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ ok: false }, { status: 401 });
 
-  const { slug } = await request.json().catch(() => ({ slug: undefined }));
+  const { slug, path } = await request
+    .json()
+    .catch(() => ({ slug: undefined, path: undefined }));
 
   revalidatePath("/");
   revalidatePath("/sitemap.xml");
   revalidatePath("/metiers/[slug]", "page");
+  revalidatePath("/univers/[slug]", "page");
   revalidatePath("/realisations/[slug]", "page");
   if (slug) revalidatePath(`/realisations/${slug}`);
+  if (path) revalidatePath(path);
 
   return NextResponse.json({ ok: true });
 }

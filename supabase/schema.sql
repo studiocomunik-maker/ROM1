@@ -106,3 +106,33 @@ create policy "réglages : admin insère"
   on public.site_settings for insert to authenticated with check (true);
 create policy "réglages : admin met à jour"
   on public.site_settings for update to authenticated using (true) with check (true);
+
+-- 5) Hero des sections (métiers + univers) -----------------------------
+--    Une ligne par section. id = "metier:<key>" ou "univers:<key>".
+--    media = image OU vidéo (fond plein écran + voile sur la page).
+--    title / intro vides = on retombe sur les valeurs par défaut de data.ts.
+create table if not exists public.section_heroes (
+  id          text primary key,             -- "metier:identite" | "univers:vin"
+  media_url   text,
+  media_kind  text,                          -- 'image' | 'video'
+  poster_url  text,                          -- cover de la vidéo (optionnel)
+  title       text,
+  intro       text,
+  updated_at  timestamptz not null default now()
+);
+
+drop trigger if exists trg_section_heroes_updated on public.section_heroes;
+create trigger trg_section_heroes_updated
+  before update on public.section_heroes
+  for each row execute function public.touch_updated_at();
+
+alter table public.section_heroes enable row level security;
+
+create policy "hero sections lisibles par tous"
+  on public.section_heroes for select to anon, authenticated using (true);
+create policy "hero sections : admin insère"
+  on public.section_heroes for insert to authenticated with check (true);
+create policy "hero sections : admin met à jour"
+  on public.section_heroes for update to authenticated using (true) with check (true);
+create policy "hero sections : admin supprime"
+  on public.section_heroes for delete to authenticated using (true);

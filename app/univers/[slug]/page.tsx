@@ -4,8 +4,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
 import Contact from "../../components/Contact";
+import SectionHeroBg from "../../components/SectionHeroBg";
 import { EXPS, SITE_URL, getUnivers, univers } from "../../data";
 import { getRealisationsByUnivers } from "../../../utils/realisations";
+import { getSectionHero } from "../../../utils/sectionHeroes";
 
 export const revalidate = 60;
 
@@ -104,9 +106,15 @@ export default async function UniversPage({ params }: PageProps<"/univers/[slug]
   if (!u) notFound();
 
   const page = PAGES[slug];
-  const refs = await getRealisationsByUnivers(u.key);
+  const [refs, hero] = await Promise.all([
+    getRealisationsByUnivers(u.key),
+    getSectionHero(`univers:${u.key}`),
+  ]);
   const idx = univers.findIndex((x) => x.key === u.key);
   const next = univers[(idx + 1) % univers.length];
+
+  const heroTitle = hero?.title?.trim() || page?.h1 || u.t;
+  const heroIntro = hero?.intro?.trim() || u.intro;
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -150,19 +158,22 @@ export default async function UniversPage({ params }: PageProps<"/univers/[slug]
 
       {/* HERO univers */}
       <section className="grain relative flex min-h-screen flex-col justify-center overflow-hidden px-6 py-32 md:px-12">
-        <p className="mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
-          ★ Univers · {u.sub}
-        </p>
-        <h1 className="max-w-[18ch] font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.4rem,8vw,6rem)]">
-          {page?.h1 ?? u.t}
-          <span className="text-orange">.</span>
-        </h1>
-        <p className="mt-8 max-w-[62ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
-          {u.intro}
-        </p>
-        <p className="mt-16 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
-          {refs.length} réalisation{refs.length > 1 ? "s" : ""} ↓
-        </p>
+        <SectionHeroBg hero={hero} />
+        <div className="relative z-10">
+          <p className="mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
+            ★ Univers · {u.sub}
+          </p>
+          <h1 className="max-w-[18ch] font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.4rem,8vw,6rem)]">
+            {heroTitle}
+            <span className="text-orange">.</span>
+          </h1>
+          <p className="mt-8 max-w-[62ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
+            {heroIntro}
+          </p>
+          <p className="mt-16 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
+            {refs.length} réalisation{refs.length > 1 ? "s" : ""} ↓
+          </p>
+        </div>
       </section>
 
       {/* SERVICES (vin uniquement) */}
