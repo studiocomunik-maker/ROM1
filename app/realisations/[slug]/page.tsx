@@ -300,7 +300,7 @@ export default async function RealisationPage({
       {related.length > 0 && (
         <section className="bg-coal px-6 py-14 text-paper md:px-12 md:py-20">
           <Reveal>
-            <h2 className="mb-8 text-center font-display uppercase leading-none tracking-tight text-paper text-[clamp(1.8rem,4vw,3rem)] md:mb-10">
+            <h2 className="mb-8 text-center font-display uppercase leading-none tracking-tight text-paper text-[clamp(1.4rem,3vw,2.2rem)] md:mb-10">
               Autres réalisations
             </h2>
           </Reveal>
