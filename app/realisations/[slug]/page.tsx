@@ -117,7 +117,7 @@ export default async function RealisationPage({
         x.exps.filter((e) => p.exps.includes(e)).length,
     }))
     .sort((a, b) => b.score - a.score || a.i - b.i)
-    .slice(0, 3)
+    .slice(0, 4)
     .map((r) => r.x);
 
   // Colonne gauche = UNIQUEMENT les médias uploadés (la cover sert de vignette
@@ -310,7 +310,9 @@ export default async function RealisationPage({
                 ? ""
                 : related.length === 2
                   ? "sm:max-w-[600px] sm:grid-cols-2"
-                  : "sm:max-w-[900px] sm:grid-cols-3"
+                  : related.length === 3
+                    ? "sm:max-w-[900px] sm:grid-cols-3"
+                    : "sm:max-w-[600px] sm:grid-cols-2 lg:max-w-[1220px] lg:grid-cols-4"
             }`}
           >
             {related.map((o) => (
