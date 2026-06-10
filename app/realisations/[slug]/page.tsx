@@ -300,9 +300,9 @@ export default async function RealisationPage({
       {related.length > 0 && (
         <section className="bg-coal px-6 py-14 text-paper md:px-12 md:py-20">
           <Reveal>
-            <p className="mb-8 text-center font-display text-xs uppercase tracking-[0.3em] text-orange">
-              ★ Autres réalisations
-            </p>
+            <h2 className="mb-8 text-center font-display uppercase leading-none tracking-tight text-paper text-[clamp(1.8rem,4vw,3rem)] md:mb-10">
+              Autres réalisations
+            </h2>
           </Reveal>
           <div
             className={`grid gap-2 md:gap-3 ${
