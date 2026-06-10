@@ -234,7 +234,7 @@ export default async function RealisationPage({
                   {p.partners.map((pt, i) => {
                     const inner = pt.logo ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={pt.logo} alt={pt.name} className="h-7 w-auto max-w-[110px] object-contain" />
+                      <img src={pt.logo} alt={pt.name} className="h-[60px] w-auto max-w-[200px] object-contain" />
                     ) : (
                       <span className="font-display text-sm uppercase tracking-tight">{pt.name}</span>
                     );
@@ -259,12 +259,6 @@ export default async function RealisationPage({
             )}
 
             <div className="mt-10 flex flex-wrap items-center gap-6">
-              <a
-                href="mailto:rom1@rom1.fr"
-                className="w-fit bg-orange px-6 py-3 font-display text-sm uppercase tracking-[0.12em] text-coal transition-transform hover:scale-[1.03]"
-              >
-                Un projet comme ça ?
-              </a>
               {p.website && (
                 <a
                   href={p.website}
