@@ -1,6 +1,7 @@
 import Accueil from "./components/Accueil";
 import Expertises from "./components/Expertises";
 import Portfolio from "./components/Portfolio";
+import Atelier from "./components/Atelier";
 import Contact from "./components/Contact";
 import { getRealisations } from "../utils/realisations";
 import { getSiteSettings } from "../utils/settings";
@@ -37,6 +38,7 @@ export default async function Home() {
       />
       <Expertises />
       <Portfolio items={items} />
+      <Atelier />
       <Contact />
     </main>
   );
