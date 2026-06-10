@@ -50,12 +50,12 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
     allLabel: string;
     options: Record<string, string>;
   }) => (
-    <div className="group relative">
+    <div className="group relative max-sm:w-full">
       <select
         value={value}
         onChange={(ev) => onChange(ev.target.value)}
         aria-label={allLabel}
-        className="cursor-pointer appearance-none border border-coal bg-white py-2.5 pl-4 pr-10 font-mono text-[11px] uppercase tracking-[0.1em] text-coal transition-colors group-hover:bg-coal group-hover:text-white"
+        className="cursor-pointer appearance-none border border-coal bg-white py-2.5 pl-4 pr-10 font-mono text-[11px] uppercase tracking-[0.1em] text-coal transition-colors group-hover:bg-coal group-hover:text-white max-sm:w-full"
       >
         <option value="all">{allLabel}</option>
         {Object.entries(options).map(([k, label]) => (
@@ -94,7 +94,7 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
             </span>
           </h2>
         </Reveal>
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-wrap justify-center gap-3 max-sm:w-full max-sm:max-w-[360px] max-sm:flex-col">
           <Select value={u} onChange={setU} allLabel="Tous les univers" options={UNIVERS} />
           <Select value={e} onChange={setE} allLabel="Toutes les expertises" options={EXPS} />
         </div>
@@ -114,7 +114,7 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
                 src={p.cover_url}
                 alt={p.titre}
                 fill
-                sizes="(min-width: 640px) 33vw, 50vw"
+                sizes="(min-width: 640px) 33vw, 100vw"
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               />
             ) : (

@@ -182,7 +182,7 @@ export default function Expertises() {
 
   const row = (e: Item, big: boolean, gi: number, href?: string) => {
     const titleCls = `flex items-center whitespace-nowrap font-display uppercase leading-[0.9] tracking-[-0.02em] transition-opacity duration-300 ${
-      big ? "text-[clamp(1.5rem,5vw,3.6rem)]" : "text-[clamp(1.3rem,3.8vw,2.8rem)] gap-3"
+      big ? "text-[clamp(1.5rem,5vw,3.6rem)]" : "text-[clamp(1.1rem,3.8vw,2.8rem)] gap-3"
     }`;
     const titleStyle = { opacity: dim(e.key) ? 0.18 : 1, color: e.featured ? "#ff3d1f" : undefined };
     const inner = (
@@ -199,8 +199,8 @@ export default function Expertises() {
       }}
       onMouseEnter={() => setHov(e.key)}
       onMouseLeave={() => setHov(null)}
-      style={{ marginLeft: e.off, willChange: "transform" }}
-      className="group flex cursor-none items-center py-1"
+      style={{ "--off": e.off, willChange: "transform" } as React.CSSProperties}
+      className="group flex cursor-none items-center py-1 ml-[calc(var(--off)/3)] md:ml-[var(--off)]"
     >
       {/* MASQUE : la ligne monte depuis un bord clippé (le li garde sa parallaxe translateX).
          pt/-mt + lineHeight : marge pour ne pas rogner les accents (É, À). */}
@@ -241,7 +241,7 @@ export default function Expertises() {
     <>
       <section
         onMouseMove={onMove}
-        className="relative z-10 min-h-screen overflow-hidden bg-coal px-6 py-28 text-paper md:px-12"
+        className="relative z-10 overflow-hidden bg-coal px-6 py-16 text-paper md:min-h-screen md:px-12 md:py-28"
       >
         {/* Wrapper centré sur grand écran — décalages internes conservés */}
         <div ref={listRef} className="relative z-10 mx-auto w-full max-w-[1100px]">
@@ -249,12 +249,12 @@ export default function Expertises() {
           <p className="mb-3 text-center font-display text-xs uppercase tracking-[0.3em] text-orange">
             ★ Métiers
           </p>
-          <Squiggle className="mx-auto mb-6 w-[200px] -translate-x-12 -rotate-3 opacity-90 md:w-[240px]" />
+          <Squiggle className="mx-auto mb-4 w-[120px] -translate-x-6 -rotate-3 opacity-90 md:mb-6 md:w-[240px] md:-translate-x-12" />
 
           <ul>{metiers.map((e, i) => row(e, true, i, `/metiers/${e.key}`))}</ul>
 
           {/* courbe de liaison métiers → univers — respiration */}
-          <Curve className="mx-auto my-6 w-[80px] md:w-[100px]" />
+          <Curve className="mx-auto my-3 w-[52px] md:my-6 md:w-[100px]" />
 
           {/* UNIVERS */}
           <p className="mb-5 text-center font-display text-xs uppercase tracking-[0.3em] text-orange">

@@ -105,10 +105,20 @@ export default async function RealisationPage({
   const list = await getRealisations();
   const idx = list.findIndex((x) => x.slug === p.slug);
   const next = list.length > 1 ? list[(idx + 1) % list.length] : null;
-  // Autres réalisations (les suivantes, en cyclique) pour relier les projets
-  const related = [...list.slice(idx + 1), ...list.slice(0, idx)]
+  // Autres réalisations : les plus proches du projet courant
+  // (même univers avant tout, puis expertises partagées), ordre stable sinon.
+  const related = list
     .filter((x) => x.slug !== p.slug)
-    .slice(0, 3);
+    .map((x, i) => ({
+      x,
+      i,
+      score:
+        (x.univers === p.univers ? 2 : 0) +
+        x.exps.filter((e) => p.exps.includes(e)).length,
+    }))
+    .sort((a, b) => b.score - a.score || a.i - b.i)
+    .slice(0, 3)
+    .map((r) => r.x);
 
   // Colonne gauche = UNIQUEMENT les médias uploadés (la cover sert de vignette
   // dans les listings). Si aucun média, on retombe sur la cover en secours.
@@ -195,7 +205,7 @@ export default async function RealisationPage({
         {/* COLONNE DROITE — panneau sticky : titre + descriptif (thème au choix) */}
         <aside className="order-1 lg:order-2">
           <div
-            className={`flex min-h-[60vh] flex-col justify-center px-6 py-28 lg:sticky lg:top-0 lg:h-screen lg:min-h-0 lg:px-10 ${
+            className={`flex min-h-[60vh] flex-col justify-center px-6 py-16 lg:sticky lg:top-0 lg:h-screen lg:min-h-0 lg:px-10 lg:py-28 ${
               light ? "bg-paper text-coal" : "bg-coal text-paper"
             }`}
           >
@@ -288,26 +298,26 @@ export default async function RealisationPage({
 
       {/* Autres réalisations — passerelle entre les projets */}
       {related.length > 0 && (
-        <section className="bg-coal px-6 py-20 text-paper md:px-12 md:py-24">
+        <section className="bg-coal px-6 py-14 text-paper md:px-12 md:py-20">
           <Reveal>
-            <p className="mb-10 text-center font-display text-xs uppercase tracking-[0.3em] text-orange">
+            <p className="mb-8 text-center font-display text-xs uppercase tracking-[0.3em] text-orange">
               ★ Autres réalisations
             </p>
           </Reveal>
           <div
-            className={`mx-auto grid gap-3 ${
+            className={`mx-auto grid max-w-[340px] gap-2 md:gap-3 ${
               related.length === 1
-                ? "max-w-[480px]"
+                ? ""
                 : related.length === 2
-                  ? "max-w-[780px] sm:grid-cols-2"
-                  : "sm:grid-cols-3"
+                  ? "sm:max-w-[600px] sm:grid-cols-2"
+                  : "sm:max-w-[900px] sm:grid-cols-3"
             }`}
           >
             {related.map((o) => (
               <Link
                 key={o.slug}
                 href={`/realisations/${o.slug}`}
-                className="group relative block aspect-[4/3] overflow-hidden bg-coal text-paper"
+                className="group relative block aspect-video overflow-hidden bg-coal text-paper sm:aspect-[4/3]"
               >
                 {/* Image (base, toujours visible) */}
                 {o.cover_url ? (
@@ -315,7 +325,7 @@ export default async function RealisationPage({
                     src={o.cover_url}
                     alt={o.titre}
                     fill
-                    sizes="(min-width: 640px) 33vw, 100vw"
+                    sizes="(min-width: 640px) 300px, 340px"
                     className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   />
                 ) : (
@@ -327,24 +337,14 @@ export default async function RealisationPage({
                 {/* Voile sombre : assombrit par défaut → transparent au survol */}
                 <div className="absolute inset-0 bg-coal/60 transition-colors duration-300 group-hover:bg-coal/0" />
 
-                {/* Univers + titre + métiers : par défaut → s'effacent au survol */}
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 p-5 text-center transition-opacity duration-300 group-hover:opacity-0">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
+                {/* Univers + titre : par défaut → s'effacent au survol */}
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1.5 p-4 text-center transition-opacity duration-300 group-hover:opacity-0">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-orange">
                     {UNIVERS[o.univers] ?? o.univers}
                   </span>
-                  <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
+                  <h3 className="font-display text-base uppercase leading-none tracking-tight text-paper md:text-lg">
                     {o.titre}
                   </h3>
-                  <div className="mt-1 flex flex-wrap justify-center gap-1.5">
-                    {o.exps.map((x) => (
-                      <span
-                        key={x}
-                        className="border border-paper/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-paper"
-                      >
-                        {EXPS[x] ?? x}
-                      </span>
-                    ))}
-                  </div>
                 </div>
               </Link>
             ))}

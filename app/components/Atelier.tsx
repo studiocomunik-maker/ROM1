@@ -23,7 +23,7 @@ const MARQUEE = "Romain & Céline — l’œil et la technique";
 export default function Atelier() {
   return (
     <section id="atelier" className="grain relative z-10 overflow-hidden bg-paper text-coal">
-      <div className="mx-auto max-w-[1400px] px-6 pt-20 md:px-12 md:pt-28">
+      <div className="mx-auto max-w-[1400px] px-6 pt-24 md:px-12 md:pt-28">
         {/* Eyebrow */}
         <Reveal>
           <div className="mb-8 flex items-baseline justify-between font-display text-xs uppercase tracking-[0.25em] md:mb-10">
@@ -34,7 +34,7 @@ export default function Atelier() {
 
         {/* Titre — « têtes » barré, corrigé en « regards » comme le hero barre « aux marques » */}
         <Reveal delay={80}>
-          <h2 className="mb-12 max-w-[900px] font-display uppercase leading-[0.94] tracking-[-0.015em] text-[clamp(2.6rem,8vw,5.5rem)] md:mb-16">
+          <h2 className="mb-8 max-w-[900px] font-display uppercase leading-[0.94] tracking-[-0.015em] text-[clamp(2.6rem,8vw,5.5rem)] md:mb-16">
             Deux{" "}
             <span className="relative inline-block">
               têtes
@@ -52,7 +52,7 @@ export default function Atelier() {
           </h2>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-12 pb-20 md:grid-cols-[44%_1fr] md:gap-16 md:pb-28 xl:grid-cols-[35%_1fr]">
+        <div className="grid grid-cols-1 gap-10 pb-14 md:grid-cols-[44%_1fr] md:gap-16 md:pb-28 xl:grid-cols-[35%_1fr]">
           {/* Photo — cadre orange décalé façon riso, photo droite */}
           <Reveal delay={120}>
             <div>
