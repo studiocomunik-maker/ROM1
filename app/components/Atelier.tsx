@@ -23,7 +23,7 @@ const MARQUEE = "Romain & Céline — l’œil et la technique";
 export default function Atelier() {
   return (
     <section id="atelier" className="grain relative z-10 overflow-hidden bg-paper text-coal">
-      <div className="px-6 pt-20 md:px-12 md:pt-28">
+      <div className="mx-auto max-w-[1400px] px-6 pt-20 md:px-12 md:pt-28">
         {/* Eyebrow */}
         <Reveal>
           <div className="mb-8 flex items-baseline justify-between font-display text-xs uppercase tracking-[0.25em] md:mb-10">
@@ -55,7 +55,7 @@ export default function Atelier() {
         <div className="grid grid-cols-1 gap-12 pb-20 md:grid-cols-[44%_1fr] md:gap-16 md:pb-28">
           {/* Photo — cadre orange décalé façon riso, photo droite */}
           <Reveal delay={120}>
-            <div className="max-w-[460px]">
+            <div>
               <AtelierPhoto />
               <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.12em] text-coal/50">
                 ( Qui fait quoi&nbsp;? — survolez les points )
