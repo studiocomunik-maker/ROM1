@@ -69,6 +69,14 @@ const PAGES: Record<string, UniversPage> = {
         a: "Je dessine l'étiquette et prépare le fichier pour l'imprimeur en intégrant les mentions obligatoires (degré, volume, allergènes, e-mention, logos). La validation réglementaire finale reste celle de votre conseil, mais le fichier est calé pour la production.",
       },
       {
+        q: "Comment se déroule la création d'une étiquette de vin ?",
+        a: "Un premier échange pour comprendre le domaine et la cuvée, puis des pistes créatives, et la mise au point de l'étiquette retenue jusqu'au fichier d'impression — papier, gaufrage et dorure compris. Comptez quelques semaines entre le premier rendez-vous et le départ chez l'imprimeur.",
+      },
+      {
+        q: "Travaillez-vous uniquement dans le Beaujolais ?",
+        a: "Je suis installé au cœur du Beaujolais, entre Lyon et Mâcon, et je travaille sur place comme à distance : domaines du Rhône, du Mâconnais, de la Bourgogne et d'ailleurs en France. La proximité aide pour la photo et les vendanges, le reste passe très bien en visio.",
+      },
+      {
         q: "Combien coûte une identité ou une étiquette de domaine ?",
         a: "Chaque projet est devisé sur-mesure selon le nombre de cuvées, les déclinaisons et les supports. Le mieux est d'en parler : un échange suffit pour cadrer un budget réaliste.",
       },
@@ -292,6 +300,9 @@ export default async function UniversPage({ params }: PageProps<"/univers/[slug]
               </div>
             ))}
           </div>
+          <p className="mt-8 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-paper/30">
+            Page mise à jour — juin 2026
+          </p>
         </section>
       )}
 
