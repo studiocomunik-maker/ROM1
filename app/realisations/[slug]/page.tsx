@@ -305,14 +305,14 @@ export default async function RealisationPage({
             </p>
           </Reveal>
           <div
-            className={`mx-auto grid max-w-[340px] gap-2 md:gap-3 ${
+            className={`grid gap-2 md:gap-3 ${
               related.length === 1
-                ? ""
+                ? "mx-auto max-w-[340px]"
                 : related.length === 2
-                  ? "sm:max-w-[600px] sm:grid-cols-2"
+                  ? "sm:grid-cols-2"
                   : related.length === 3
-                    ? "sm:max-w-[900px] sm:grid-cols-3"
-                    : "sm:max-w-[600px] sm:grid-cols-2 lg:max-w-[1220px] lg:grid-cols-4"
+                    ? "sm:grid-cols-3"
+                    : "sm:grid-cols-2 lg:grid-cols-4"
             }`}
           >
             {related.map((o) => (
