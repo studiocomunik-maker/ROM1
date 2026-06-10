@@ -52,7 +52,7 @@ export default function Atelier() {
           </h2>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-12 pb-20 md:grid-cols-[44%_1fr] md:gap-16 md:pb-28">
+        <div className="grid grid-cols-1 gap-12 pb-20 md:grid-cols-[44%_1fr] md:gap-16 md:pb-28 xl:grid-cols-[35%_1fr]">
           {/* Photo — cadre orange décalé façon riso, photo droite */}
           <Reveal delay={120}>
             <div>
