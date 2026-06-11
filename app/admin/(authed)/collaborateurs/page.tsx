@@ -8,7 +8,8 @@ export default async function AdminCollaborateurs() {
     .select("id, name, role, body, photo_url, position, published")
     .order("position", { ascending: true });
 
-  if (error?.code === "42P01") {
+  // 42P01 = table absente (Postgres) ; PGRST205 = table absente du cache PostgREST
+  if (error && (error.code === "42P01" || error.code === "PGRST205")) {
     return (
       <div className="mx-auto max-w-[640px] space-y-4">
         <h1 className="font-display text-3xl uppercase tracking-tight">Collaborateurs</h1>

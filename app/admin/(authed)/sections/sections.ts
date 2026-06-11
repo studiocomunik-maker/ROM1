@@ -31,9 +31,9 @@ export const SECTIONS: SectionMeta[] = [
     label: "À propos",
     sub: "Page à propos",
     publicPath: "/a-propos",
-    defaultTitle: "L'image est un métier",
+    defaultTitle: "Geek & artiste",
     defaultIntro:
-      "Romain Renoux, graphiste et directeur artistique en Beaujolais. 20 ans de projets pour le vin, le spectacle et l'industrie — et toujours la même obsession : raconter juste.",
+      "Le dessin reçu en héritage, la technologie attrapée par passion — 20 ans que les deux se tressent pour fabriquer des images.",
   },
   ...metiers.map((m) => ({
     routeId: `metier-${m.key}`,

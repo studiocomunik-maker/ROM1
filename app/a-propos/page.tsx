@@ -58,51 +58,80 @@ const FALLBACK_CLIENTS: ClientItem[] = [
 ].map((name) => ({ name, logo_url: null, url: null }));
 
 /* Frise du parcours de Romain — repères chrono-thématiques. Ajouter une
-   entrée suffit, la frise suit. */
-const JALONS: { k: string; t: string; d: string; g: "burst" | "bolt" | "eye" }[] = [
+   entrée suffit, la frise suit. `g` = picto thématique (voir JalonGlyph). */
+type JalonGlyphKey = "crayon" | "ecran" | "code" | "camera";
+const JALONS: { k: string; t: string; d: string; g: JalonGlyphKey }[] = [
   {
     k: "Origines",
     t: "Une famille d'artistes",
     d: "Fils d'Allain Renoux, peintre, et frère de Christophe Renoux. Chez les Renoux, on dessine — et j'ai dessiné depuis mon plus jeune âge, bien avant d'en faire un métier.",
-    g: "burst",
+    g: "crayon",
   },
   {
     k: "Bascule",
     t: "Du réseau au pixel",
     d: "Vient ensuite la passion de l'informatique : une formation en administration réseaux, avant de bifurquer vers les joies de Photoshop et de la suite Adobe. Geek et artiste, les deux à la fois.",
-    g: "bolt",
+    g: "ecran",
   },
   {
     k: "Le web, d'avant",
     t: "Quand le CSS n'existait pas",
     d: "Je vois Internet apparaître. Le CSS n'existe pas encore, le moteur de recherche à la mode s'appelle Altavista. J'évolue au fil de cette technologie — pour en arriver, vingt ans plus tard, à travailler avec des outils comme Claude ou Nano Banana Pro.",
-    g: "eye",
+    g: "code",
   },
   {
     k: "Image & son",
     t: "La musique, la photo, le film",
     d: "En parallèle, je développe mon appétence pour la musique, la vidéo, la photo. J'investis dans un drone qui m'emmène vers le film, j'apprends Ableton et Logic — et je continue d'avancer dans ce monde toujours en évolution.",
-    g: "burst",
+    g: "camera",
   },
 ];
 
-/* Glyphe riso animé d'un jalon — même registre que le hero d'accueil. */
-function JalonGlyph({ g }: { g: "burst" | "bolt" | "eye" }) {
-  if (g === "bolt")
-    return (
-      <span className="float-slow inline-block h-10 w-7">
-        <Bolt className="h-full w-full" />
-      </span>
-    );
-  if (g === "eye")
-    return (
-      <span className="inline-block h-7 w-11">
-        <Eye className="eye-blink h-full w-full" />
-      </span>
-    );
+/* Picto thématique d'un jalon — trait orange (registre des pictos métiers),
+   flottement doux continu pour garder un peu de vie. */
+const JALON_PATHS: Record<JalonGlyphKey, React.ReactNode> = {
+  // crayon — le dessin, l'héritage artistique
+  crayon: (
+    <>
+      <path d="M4 20l1.2-4.2L15.6 5.4a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8.2 18.8 4 20z" />
+      <path d="M14 7l3 3" />
+    </>
+  ),
+  // écran — l'informatique, du réseau au pixel
+  ecran: (
+    <>
+      <rect x="3" y="4" width="18" height="12" rx="1" />
+      <path d="M9 20h6M12 16v4" />
+      <path d="M8 9l-2 2 2 2M16 9l2 2-2 2" />
+    </>
+  ),
+  // </> — le web
+  code: <path d="M9 8l-4 4 4 4M15 8l4 4-4 4" />,
+  // caméra — la photo, le film
+  camera: (
+    <>
+      <rect x="3" y="7" width="12" height="10" rx="1.5" />
+      <path d="M15 10.5l6-3v9l-6-3z" />
+      <circle cx="8" cy="12" r="2" />
+    </>
+  ),
+};
+
+function JalonGlyph({ g }: { g: JalonGlyphKey }) {
   return (
-    <span className="inline-block h-10 w-10">
-      <Burst className="spin-slow h-full w-full" />
+    <span className="float-slow inline-block text-orange">
+      <svg
+        viewBox="0 0 24 24"
+        className="h-9 w-9 md:h-10 md:w-10"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+      >
+        {JALON_PATHS[g]}
+      </svg>
     </span>
   );
 }
@@ -136,10 +165,11 @@ export default async function AProposPage() {
   const clients: ClientItem[] = clientsDb.length ? clientsDb : FALLBACK_CLIENTS;
   const collabs: CollabItem[] = collabsDb.length ? collabsDb : FALLBACK_COLLABS;
 
-  const heroTitle = hero?.title?.trim() || "L'image est un métier";
+  // Titre éditable (back-office) ; vide = composition par défaut « Geek & artiste »
+  const heroTitleOverride = hero?.title?.trim();
   const heroIntro =
     hero?.intro?.trim() ||
-    "Romain Renoux, graphiste et directeur artistique en Beaujolais. 20 ans de projets pour le vin, le spectacle et l'industrie — et toujours la même obsession : raconter juste.";
+    "Le dessin reçu en héritage, la technologie attrapée par passion — 20 ans que les deux se tressent pour fabriquer des images.";
 
   return (
     <main className="bg-coal text-paper">
@@ -149,7 +179,8 @@ export default async function AProposPage() {
       />
       <PageNav />
 
-      {/* HERO — fond éditable depuis le back-office (sinon grain coal) */}
+      {/* HERO — « Geek & artiste » : le fil du parcours en accroche. Fond
+         éditable depuis le back-office (sinon grain coal). */}
       <section className="grain relative flex min-h-[80vh] flex-col justify-center overflow-hidden px-6 py-32 md:px-12">
         <SectionHeroBg hero={hero} />
         {/* Étoile-éclat qui tourne, débordant du bord droit (registre hero) */}
@@ -157,14 +188,28 @@ export default async function AProposPage() {
         <p className="relative z-10 mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
           ★ À propos
         </p>
-        <h1 className="relative z-10 max-w-[14ch] font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.6rem,9vw,7rem)]">
-          {heroTitle}
-          <span className="text-orange">.</span>
-          <span className="ml-[0.18em] inline-block h-[0.7em] w-[0.5em] -translate-y-[0.04em] rotate-[8deg] align-baseline">
-            <Bolt className="float-slow h-full w-full" />
-          </span>
+        <h1 className="relative z-10 font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.8rem,10vw,7.5rem)]">
+          {heroTitleOverride ? (
+            <>
+              {heroTitleOverride}
+              <span className="text-orange">.</span>
+            </>
+          ) : (
+            <>
+              Geek <span className="text-orange">&amp;</span> artiste
+              {/* œil qui cligne + éclair, en bout d'accroche */}
+              <span className="ml-[0.18em] inline-block h-[0.5em] w-[0.82em] -translate-y-[0.06em] align-baseline">
+                <Eye className="eye-blink h-full w-full" />
+              </span>
+              <span className="ml-[0.1em] inline-block h-[0.62em] w-[0.42em] -translate-y-[0.02em] rotate-[8deg] align-baseline">
+                <Bolt className="float-slow h-full w-full" />
+              </span>
+              <br />
+              depuis 2005<span className="text-orange">.</span>
+            </>
+          )}
         </h1>
-        <p className="relative z-10 mt-8 max-w-[60ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
+        <p className="relative z-10 mt-8 max-w-[58ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
           {heroIntro}
         </p>
         <p className="relative z-10 mt-16 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
@@ -339,11 +384,11 @@ export default async function AProposPage() {
             {collabs.map((c, i) => (
               <li key={c.name + i}>
                 <Reveal delay={i * 100}>
-                  <div className="group flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-10">
+                  <div className="group flex flex-col gap-7 sm:flex-row sm:items-start sm:gap-12">
                     {/* Portrait — cadre orange décalé façon riso ; au survol
                        le cadre glisse davantage. Initiales en attendant le
                        vrai fichier (remplacer par <Image>) */}
-                    <div className="relative w-32 shrink-0 sm:w-40">
+                    <div className="relative w-full max-w-[280px] shrink-0 sm:w-56 md:w-72">
                       <div
                         aria-hidden
                         className="absolute inset-0 translate-x-2 translate-y-2 bg-orange transition-transform duration-300 ease-out group-hover:translate-x-3 group-hover:translate-y-3"
@@ -364,17 +409,17 @@ export default async function AProposPage() {
                       </div>
                     </div>
 
-                    <div className="max-w-[620px] pt-1">
-                      <h3 className="font-display uppercase leading-[0.94] tracking-[-0.015em] text-[clamp(1.5rem,3.5vw,2.4rem)]">
+                    <div className="max-w-[640px] pt-1 sm:pt-2">
+                      <h3 className="font-display uppercase leading-[0.94] tracking-[-0.015em] text-[clamp(1.9rem,4.5vw,3rem)]">
                         {c.name}
                       </h3>
                       {c.role && (
-                        <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-orange">
+                        <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.15em] text-orange">
                           {c.role}
                         </p>
                       )}
                       {c.body && (
-                        <p className="mt-4 text-[15px] leading-[1.75] text-coal/80">
+                        <p className="mt-5 text-base leading-[1.75] text-coal/80 md:text-lg">
                           {c.body}
                         </p>
                       )}

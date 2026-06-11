@@ -136,7 +136,7 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
             Bientôt des réalisations ici.
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-px bg-coal/10 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-px bg-coal/10 sm:grid-cols-3">
             {refs.map((p) => (
               <Link
                 key={p.slug}
