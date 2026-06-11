@@ -2,10 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 /* Hotspots ancrés sur la photo (en % de l'image). side = côté d'ouverture
    de l'étiquette pour ne pas sortir du cadre. */
@@ -37,27 +33,50 @@ export default function AtelierPhoto() {
   const frame = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<string | null>(null);
 
+  // Scrub au scroll sans lib : progression 0→1 pendant que la section traverse
+  // l'écran (équivalent gsap start "top bottom" / end "bottom top"). Position
+  // mesurée au montage + resize seulement — aucune lecture layout au scroll.
   useEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      const st = {
-        trigger: root.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-      };
-      gsap.fromTo(
-        photo.current,
-        { yPercent: -7, scale: 1.16 },
-        { yPercent: 7, scale: 1.16, ease: "none", scrollTrigger: st }
-      );
-      gsap.fromTo(
-        frame.current,
-        { x: 16, y: 16 },
-        { x: 6, y: 6, ease: "none", scrollTrigger: st }
-      );
-    });
-    return () => mm.revert();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rootEl = root.current;
+    const photoEl = photo.current;
+    const frameEl = frame.current;
+    if (!rootEl || !photoEl || !frameEl) return;
+    let top = 0;
+    let height = 0;
+    const measure = () => {
+      const r = rootEl.getBoundingClientRect();
+      top = window.scrollY + r.top;
+      height = r.height;
+    };
+    let ticking = false;
+    const update = () => {
+      const vh = window.innerHeight;
+      const p = Math.min(1, Math.max(0, (window.scrollY + vh - top) / (vh + height)));
+      // photo : yPercent -7 → 7 (scale fixe) ; cadre : 16px → 6px
+      photoEl.style.transform = `translateY(${(-7 + 14 * p).toFixed(2)}%) scale(1.16)`;
+      const o = 16 - 10 * p;
+      frameEl.style.transform = `translate(${o.toFixed(1)}px, ${o.toFixed(1)}px)`;
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    };
+    const onResize = () => {
+      measure();
+      onScroll();
+    };
+    measure();
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   return (

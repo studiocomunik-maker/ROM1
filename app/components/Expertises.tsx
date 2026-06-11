@@ -141,19 +141,29 @@ export default function Expertises() {
     return () => io.disconnect();
   }, []);
 
-  // Parallax HORIZONTAL léger & un peu aléatoire sur chaque ligne
+  // Parallax HORIZONTAL léger & un peu aléatoire sur chaque ligne.
+  // Les positions sont mesurées au montage + resize (jamais pendant le scroll :
+  // lire le layout entre deux écritures de transform force un reflow à chaque frame).
   const rowsRef = useRef<(HTMLLIElement | null)[]>([]);
   useEffect(() => {
     const rows = rowsRef.current.filter(Boolean) as HTMLLIElement[];
     // amplitude (30–70px) et sens aléatoires par ligne
     const factors = rows.map(() => (Math.random() * 2 - 1) * (30 + Math.random() * 40));
+    // centre de chaque ligne en coordonnées document (translateX n'y change rien)
+    let centers: number[] = [];
+    const measure = () => {
+      const sy = window.scrollY;
+      centers = rows.map((el) => {
+        const r = el.getBoundingClientRect();
+        return sy + r.top + r.height / 2;
+      });
+    };
     let ticking = false;
     const update = () => {
       const vh = window.innerHeight;
+      const sy = window.scrollY;
       rows.forEach((el, i) => {
-        const r = el.getBoundingClientRect();
-        const center = r.top + r.height / 2;
-        let prog = (center - vh / 2) / vh;
+        let prog = (centers[i] - sy - vh / 2) / vh;
         prog = Math.max(-1, Math.min(1, prog));
         el.style.transform = `translateX(${(prog * factors[i]).toFixed(1)}px)`;
       });
@@ -165,12 +175,17 @@ export default function Expertises() {
         ticking = true;
       }
     };
+    const onResize = () => {
+      measure();
+      onScroll();
+    };
+    measure();
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
