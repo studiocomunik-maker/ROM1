@@ -31,7 +31,16 @@ function Eye({ className = "" }: { className?: string }) {
   );
 }
 
-export default function Portfolio({ items }: { items: PortfolioItem[] }) {
+/* `as` : niveau du titre — h2 sur l'accueil (section), h1 sur /realisations
+   (la section EST la page). Les titres de tuiles suivent (h3 → h2). */
+export default function Portfolio({
+  items,
+  as: Heading = "h2",
+}: {
+  items: PortfolioItem[];
+  as?: "h1" | "h2";
+}) {
+  const TileHeading = Heading === "h1" ? "h2" : "h3";
   const [u, setU] = useState("all");
   const [e, setE] = useState("all");
 
@@ -87,12 +96,12 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
           <p className="mb-3 font-display text-xs uppercase tracking-[0.3em] text-orange">
             ★ Portfolio
           </p>
-          <h2 className="font-display uppercase leading-[0.9] tracking-tight text-[clamp(2.4rem,8vw,6rem)]">
+          <Heading className="font-display uppercase leading-[0.9] tracking-tight text-[clamp(2.4rem,8vw,6rem)]">
             Réalisations
             <span className="relative z-10 -ml-[0.38em] -mt-[20px] inline-block h-[0.46em] w-[0.78em] -translate-y-[0.42em] rotate-[5deg] align-baseline">
               <Eye className="eye-blink-rand h-full w-full" />
             </span>
-          </h2>
+          </Heading>
         </Reveal>
         <div className="flex flex-wrap justify-center gap-3 max-sm:w-full max-sm:max-w-[360px] max-sm:flex-col">
           <Select value={u} onChange={setU} allLabel="Tous les univers" options={UNIVERS} />
@@ -133,9 +142,9 @@ export default function Portfolio({ items }: { items: PortfolioItem[] }) {
               <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
                 {UNIVERS[p.univers] ?? p.univers}
               </span>
-              <h3 className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
+              <TileHeading className="font-display text-xl uppercase leading-none tracking-tight text-paper md:text-2xl">
                 {p.titre}
-              </h3>
+              </TileHeading>
               <div className="mt-1 flex flex-wrap justify-center gap-1.5">
                 {p.exps.map((x) => (
                   <span
