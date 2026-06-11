@@ -86,6 +86,30 @@ const PAGES: Record<string, UniversPage> = {
       },
     ],
   },
+  sceno: {
+    h1: "Scénographie",
+    metaTitle: "Scénographie & visuels de concert — Romain Renoux",
+    metaDescription:
+      "Scénographie visuelle pour le spectacle : habillage d'écrans géants, contenus de scène, mapping et teasers. Du concert au festival, une image pensée pour le live.",
+  },
+  art: {
+    h1: "Culture & Art",
+    metaTitle: "Graphiste culture & art — Romain Renoux",
+    metaDescription:
+      "Graphiste pour artistes, galeries et expositions : identité, édition, signalétique. Une direction artistique au service de l'œuvre, en Beaujolais et au-delà.",
+  },
+  corporate: {
+    h1: "Corporate",
+    metaTitle: "Graphiste corporate & industrie — Romain Renoux",
+    metaDescription:
+      "Identité, image et web pour l'industrie et le B2B : rendre lisible et désirable un savoir-faire technique. 20 ans de direction artistique entre Lyon et Mâcon.",
+  },
+  hotel: {
+    h1: "Hôtellerie & Tables",
+    metaTitle: "Graphiste hôtellerie & restaurants — Romain Renoux",
+    metaDescription:
+      "Identité visuelle pour hôtels, restaurants et lieux de réception : carte, signalétique, photo et site web. L'expérience commence par l'image.",
+  },
 };
 
 export async function generateMetadata({
