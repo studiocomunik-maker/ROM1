@@ -136,3 +136,65 @@ create policy "hero sections : admin met à jour"
   on public.section_heroes for update to authenticated using (true) with check (true);
 create policy "hero sections : admin supprime"
   on public.section_heroes for delete to authenticated using (true);
+
+-- NB : les hero des PAGES (savoir-faire, à-propos) réutilisent cette table,
+-- avec id = "page:<slug>" (ex. "page:savoir-faire"). Aucune colonne en plus.
+
+-- 6) Clients (grille de logos « Ils nous font confiance », page à-propos) ----
+create table if not exists public.clients (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  logo_url   text,                          -- logo (bucket realisations, sous clients/)
+  url        text,                          -- lien vers le site client (optionnel)
+  position   int  not null default 0,
+  published  boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_clients_updated on public.clients;
+create trigger trg_clients_updated
+  before update on public.clients
+  for each row execute function public.touch_updated_at();
+
+alter table public.clients enable row level security;
+
+create policy "clients publiés lisibles par tous"
+  on public.clients for select to anon, authenticated using (published = true);
+create policy "admin lit tous les clients"
+  on public.clients for select to authenticated using (true);
+create policy "clients : admin insère"
+  on public.clients for insert to authenticated with check (true);
+create policy "clients : admin met à jour"
+  on public.clients for update to authenticated using (true) with check (true);
+create policy "clients : admin supprime"
+  on public.clients for delete to authenticated using (true);
+
+-- 7) Collaborateurs (section « Les collaborateurs », page à-propos) -----------
+create table if not exists public.collaborators (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  role       text,
+  body       text,                          -- description
+  photo_url  text,                          -- portrait (bucket realisations, sous collaborateurs/)
+  position   int  not null default 0,
+  published  boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_collaborators_updated on public.collaborators;
+create trigger trg_collaborators_updated
+  before update on public.collaborators
+  for each row execute function public.touch_updated_at();
+
+alter table public.collaborators enable row level security;
+
+create policy "collaborateurs publiés lisibles par tous"
+  on public.collaborators for select to anon, authenticated using (published = true);
+create policy "admin lit tous les collaborateurs"
+  on public.collaborators for select to authenticated using (true);
+create policy "collaborateurs : admin insère"
+  on public.collaborators for insert to authenticated with check (true);
+create policy "collaborateurs : admin met à jour"
+  on public.collaborators for update to authenticated using (true) with check (true);
+create policy "collaborateurs : admin supprime"
+  on public.collaborators for delete to authenticated using (true);

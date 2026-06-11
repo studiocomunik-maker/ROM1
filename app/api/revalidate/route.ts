@@ -17,6 +17,9 @@ export async function POST(request: Request) {
 
   revalidatePath("/");
   revalidatePath("/sitemap.xml");
+  revalidatePath("/savoir-faire");
+  revalidatePath("/realisations");
+  revalidatePath("/a-propos");
   revalidatePath("/metiers/[slug]", "page");
   revalidatePath("/univers/[slug]", "page");
   revalidatePath("/realisations/[slug]", "page");

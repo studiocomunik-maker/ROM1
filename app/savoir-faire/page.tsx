@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import PageNav from "../components/PageNav";
 import Contact from "../components/Contact";
 import Picto from "../components/Picto";
+import SectionHeroBg from "../components/SectionHeroBg";
 import { SITE_URL, metiers, univers } from "../data";
+import { getSectionHero } from "../../utils/sectionHeroes";
+
+export const revalidate = 60;
 
 const TITLE = "Savoir-faire — identité, print, photo, web & motion · Romain Renoux";
 const DESCRIPTION =
@@ -35,7 +39,13 @@ const breadcrumbLd = {
   ],
 };
 
-export default function SavoirFairePage() {
+export default async function SavoirFairePage() {
+  const hero = await getSectionHero("page:savoir-faire");
+  const heroTitle = hero?.title?.trim() || "Cinq métiers, un seul œil";
+  const heroIntro =
+    hero?.intro?.trim() ||
+    "De l'identité au motion, je pratique des métiers qui s'additionnent — et des univers où je les exerce depuis 20 ans : le vin d'abord, le spectacle, l'industrie, l'art et les belles tables.";
+
   return (
     <main className="bg-coal text-paper">
       <script
@@ -44,21 +54,20 @@ export default function SavoirFairePage() {
       />
       <PageNav />
 
-      {/* HERO */}
+      {/* HERO — fond éditable depuis le back-office (sinon grain coal) */}
       <section className="grain relative flex min-h-[80vh] flex-col justify-center overflow-hidden px-6 py-32 md:px-12">
-        <p className="mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
+        <SectionHeroBg hero={hero} />
+        <p className="relative z-10 mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
           ★ Savoir-faire
         </p>
-        <h1 className="max-w-[14ch] font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.6rem,9vw,7rem)]">
-          Cinq métiers, un seul œil<span className="text-orange">.</span>
+        <h1 className="relative z-10 max-w-[14ch] font-display uppercase leading-[0.88] tracking-tight text-[clamp(2.6rem,9vw,7rem)]">
+          {heroTitle}
+          <span className="text-orange">.</span>
         </h1>
-        <p className="mt-8 max-w-[60ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
-          De l&apos;identité au motion, je pratique des métiers qui
-          s&apos;additionnent — et des univers où je les exerce depuis 20 ans :
-          le vin d&apos;abord, le spectacle, l&apos;industrie, l&apos;art et les
-          belles tables.
+        <p className="relative z-10 mt-8 max-w-[60ch] text-lg leading-relaxed text-paper/75 md:text-2xl">
+          {heroIntro}
         </p>
-        <p className="mt-16 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
+        <p className="relative z-10 mt-16 font-mono text-[10px] uppercase tracking-[0.2em] text-paper/40">
           {metiers.length} métiers · {univers.length} univers ↓
         </p>
       </section>

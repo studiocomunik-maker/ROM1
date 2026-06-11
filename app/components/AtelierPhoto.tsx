@@ -27,7 +27,9 @@ const SPOTS = [
 /* Photo du duo : parallax au scroll (l'image glisse dans son cadre pendant
    que le cadre orange dérive en sens inverse — la « riso » se décale) +
    hotspots interactifs qui remplacent la légende. */
-export default function AtelierPhoto() {
+/* hotspots : affiche (ou non) les points interactifs « qui fait quoi ».
+   Désactivés sur la page à-propos (section Romain = focus solo). */
+export default function AtelierPhoto({ hotspots = true }: { hotspots?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLDivElement>(null);
@@ -103,6 +105,7 @@ export default function AtelierPhoto() {
         {/* Hotspots hors du calque parallax : posés dedans, dots et étiquettes
            subiraient le scale(1.16). La photo dérive de quelques px sous les
            dots au scroll — invisible à l'usage. */}
+        {hotspots && (
         <div className="absolute inset-0">
           {SPOTS.map((s) => {
             const open = active === s.id;
@@ -142,6 +145,7 @@ export default function AtelierPhoto() {
             );
           })}
         </div>
+        )}
       </div>
     </div>
   );

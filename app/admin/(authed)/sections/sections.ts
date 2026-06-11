@@ -3,7 +3,7 @@ import { metiers, univers } from "../../../data";
 export type SectionMeta = {
   routeId: string; // segment d'URL admin : "metier-identite" | "univers-vin"
   dbId: string; // clé en base : "metier:identite" | "univers:vin"
-  group: "Métiers" | "Univers";
+  group: "Pages" | "Métiers" | "Univers";
   label: string;
   sub: string;
   publicPath: string; // page publique correspondante
@@ -12,6 +12,29 @@ export type SectionMeta = {
 };
 
 export const SECTIONS: SectionMeta[] = [
+  // Hero des PAGES principales (réutilisent la table section_heroes, id "page:<slug>")
+  {
+    routeId: "page-savoir-faire",
+    dbId: "page:savoir-faire",
+    group: "Pages",
+    label: "Savoir-faire",
+    sub: "Page savoir-faire",
+    publicPath: "/savoir-faire",
+    defaultTitle: "Cinq métiers, un seul œil",
+    defaultIntro:
+      "De l'identité au motion, je pratique des métiers qui s'additionnent — et des univers où je les exerce depuis 20 ans : le vin d'abord, le spectacle, l'industrie, l'art et les belles tables.",
+  },
+  {
+    routeId: "page-a-propos",
+    dbId: "page:a-propos",
+    group: "Pages",
+    label: "À propos",
+    sub: "Page à propos",
+    publicPath: "/a-propos",
+    defaultTitle: "L'image est un métier",
+    defaultIntro:
+      "Romain Renoux, graphiste et directeur artistique en Beaujolais. 20 ans de projets pour le vin, le spectacle et l'industrie — et toujours la même obsession : raconter juste.",
+  },
   ...metiers.map((m) => ({
     routeId: `metier-${m.key}`,
     dbId: `metier:${m.key}`,

@@ -141,6 +141,21 @@ body {
   transform-origin: 50% 50%;
 }
 
+/* Flottement doux pour glyphes décoratifs (éclair…). Sur un WRAPPER, pas
+   sur un glyphe déjà animé en rotation/clignement (conflit de transform). */
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+.float-slow {
+  animation: floaty 4s ease-in-out infinite;
+}
+
 /* Menu overlay : rideau qui descend depuis le haut (même easing que la
    transition de page, sens inverse de la révélation). */
 @keyframes menuIn {
