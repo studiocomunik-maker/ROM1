@@ -98,7 +98,7 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <PageNav back="/" backLabel="Accueil" />
+      <PageNav />
 
       {/* HERO métier — explique l'expertise */}
       <section className="grain relative flex min-h-screen flex-col justify-center overflow-hidden px-6 py-32 md:px-12">

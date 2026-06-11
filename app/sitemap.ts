@@ -8,6 +8,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const reals = await getRealisations();
   return [
     { url: SITE_URL, changeFrequency: "weekly", priority: 1 },
+    {
+      url: `${SITE_URL}/savoir-faire`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/realisations`,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    { url: `${SITE_URL}/a-propos`, changeFrequency: "monthly", priority: 0.6 },
     ...univers.map((u) => ({
       url: `${SITE_URL}/univers/${u.key}`,
       changeFrequency: "monthly" as const,

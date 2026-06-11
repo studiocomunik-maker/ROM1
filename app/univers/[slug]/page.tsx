@@ -186,7 +186,7 @@ export default async function UniversPage({ params }: PageProps<"/univers/[slug]
         />
       )}
 
-      <PageNav back="/" backLabel="Accueil" />
+      <PageNav />
 
       {/* HERO univers */}
       <section className="grain relative flex min-h-screen flex-col justify-center overflow-hidden px-6 py-32 md:px-12">

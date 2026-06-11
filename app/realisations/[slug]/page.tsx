@@ -170,7 +170,7 @@ export default async function RealisationPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PageNav back="/" backLabel="Accueil" />
+      <PageNav />
 
       <div className="flex flex-col lg:grid lg:grid-cols-[1.8fr_1fr]">
         {/* COLONNE GAUCHE — visuels qui scrollent (0px entre eux), fond noir pur */}

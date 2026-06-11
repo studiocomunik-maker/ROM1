@@ -1,4 +1,5 @@
 import Accueil from "./components/Accueil";
+import MenuOverlay from "./components/MenuOverlay";
 import Expertises from "./components/Expertises";
 import Portfolio from "./components/Portfolio";
 import Atelier from "./components/Atelier";
@@ -30,8 +31,9 @@ export default async function Home() {
         width={179}
         height={128}
         alt="Romain Renoux"
-        className="fixed left-6 top-7 z-50 h-11 w-auto mix-blend-difference md:left-12 md:h-14"
+        className="fixed left-6 top-7 z-[95] h-11 w-auto mix-blend-difference md:left-12 md:h-14"
       />
+      <MenuOverlay />
       <Accueil
         heroVideoUrl={settings.heroVideoUrl}
         heroVideoPoster={settings.heroVideoPoster}

@@ -117,6 +117,40 @@ body {
   animation: heroStrike 0.55s cubic-bezier(0.7, 0, 0.2, 1) both;
 }
 
+/* Traits du burger : ondulation gauche-droite douce continue (registre
+   œil qui cligne / étoile qui tourne). Chaque trait porte sa durée/délai
+   inline → désynchro. Le morph burger↔croix vit sur le <g> wrapper
+   (.burger-morph, transition) pour ne pas entrer en conflit avec
+   l'animation du <path>. */
+@keyframes burgerwiggle {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-2px);
+  }
+}
+.burger-line {
+  animation: burgerwiggle 2.6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+.burger-morph {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+/* Menu overlay : rideau qui descend depuis le haut (même easing que la
+   transition de page, sens inverse de la révélation). */
+@keyframes menuIn {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+.menu-in {
+  animation: menuIn 0.5s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
 /* Barre de chargement de l'overlay de transition */
 @keyframes loadbar {
   0% { transform: translateX(-100%); }

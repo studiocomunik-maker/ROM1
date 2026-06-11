@@ -26,7 +26,7 @@ const p = "max-w-[68ch] text-sm leading-relaxed text-paper/75 md:text-base";
 export default function MentionsLegales() {
   return (
     <main className="min-h-screen bg-coal text-paper">
-      <PageNav back="/" backLabel="Accueil" />
+      <PageNav />
 
       <div className="px-6 pb-24 pt-36 md:px-12">
         <h1 className="mb-14 font-display uppercase leading-[0.9] tracking-tight text-[clamp(2rem,6vw,4rem)]">

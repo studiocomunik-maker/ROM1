@@ -84,7 +84,9 @@ export default function Accueil({
       )}
 
       <header className="relative z-10 flex items-start justify-end px-6 pt-7 md:px-12">
-        <p className="text-right font-display text-[10px] uppercase leading-[1.1] tracking-[0.04em] text-paper/60 sm:text-xs md:text-sm">
+        {/* mt mobile : passe sous la ligne logo/Menu ; md : même ligne, mr
+           laisse la place au bouton Menu fixe (MenuOverlay) à droite */}
+        <p className="mt-14 text-right font-display text-[10px] uppercase leading-[1.1] tracking-[0.04em] text-paper/60 sm:text-xs md:mr-24 md:mt-0 md:text-sm">
           Graphiste · direction artistique
           <br />
           Vin, image &amp; web · Beaujolais
