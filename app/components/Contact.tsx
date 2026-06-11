@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Reveal from "./Reveal";
 
 /* Étoile-éclat du hero, recolorée pour ressortir sur le fond orange (coal + cœur orange). */
@@ -62,6 +63,13 @@ export default function Contact() {
         © Romain Renoux — rom1.fr
         <br />
         Côté web → pixelstore.fr
+        <br />
+        <Link
+          href="/mentions-legales"
+          className="transition-colors hover:text-coal"
+        >
+          Mentions légales
+        </Link>
       </p>
     </section>
   );
