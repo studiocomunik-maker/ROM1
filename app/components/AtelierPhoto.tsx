@@ -27,9 +27,22 @@ const SPOTS = [
 /* Photo du duo : parallax au scroll (l'image glisse dans son cadre pendant
    que le cadre orange dérive en sens inverse — la « riso » se décale) +
    hotspots interactifs qui remplacent la légende. */
-/* hotspots : affiche (ou non) les points interactifs « qui fait quoi ».
-   Désactivés sur la page à-propos (section Romain = focus solo). */
-export default function AtelierPhoto({ hotspots = true }: { hotspots?: boolean }) {
+/* hotspots : affiche (ou non) les points interactifs « qui fait quoi »
+   (désactivés sur la page à-propos). src/alt/width/height : image affichée —
+   défaut = duo de l'atelier (home), surchargée par le portrait solo ailleurs. */
+export default function AtelierPhoto({
+  hotspots = true,
+  src = "/medias/atelier-duo.jpg",
+  alt = "Romain Renoux et Céline Kbaier, graphistes en Beaujolais",
+  width = 1500,
+  height = 2000,
+}: {
+  hotspots?: boolean;
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+}) {
   const root = useRef<HTMLDivElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLDivElement>(null);
@@ -93,10 +106,10 @@ export default function AtelierPhoto({ hotspots = true }: { hotspots?: boolean }
       <div className="relative overflow-hidden">
         <div ref={photo} className="will-change-transform">
           <Image
-            src="/medias/atelier-duo.jpg"
-            alt="Romain Renoux et Céline Kbaier, graphistes en Beaujolais"
-            width={1500}
-            height={2000}
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
             sizes="(min-width: 768px) 40vw, 90vw"
             className="block w-full grayscale"
           />

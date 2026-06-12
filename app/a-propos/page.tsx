@@ -388,7 +388,13 @@ export default async function AProposPage() {
 
           <div className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-[40%_1fr] md:gap-16 xl:grid-cols-[34%_1fr]">
             <Reveal delay={120}>
-              <AtelierPhoto hotspots={false} />
+              <AtelierPhoto
+                hotspots={false}
+                src="/medias/romain-portrait.jpg"
+                alt="Romain Renoux dans son atelier, entouré de photos, d'appareils et de pellicules"
+                width={1062}
+                height={1600}
+              />
             </Reveal>
 
             <Reveal delay={200}>
