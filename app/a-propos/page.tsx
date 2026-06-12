@@ -81,56 +81,120 @@ const JALONS: { k: string; t: string; d: string; g: JalonGlyphKey }[] = [
   },
   {
     k: "Image & son",
-    t: "La musique, la photo, le film",
-    d: "En parallèle, je développe mon appétence pour la musique, la vidéo, la photo. J'investis dans un drone qui m'emmène vers le film, j'apprends Ableton et Logic — et je continue d'avancer dans ce monde toujours en évolution.",
+    t: "Photo, vidéo et musique",
+    d: "La photo, puis la vidéo, ont pris une place centrale dans mon métier : reportage, film de domaine, images par drone — fabriquer du mouvement est devenu un réflexe. La musique, elle, reste à côté : une passion qui nourrit l'œil sans jamais en être le cœur.",
     g: "camera",
   },
 ];
 
-/* Picto thématique d'un jalon — trait orange (registre des pictos métiers),
-   flottement doux continu pour garder un peu de vie. */
-const JALON_PATHS: Record<JalonGlyphKey, React.ReactNode> = {
+/* Picto thématique d'un jalon — STYLE RISO PLEIN comme l'œil et l'étoile
+   du hero : silhouettes pleines orange (#ff3d1f) + accents crème (#f5f4f2)
+   et noir (#0c0c0e). Flottement doux continu pour garder un peu de vie. */
+const O = "#ff3d1f";
+const C = "#f5f4f2";
+const K = "#0c0c0e";
+
+// Lamelles de focus au centre de l'œil : la pupille devient un mini-diaphragme.
+// Géométrie calculée autour du centre de l'iris (60,40 dans le viewBox 120×80).
+const EYE_CX = 60;
+const EYE_CY = 40;
+const AP_RH = 7; // rayon de l'ouverture (pupille)
+const AP_RIM = 18; // longueur des entailles (restent dans l'iris)
+const AP_TWIST = 30; // décalage en hélice (deg) → aspect lamelles
+const apVerts = Array.from({ length: 6 }, (_, i) => {
+  const a = (i * 60 * Math.PI) / 180;
+  return [EYE_CX + AP_RH * Math.cos(a), EYE_CY + AP_RH * Math.sin(a)] as const;
+});
+const apSeams = apVerts.map((_, i) => {
+  const a = ((i * 60 + AP_TWIST) * Math.PI) / 180;
+  return [EYE_CX + AP_RIM * Math.cos(a), EYE_CY + AP_RIM * Math.sin(a)] as const;
+});
+const apHex =
+  apVerts.map((v, i) => `${i ? "L" : "M"}${v[0].toFixed(1)} ${v[1].toFixed(1)}`).join(" ") + "Z";
+
+// Pictos SVG « pleins » (viewBox 64). code + camera sont rendus à part.
+const JALON_GLYPHS: Record<"crayon" | "ecran", React.ReactNode> = {
   // crayon — le dessin, l'héritage artistique
   crayon: (
     <>
-      <path d="M4 20l1.2-4.2L15.6 5.4a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8.2 18.8 4 20z" />
-      <path d="M14 7l3 3" />
+      <polygon points="44,8 56,20 26,50 14,38" fill={O} />
+      <polygon points="14,38 26,50 9,55" fill={C} />
+      <polygon points="14,46 18,50 9,55" fill={K} />
     </>
   ),
   // écran — l'informatique, du réseau au pixel
   ecran: (
     <>
-      <rect x="3" y="4" width="18" height="12" rx="1" />
-      <path d="M9 20h6M12 16v4" />
-      <path d="M8 9l-2 2 2 2M16 9l2 2-2 2" />
-    </>
-  ),
-  // </> — le web
-  code: <path d="M9 8l-4 4 4 4M15 8l4 4-4 4" />,
-  // caméra — la photo, le film
-  camera: (
-    <>
-      <rect x="3" y="7" width="12" height="10" rx="1.5" />
-      <path d="M15 10.5l6-3v9l-6-3z" />
-      <circle cx="8" cy="12" r="2" />
+      <rect x="7" y="12" width="50" height="34" rx="4" fill={O} />
+      <rect x="15" y="19" width="34" height="20" rx="1.5" fill={C} />
+      <rect x="28" y="46" width="8" height="7" fill={O} />
+      <rect x="19" y="52" width="26" height="5" rx="2.5" fill={O} />
     </>
   ),
 };
 
-function JalonGlyph({ g }: { g: JalonGlyphKey }) {
+// Animation propre à chaque picto, en lien avec son thème.
+const JALON_ANIM: Record<JalonGlyphKey, string> = {
+  crayon: "glyph-sketch", // croque comme un trait de crayon
+  ecran: "glyph-pulse", // respire / s'allume
+  code: "", // rendu à part (CodeGlyph, effet typewriter)
+  camera: "", // corps fixe : c'est l'iris de focus qui s'anime (cf .iris-focus)
+};
+
+/* code — balise <rom1/> où « rom1 » se tape et s'efface (typewriter). Rendu
+   en HTML (texte), pas en SVG comme les autres pictos. */
+function CodeGlyph() {
   return (
-    <span className="float-slow inline-block text-orange">
-      <svg
-        viewBox="0 0 24 24"
-        className="h-9 w-9 md:h-10 md:w-10"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden
-      >
-        {JALON_PATHS[g]}
+    <span
+      aria-hidden
+      className="inline-flex items-baseline font-mono text-[17px] font-bold leading-none text-orange md:text-xl"
+    >
+      <span className="text-[1.15em]">&lt;</span>
+      <span className="code-type mx-[0.1em] text-paper">rom1</span>
+      <span className="text-[1.15em]">/&gt;</span>
+    </span>
+  );
+}
+
+/* camera — l'œil du site (sclère crème + contour noir) dont la pupille est un
+   mini-diaphragme à lamelles. Anime le clignement de l'œil (.eye-blink). */
+function EyeApertureGlyph() {
+  return (
+    <span className="inline-block h-8 w-12 md:h-9 md:w-14">
+      <svg viewBox="0 0 120 80" className="eye-blink h-full w-full" aria-hidden>
+        <path
+          d="M4 40 C30 6 90 6 116 40 C90 74 30 74 4 40 Z"
+          fill={C}
+          stroke={K}
+          strokeWidth="6"
+          strokeLinejoin="round"
+        />
+        <circle cx={EYE_CX} cy={EYE_CY} r="20" fill={O} />
+        {apSeams.map((s, i) => (
+          <line
+            key={i}
+            x1={apVerts[i][0]}
+            y1={apVerts[i][1]}
+            x2={s[0]}
+            y2={s[1]}
+            stroke={K}
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        ))}
+        <path d={apHex} fill={K} />
+      </svg>
+    </span>
+  );
+}
+
+function JalonGlyph({ g }: { g: JalonGlyphKey }) {
+  if (g === "code") return <CodeGlyph />;
+  if (g === "camera") return <EyeApertureGlyph />;
+  return (
+    <span className={`inline-block ${JALON_ANIM[g]}`}>
+      <svg viewBox="0 0 64 64" className="h-10 w-10 md:h-11 md:w-11" aria-hidden>
+        {JALON_GLYPHS[g as "crayon" | "ecran"]}
       </svg>
     </span>
   );

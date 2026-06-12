@@ -156,6 +156,66 @@ body {
   animation: floaty 4s ease-in-out infinite;
 }
 
+/* Animations distinctes des pictos de la frise parcours (a-propos), chacune
+   en lien avec son thème. Posées sur le <span> wrapper (HTML → transform-origin
+   classique). */
+@keyframes glyphSketch {
+  0%,
+  100% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+}
+.glyph-sketch {
+  animation: glyphSketch 2.3s ease-in-out infinite;
+  transform-origin: 16% 84%; /* pivot sur la pointe du crayon */
+}
+@keyframes glyphPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+.glyph-pulse {
+  animation: glyphPulse 2.8s ease-in-out infinite;
+}
+/* code <rom1/> — effet typewriter : « rom1 » se tape puis s'efface en boucle,
+   curseur clignotant. width en ch + steps = révélation caractère par caractère
+   (police mono pour que 4ch = 4 lettres). */
+@keyframes codeType {
+  0% {
+    width: 0;
+  }
+  40% {
+    width: 4ch;
+  }
+  62% {
+    width: 4ch;
+  }
+  100% {
+    width: 0;
+  }
+}
+@keyframes codeCaret {
+  50% {
+    border-color: transparent;
+  }
+}
+.code-type {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  width: 0;
+  border-right: 0.1em solid currentColor;
+  animation: codeType 4s steps(4, end) infinite, codeCaret 0.7s step-end infinite;
+}
+
 /* Menu overlay : rideau qui descend depuis le haut (même easing que la
    transition de page, sens inverse de la révélation). */
 @keyframes menuIn {
