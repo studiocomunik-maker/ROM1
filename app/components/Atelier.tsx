@@ -67,9 +67,9 @@ export default function Atelier() {
           <Reveal delay={200}>
             <div className="max-w-[560px] space-y-4 text-[15px] leading-[1.75] text-coal/80">
               <p>
-                Depuis 2005, j’accompagne des domaines viticoles, des vignerons,
-                des artistes et des entreprises dans la construction de leur
-                image : identité graphique, étiquettes de vin, packaging, photo,
+                Depuis 2005, graphiste indépendant, j’accompagne des domaines
+                viticoles, des vignerons, des artistes et des entreprises dans
+                la construction de leur image : identité graphique, étiquettes de vin, packaging, photo,
                 vidéo et sites web. Je travaille avec l’appui de Céline Kbaier,
                 graphiste elle aussi, qui intervient sur le print, la création
                 d’étiquettes, les contenus et les réseaux sociaux — deux regards

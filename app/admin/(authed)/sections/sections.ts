@@ -22,7 +22,7 @@ export const SECTIONS: SectionMeta[] = [
     publicPath: "/savoir-faire",
     defaultTitle: "Cinq métiers, un seul œil",
     defaultIntro:
-      "De l'identité au motion, je pratique des métiers qui s'additionnent — et des univers où je les exerce depuis 20 ans : le vin d'abord, le spectacle, l'industrie, l'art et les belles tables.",
+      "Identité, print, photo, web, motion : cinq métiers que je fais dialoguer d'un même œil. Une direction à 360° — un global design où tout, du logo à l'écran, raconte la même histoire. Pour le vin d'abord, et partout où une marque cherche son image.",
   },
   {
     routeId: "page-a-propos",

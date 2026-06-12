@@ -23,7 +23,7 @@ const anton = Anton({
 
 const TITLE = "Graphiste en Beaujolais — vin, image & web · Romain Renoux";
 const DESCRIPTION =
-  "Romain Renoux, graphiste en Beaujolais : identité visuelle, étiquettes de vin, packaging, photo et web pour domaines et vignerons. 20 ans de métier.";
+  "Romain Renoux, graphiste indépendant en Beaujolais : identité visuelle, étiquettes de vin, packaging, photo et web pour domaines et vignerons. 20 ans de métier.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -32,11 +32,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   keywords: [
     "graphiste Beaujolais",
+    "graphiste indépendant",
     "graphiste vin",
     "graphiste vigneron",
     "étiquette de vin",
     "identité domaine viticole",
     "direction artistique Beaujolais",
+    "directeur artistique indépendant",
     "graphiste Lyon",
   ],
   openGraph: {
@@ -104,7 +106,7 @@ const siteJsonLd = {
       "@id": `${SITE_URL}/#person`,
       name: "Romain Renoux",
       alternateName: "rom1",
-      jobTitle: "Graphiste — Directeur artistique",
+      jobTitle: "Graphiste indépendant — Directeur artistique",
       url: SITE_URL,
       email: "rom1@rom1.fr",
       worksFor: { "@id": `${SITE_URL}/#org` },
