@@ -402,18 +402,31 @@ export default async function AProposPage() {
                 <p>
                   <span className="text-paper">Geek et artiste.</span>{" "}
                   Mon histoire tient en deux fils qui n&apos;ont jamais cessé de se
-                  tresser : le dessin, reçu en héritage, et la technologie,
-                  attrapée par passion. Vingt ans plus tard, c&apos;est toujours
-                  ce dialogue-là qui fabrique mes images.
+                  tresser : le dessin, reçu en héritage par ma famille, et la
+                  technologie, attrapée par passion. Vingt ans plus tard, c&apos;est
+                  toujours ce dialogue-là qui fabrique mes images.
                 </p>
                 <p>
                   Depuis 2005, j&apos;accompagne des domaines viticoles, des
                   vignerons, des artistes et des entreprises dans la
                   construction de leur image : identité graphique, étiquettes
-                  de vin, packaging, photo, vidéo et sites web. Mon terrain de
-                  jeu, c&apos;est d&apos;abord le vin — mais le métier m&apos;a
-                  aussi mené sur les écrans géants de Bercy, dans les ateliers
-                  de l&apos;industrie et les galeries d&apos;art.
+                  de vin, packaging, photo, vidéo et sites web. Touche-à-tout
+                  par nature, je pense chaque projet à{" "}
+                  <span className="text-paper">360°</span>{" "}— un{" "}
+                  <span className="text-paper">global design</span>{" "}où le logo,
+                  l&apos;étiquette, l&apos;image et l&apos;écran racontent la même
+                  histoire, d&apos;une seule voix.
+                </p>
+                <p>
+                  Mais ce qui m&apos;anime vraiment, c&apos;est de{" "}
+                  <span className="text-paper">comprendre les métiers</span>{" "}de
+                  ceux que j&apos;accompagne. Vigneron, industriel, artiste :
+                  j&apos;écoute, je décortique, puis je factorise — je traduis un
+                  savoir-faire complexe en une image claire et accessible, quel
+                  que soit le sujet. Mon terrain de jeu, c&apos;est d&apos;abord
+                  le vin ; cette curiosité m&apos;a aussi mené sur les écrans
+                  géants de Bercy, dans les ateliers de l&apos;industrie et les
+                  galeries d&apos;art.
                 </p>
               </div>
 
