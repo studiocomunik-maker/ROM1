@@ -216,6 +216,29 @@ body {
   animation: codeType 4s steps(4, end) infinite, codeCaret 0.7s step-end infinite;
 }
 
+/* Pictos savoir-faire : animation UNIQUEMENT au survol de la carte (.group),
+   sinon toutes les cartes bougeraient en même temps (« le bordel »). Réutilise
+   les keyframes existantes (spinslow, blink, codeType/codeCaret). */
+.pic-code {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 4ch;
+  vertical-align: bottom;
+}
+.group:hover .pic-spin {
+  animation: spinslow 5s linear infinite;
+  transform-origin: 50% 50%;
+}
+.group:hover .pic-blink {
+  animation: blink 1.6s infinite;
+  transform-origin: 50% 50%;
+}
+.group:hover .pic-code {
+  border-right: 0.1em solid currentColor;
+  animation: codeType 4s steps(4, end) infinite, codeCaret 0.7s step-end infinite;
+}
+
 /* Menu overlay : rideau qui descend depuis le haut (même easing que la
    transition de page, sens inverse de la révélation). */
 @keyframes menuIn {

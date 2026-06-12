@@ -2,10 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import PageNav from "../components/PageNav";
 import Contact from "../components/Contact";
-import Picto from "../components/Picto";
+import PictoSolid from "../components/PictoSolid";
 import SectionHeroBg from "../components/SectionHeroBg";
 import { SITE_URL, metiers, univers } from "../data";
-import { getSectionHero } from "../../utils/sectionHeroes";
+import { getSectionHero, getSectionHeroImages } from "../../utils/sectionHeroes";
 
 export const revalidate = 60;
 
@@ -68,7 +68,13 @@ const jsonLd = {
 };
 
 export default async function SavoirFairePage() {
-  const hero = await getSectionHero("page:savoir-faire");
+  const [hero, heroImgs] = await Promise.all([
+    getSectionHero("page:savoir-faire"),
+    getSectionHeroImages([
+      ...metiers.map((m) => `metier:${m.key}`),
+      ...univers.map((u) => `univers:${u.key}`),
+    ]),
+  ]);
   const heroTitle = hero?.title?.trim() || "Cinq métiers, un seul œil";
   const heroIntro =
     hero?.intro?.trim() ||
@@ -113,33 +119,49 @@ export default async function SavoirFairePage() {
         </div>
 
         <ul className="grid gap-px border-y border-coal/10 bg-coal/10 sm:grid-cols-2 xl:grid-cols-3">
-          {metiers.map((m, i) => (
-            <li key={m.key} className="bg-white">
-              <Link
-                href={`/metiers/${m.key}`}
-                className="group flex h-full flex-col p-8 transition-colors duration-300 hover:bg-coal hover:text-paper md:p-10"
-              >
-                <span className="flex items-start justify-between">
-                  <Picto k={m.key} className="h-9 w-9 text-orange md:h-10 md:w-10" />
-                  <span className="font-mono text-xs tracking-[0.2em] text-orange">
-                    0{i + 1}
+          {metiers.map((m, i) => {
+            const img = heroImgs[`metier:${m.key}`];
+            return (
+              <li key={m.key} className="bg-white">
+                <Link
+                  href={`/metiers/${m.key}`}
+                  className="group relative block h-full overflow-hidden transition-colors duration-300 hover:bg-coal hover:text-paper"
+                >
+                  {/* Fond = hero du métier, révélé au survol (sinon coal uni) */}
+                  {img && (
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 z-0 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img} alt="" className="h-full w-full object-cover grayscale" />
+                      <span className="absolute inset-0 bg-coal/70" />
+                    </span>
+                  )}
+                  <span className="relative z-10 flex h-full flex-col p-8 md:p-10">
+                    <span className="flex items-start justify-between">
+                      <PictoSolid k={m.key} accent="coal" className="h-10 w-10 md:h-11 md:w-11" />
+                      <span className="font-mono text-xs tracking-[0.2em] text-orange">
+                        0{i + 1}
+                      </span>
+                    </span>
+                    <span className="mt-6 block font-display uppercase leading-[0.94] tracking-[-0.015em] text-[clamp(1.5rem,4.5vw,2.1rem)]">
+                      {m.t}
+                    </span>
+                    <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.15em] text-coal/50 group-hover:text-paper/70">
+                      {m.sub}
+                    </span>
+                    <span className="mt-4 block text-sm leading-relaxed text-coal/70 group-hover:text-paper/80 md:text-[15px]">
+                      {m.intro}
+                    </span>
+                    <span className="mt-auto block pt-6 font-display text-sm uppercase tracking-[0.12em] text-orange transition-transform duration-300 group-hover:translate-x-1.5">
+                      Voir le métier →
+                    </span>
                   </span>
-                </span>
-                <span className="mt-6 block font-display uppercase leading-[0.94] tracking-[-0.015em] text-[clamp(1.5rem,4.5vw,2.1rem)]">
-                  {m.t}
-                </span>
-                <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.15em] text-coal/50 group-hover:text-paper/60">
-                  {m.sub}
-                </span>
-                <span className="mt-4 block text-sm leading-relaxed text-coal/70 group-hover:text-paper/75 md:text-[15px]">
-                  {m.intro}
-                </span>
-                <span className="mt-auto block pt-6 font-display text-sm uppercase tracking-[0.12em] text-orange transition-transform duration-300 group-hover:translate-x-1.5">
-                  Voir le métier →
-                </span>
-              </Link>
-            </li>
-          ))}
+                </Link>
+              </li>
+            );
+          })}
           {/* 6e case : CTA réalisations */}
           <li className="bg-white">
             <Link
@@ -169,43 +191,49 @@ export default async function SavoirFairePage() {
         </div>
 
         <ul className="grid gap-px border-y border-paper/10 bg-paper/10 sm:grid-cols-2 xl:grid-cols-3">
-          {univers.map((u, i) => (
+          {univers.map((u, i) => {
+            const img = heroImgs[`univers:${u.key}`];
+            return (
             <li key={u.key} className="bg-coal">
               <Link
                 href={`/univers/${u.key}`}
-                className="group flex h-full flex-col p-8 transition-colors duration-300 hover:bg-orange hover:text-coal md:p-10"
+                className="group relative block h-full overflow-hidden transition-colors duration-300"
               >
-                <span className="flex items-start justify-between">
-                  <Picto
-                    k={u.key}
-                    className="h-9 w-9 text-orange transition-colors group-hover:text-coal md:h-10 md:w-10"
-                  />
-                  <span className="font-mono text-xs tracking-[0.2em] text-orange group-hover:text-coal">
-                    0{i + 1}
+                {/* Fond = hero de l'univers, révélé au survol (voile sombre) */}
+                {img && (
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 z-0 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img} alt="" className="h-full w-full object-cover grayscale" />
+                    <span className="absolute inset-0 bg-coal/70" />
                   </span>
-                </span>
-                <span
-                  className={`mt-6 flex items-center gap-3 font-display uppercase leading-[0.94] tracking-[-0.015em] text-[clamp(1.5rem,4.5vw,2.1rem)] ${
-                    u.featured ? "text-orange group-hover:text-paper" : ""
-                  }`}
-                >
-                  {u.featured && (
-                    <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-orange group-hover:bg-paper" />
-                  )}
-                  {u.t}
-                </span>
-                <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.15em] text-paper/50 group-hover:text-coal/60">
-                  {u.sub}
-                </span>
-                <span className="mt-4 block text-sm leading-relaxed text-paper/70 group-hover:text-coal/80 md:text-[15px]">
-                  {u.intro}
-                </span>
-                <span className="mt-auto block pt-6 font-display text-sm uppercase tracking-[0.12em] text-orange transition-transform duration-300 group-hover:translate-x-1.5 group-hover:text-coal">
-                  Voir l&apos;univers →
+                )}
+                <span className="relative z-10 flex h-full flex-col p-8 md:p-10">
+                  <span className="flex items-start justify-between">
+                    <PictoSolid k={u.key} accent="paper" className="h-10 w-10 md:h-11 md:w-11" />
+                    <span className="font-mono text-xs tracking-[0.2em] text-orange">
+                      0{i + 1}
+                    </span>
+                  </span>
+                  <span className="mt-6 flex items-center gap-3 font-display uppercase leading-[0.94] tracking-[-0.015em] text-[clamp(1.5rem,4.5vw,2.1rem)]">
+                    {u.t}
+                  </span>
+                  <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.15em] text-paper/50 group-hover:text-paper/70">
+                    {u.sub}
+                  </span>
+                  <span className="mt-4 block text-sm leading-relaxed text-paper/70 group-hover:text-paper/85 md:text-[15px]">
+                    {u.intro}
+                  </span>
+                  <span className="mt-auto block pt-6 font-display text-sm uppercase tracking-[0.12em] text-orange transition-transform duration-300 group-hover:translate-x-1.5">
+                    Voir l&apos;univers →
+                  </span>
                 </span>
               </Link>
             </li>
-          ))}
+            );
+          })}
           {/* 6e case : CTA contact */}
           <li className="bg-coal">
             <a

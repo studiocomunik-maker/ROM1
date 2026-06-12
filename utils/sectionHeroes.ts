@@ -19,3 +19,24 @@ export async function getSectionHero(id: string): Promise<SectionHero | null> {
     .maybeSingle();
   return (data as SectionHero) ?? null;
 }
+
+// Lecture groupée : renvoie, pour chaque id demandé, l'URL de l'image à montrer
+// (image directe, ou poster d'une vidéo). Sert au survol des cartes savoir-faire.
+// Tolérant : table absente / erreur → map vide.
+export async function getSectionHeroImages(ids: string[]): Promise<Record<string, string>> {
+  const { data } = await supabasePublic
+    .from("section_heroes")
+    .select("id, media_url, media_kind, poster_url")
+    .in("id", ids);
+  const map: Record<string, string> = {};
+  for (const row of (data ?? []) as Array<{
+    id: string;
+    media_url: string | null;
+    media_kind: string | null;
+    poster_url: string | null;
+  }>) {
+    const img = row.media_kind === "video" ? row.poster_url : row.media_url;
+    if (img) map[row.id] = img;
+  }
+  return map;
+}
