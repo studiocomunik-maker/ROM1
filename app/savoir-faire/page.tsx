@@ -25,16 +25,44 @@ export const metadata: Metadata = {
   },
 };
 
-const breadcrumbLd = {
+// Données structurées : fil d'Ariane + page-collection listant les métiers
+// et univers (chacun pointant vers sa page dédiée).
+const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Accueil", item: SITE_URL },
+  "@graph": [
     {
-      "@type": "ListItem",
-      position: 2,
-      name: "Savoir-faire",
-      item: `${SITE_URL}/savoir-faire`,
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Accueil", item: SITE_URL },
+        { "@type": "ListItem", position: 2, name: "Savoir-faire", item: `${SITE_URL}/savoir-faire` },
+      ],
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": `${SITE_URL}/savoir-faire#page`,
+      url: `${SITE_URL}/savoir-faire`,
+      name: TITLE,
+      description: DESCRIPTION,
+      isPartOf: { "@id": `${SITE_URL}/#website` },
+      about: { "@id": `${SITE_URL}/#org` },
+      mainEntity: {
+        "@type": "ItemList",
+        name: "Métiers & univers",
+        itemListElement: [
+          ...metiers.map((m, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            url: `${SITE_URL}/metiers/${m.key}`,
+            name: m.t,
+          })),
+          ...univers.map((u, i) => ({
+            "@type": "ListItem",
+            position: metiers.length + i + 1,
+            url: `${SITE_URL}/univers/${u.key}`,
+            name: u.t,
+          })),
+        ],
+      },
     },
   ],
 };
@@ -50,7 +78,7 @@ export default async function SavoirFairePage() {
     <main className="bg-coal text-paper">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <PageNav />
 

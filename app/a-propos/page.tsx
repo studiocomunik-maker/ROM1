@@ -28,19 +28,6 @@ export const metadata: Metadata = {
   },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Accueil", item: SITE_URL },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "À propos",
-      item: `${SITE_URL}/a-propos`,
-    },
-  ],
-};
 
 /* Clients — gérés depuis le back-office (table `clients`). FALLBACK affiché
    tant que la base est vide : noms en typo, sans logo. */
@@ -229,6 +216,42 @@ export default async function AProposPage() {
   const clients: ClientItem[] = clientsDb.length ? clientsDb : FALLBACK_CLIENTS;
   const collabs: CollabItem[] = collabsDb.length ? collabsDb : FALLBACK_COLLABS;
 
+  // Données structurées : fil d'Ariane + AboutPage → Person (Romain) enrichi
+  // (métier, rattaché à l'org, collègues = collaborateurs).
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Accueil", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "À propos", item: `${SITE_URL}/a-propos` },
+        ],
+      },
+      {
+        "@type": "AboutPage",
+        "@id": `${SITE_URL}/a-propos#page`,
+        url: `${SITE_URL}/a-propos`,
+        name: TITLE,
+        description: DESCRIPTION,
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        mainEntity: { "@id": `${SITE_URL}/#person` },
+      },
+      {
+        "@type": "Person",
+        "@id": `${SITE_URL}/#person`,
+        name: "Romain Renoux",
+        jobTitle: "Graphiste — Directeur artistique",
+        worksFor: { "@id": `${SITE_URL}/#org` },
+        colleague: collabs.map((c) => ({
+          "@type": "Person",
+          name: c.name,
+          ...(c.role ? { jobTitle: c.role } : {}),
+        })),
+      },
+    ],
+  };
+
   // Titre éditable (back-office) ; vide = composition par défaut « Geek & artiste »
   const heroTitleOverride = hero?.title?.trim();
   const heroIntro =
@@ -239,7 +262,7 @@ export default async function AProposPage() {
     <main className="bg-coal text-paper">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <PageNav />
 

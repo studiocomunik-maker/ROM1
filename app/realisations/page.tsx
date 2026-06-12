@@ -24,20 +24,6 @@ export const metadata: Metadata = {
   },
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Accueil", item: SITE_URL },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Réalisations",
-      item: `${SITE_URL}/realisations`,
-    },
-  ],
-};
-
 /* Page = la section Portfolio de l'accueil (titre + œil + double filtre
    univers/expertise + grille), en pleine page avec son h1. */
 export default async function RealisationsPage() {
@@ -50,11 +36,45 @@ export default async function RealisationsPage() {
     cover_url: r.cover_url,
   }));
 
+  // Données structurées : fil d'Ariane + page-collection listant le portfolio.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Accueil", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Réalisations", item: `${SITE_URL}/realisations` },
+        ],
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": `${SITE_URL}/realisations#page`,
+        url: `${SITE_URL}/realisations`,
+        name: TITLE,
+        description: DESCRIPTION,
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        about: { "@id": `${SITE_URL}/#person` },
+        mainEntity: {
+          "@type": "ItemList",
+          name: "Réalisations",
+          numberOfItems: reals.length,
+          itemListElement: reals.map((r, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            url: `${SITE_URL}/realisations/${r.slug}`,
+            name: r.titre,
+          })),
+        },
+      },
+    ],
+  };
+
   return (
     <main className="bg-white text-coal">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <PageNav />
 
