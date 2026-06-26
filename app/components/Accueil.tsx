@@ -93,8 +93,16 @@ export default function Accueil({
         </p>
       </header>
 
+      {/* H1 sémantique pour le SEO/lecteurs d'écran (requête « graphiste Beaujolais »).
+          Invisible à l'œil : la punchline ci-dessous reste le titre VISUEL (un <p>),
+          mais le vrai H1 porte le mot-clé. */}
+      <h1 className="sr-only">
+        Graphiste en Beaujolais — direction artistique, identité, étiquettes de
+        vin, photo &amp; web · Romain Renoux
+      </h1>
+
       <div className="relative z-10 flex flex-1 items-center px-6 py-8 md:px-12">
-        <h1 className="mx-auto w-full max-w-[1000px] font-display uppercase leading-[0.94] tracking-[-0.015em] text-paper text-[clamp(3.4rem,11vw,5.4rem)] md:text-[clamp(2.6rem,6.4vw,6rem)]">
+        <p className="mx-auto w-full max-w-[1000px] font-display uppercase leading-[0.94] tracking-[-0.015em] text-paper text-[clamp(3.4rem,11vw,5.4rem)] md:text-[clamp(2.6rem,6.4vw,6rem)]">
           {/* MOBILE — lignes forcées */}
           <span className="block md:hidden">
             <span className="block">
@@ -196,7 +204,7 @@ export default function Accueil({
               </span>
             </span>
           </span>
-        </h1>
+        </p>
       </div>
 
       <footer className="relative z-10 flex items-center justify-between px-6 pb-7 font-display text-[10px] uppercase tracking-[0.08em] text-paper/60 sm:text-xs md:px-12">

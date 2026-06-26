@@ -72,14 +72,23 @@ const siteJsonLd = {
       alternateName: ["Romain Renoux", "rom1"],
       url: SITE_URL,
       email: "rom1@rom1.fr",
+      telephone: "+33 6 79 71 61 83",
       logo: `${SITE_URL}/icon.png`,
       image: `${SITE_URL}/opengraph-image.png`,
       description: DESCRIPTION,
       slogan: "Graphiste spécialisé vin & domaines viticoles en Beaujolais.",
       address: {
         "@type": "PostalAddress",
-        addressRegion: "Beaujolais",
+        addressLocality: "Jullié",
+        postalCode: "69840",
+        addressRegion: "Rhône",
         addressCountry: "FR",
+      },
+      // Coordonnées du village (Jullié, Beaujolais nord) — renforce le local pack.
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: 46.1872,
+        longitude: 4.6981,
       },
       areaServed: ["Beaujolais", "Lyon", "Rhône", "Mâconnais", "France"],
       sameAs: [
