@@ -320,6 +320,7 @@ export default async function AProposPage() {
             </h2>
           </Reveal>
 
+          {/* Grille statique de logos — révélation en cascade, sans hover */}
           <ul className="mt-12 grid grid-cols-2 gap-px border border-coal/10 bg-coal/10 sm:grid-cols-3 lg:grid-cols-5">
             {clients.map((c, i) => {
               const inner = c.logo_url ? (
@@ -342,12 +343,12 @@ export default async function AProposPage() {
                         href={c.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex aspect-[8/5] items-center justify-center"
+                        className="flex aspect-[8/5] items-center justify-center"
                       >
                         {inner}
                       </a>
                     ) : (
-                      <div className="group flex aspect-[8/5] items-center justify-center">
+                      <div className="flex aspect-[8/5] items-center justify-center">
                         {inner}
                       </div>
                     )}
