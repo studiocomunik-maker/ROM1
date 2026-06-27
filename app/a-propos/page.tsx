@@ -327,10 +327,10 @@ export default async function AProposPage() {
                 <img
                   src={c.logo_url}
                   alt={c.name}
-                  className="max-h-[58px] w-auto max-w-[80%] object-contain opacity-80 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100"
+                  className="h-full w-full object-contain"
                 />
               ) : (
-                <span className="text-center font-display text-xs uppercase leading-snug tracking-[0.08em] text-coal/70 transition-all duration-300 group-hover:scale-105 group-hover:text-paper sm:text-sm">
+                <span className="px-4 text-center font-display text-xs uppercase leading-snug tracking-[0.08em] text-coal/70 sm:text-sm">
                   {c.name}
                 </span>
               );
@@ -342,12 +342,12 @@ export default async function AProposPage() {
                         href={c.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex aspect-[8/5] items-center justify-center p-4 transition-colors duration-300 hover:bg-coal"
+                        className="group flex aspect-[8/5] items-center justify-center"
                       >
                         {inner}
                       </a>
                     ) : (
-                      <div className="group flex aspect-[8/5] items-center justify-center p-4 transition-colors duration-300 hover:bg-coal">
+                      <div className="group flex aspect-[8/5] items-center justify-center">
                         {inner}
                       </div>
                     )}
@@ -360,9 +360,9 @@ export default async function AProposPage() {
               <Reveal delay={clients.length * 60}>
                 <a
                   href="mailto:rom1@rom1.fr"
-                  className="group flex aspect-[8/5] items-center justify-center p-4 transition-colors duration-300 hover:bg-orange"
+                  className="flex aspect-[8/5] items-center justify-center p-4"
                 >
-                  <span className="text-center font-display text-xs uppercase leading-snug tracking-[0.08em] text-orange transition-all duration-300 group-hover:scale-105 group-hover:text-coal sm:text-sm">
+                  <span className="text-center font-display text-xs uppercase leading-snug tracking-[0.08em] text-orange sm:text-sm">
                     &amp; vous&nbsp;?
                   </span>
                 </a>
