@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageNav from "../components/PageNav";
 import Contact from "../components/Contact";
 import Reveal from "../components/Reveal";
+import ClientsGrid from "../components/ClientsGrid";
 import AtelierPhoto from "../components/AtelierPhoto";
 import SectionHeroBg from "../components/SectionHeroBg";
 import { Eye, Bolt, Burst } from "../components/Glyphs";
@@ -320,56 +321,9 @@ export default async function AProposPage() {
             </h2>
           </Reveal>
 
-          {/* Grille statique de logos — révélation en cascade, sans hover */}
-          <ul className="mt-12 grid grid-cols-2 gap-px border border-coal/10 bg-coal/10 sm:grid-cols-3 lg:grid-cols-5">
-            {clients.map((c, i) => {
-              const inner = c.logo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={c.logo_url}
-                  alt={c.name}
-                  className="h-full w-full object-contain"
-                />
-              ) : (
-                <span className="px-4 text-center font-display text-xs uppercase leading-snug tracking-[0.08em] text-coal/70 sm:text-sm">
-                  {c.name}
-                </span>
-              );
-              return (
-                <li key={c.name + i} className="bg-white">
-                  <Reveal delay={i * 60}>
-                    {c.url ? (
-                      <a
-                        href={c.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex aspect-[8/5] items-center justify-center"
-                      >
-                        {inner}
-                      </a>
-                    ) : (
-                      <div className="flex aspect-[8/5] items-center justify-center">
-                        {inner}
-                      </div>
-                    )}
-                  </Reveal>
-                </li>
-              );
-            })}
-            {/* dernière case : et vous ? */}
-            <li className="bg-white">
-              <Reveal delay={clients.length * 60}>
-                <a
-                  href="mailto:rom1@rom1.fr"
-                  className="flex aspect-[8/5] items-center justify-center p-4"
-                >
-                  <span className="text-center font-display text-xs uppercase leading-snug tracking-[0.08em] text-orange sm:text-sm">
-                    &amp; vous&nbsp;?
-                  </span>
-                </a>
-              </Reveal>
-            </li>
-          </ul>
+          {/* Grille 2 lignes responsive — logos au hasard + rotation en fondu,
+             case « & vous ? » fixe en dernier (gérée dans le composant) */}
+          <ClientsGrid clients={clients} />
         </div>
       </section>
 
