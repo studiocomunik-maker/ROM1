@@ -48,6 +48,7 @@ export default function ClientsGrid({ clients }: { clients: ClientItem[] }) {
     clients.slice(0, wanted(SSR_COLS)),
   );
   const [fading, setFading] = useState<number | null>(null);
+  const [spin, setSpin] = useState(0); // incrémenté à chaque clic → fait tourner le picto
 
   // Sources de vérité hors-render (le swap ne passe jamais par un updater de
   // state, que React peut rejouer deux fois en Strict Mode).
@@ -73,6 +74,16 @@ export default function ClientsGrid({ clients }: { clients: ClientItem[] }) {
     slotsRef.current = s;
     poolRef.current = pool;
     setSlots(s);
+  };
+
+  // Re-mélange la totalité des clients : nouveaux logos visibles + réserve.
+  const reshuffle = () => {
+    const shuffled = shuffle(clients);
+    const desired = wanted(colsRef.current);
+    slotsRef.current = shuffled.slice(0, desired);
+    poolRef.current = shuffled.slice(desired);
+    setSlots(slotsRef.current);
+    setSpin((s) => s + 1);
   };
 
   useEffect(() => {
@@ -133,6 +144,7 @@ export default function ClientsGrid({ clients }: { clients: ClientItem[] }) {
   }, []);
 
   return (
+    <>
     <ul
       className="mt-12 grid gap-px border border-coal/10 bg-coal/10"
       style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
@@ -187,5 +199,31 @@ export default function ClientsGrid({ clients }: { clients: ClientItem[] }) {
         </a>
       </li>
     </ul>
+
+      {/* Bouton picto refresh — re-mélange tous les clients */}
+      <div className="mt-8 flex justify-center">
+        <button
+          type="button"
+          onClick={reshuffle}
+          aria-label="Mélanger les clients"
+          title="Mélanger"
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-coal/20 text-coal transition-colors hover:border-coal hover:text-orange"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5 transition-transform duration-500 ease-out"
+            style={{ transform: `rotate(${spin * 360}deg)` }}
+          >
+            <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+            <path d="M21 3v6h-6" />
+          </svg>
+        </button>
+      </div>
+    </>
   );
 }
