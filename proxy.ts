@@ -4,6 +4,12 @@ import { NextResponse, type NextRequest } from "next/server";
 // Next 16 : convention « proxy » (ex-middleware). Rafraîchit la session
 // Supabase sur chaque requête et protège la zone /admin.
 export async function proxy(request: NextRequest) {
+  // Ancien blog WordPress (chris_blog) encore dans l'index Google :
+  // 410 Gone = désindexation rapide, sans payer l'appel d'auth Supabase.
+  if (request.nextUrl.pathname.startsWith("/chris_blog")) {
+    return new NextResponse(null, { status: 410 });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -56,7 +62,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Ne tourne que sur la zone admin : les pages publiques (vitrine quasi-statique)
+  // Zone admin + ancien blog : les pages publiques (vitrine quasi-statique)
   // ne paient pas l'appel d'auth.
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/chris_blog/:path*"],
 };

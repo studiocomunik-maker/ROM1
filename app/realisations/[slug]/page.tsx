@@ -31,10 +31,16 @@ export async function generateMetadata({
   const { slug } = await params;
   const p = await getRealisation(slug);
   if (!p) return {};
-  const description = (p.description ?? "").slice(0, 160);
+  // Contexte univers + expertises dans le title (longue traîne : « Vin, Identité… »)
+  const ctx = [UNIVERS[p.univers], ...p.exps.map((e) => EXPS[e]).slice(0, 2)]
+    .filter(Boolean)
+    .join(", ");
+  const description =
+    (p.description ?? "").slice(0, 160) ||
+    `${p.titre} : projet ${UNIVERS[p.univers] ?? p.univers} signé Romain Renoux, graphiste en Beaujolais — identité, print, photo et web.`;
   const url = `${SITE_URL}/realisations/${p.slug}`;
   return {
-    title: `${p.titre} — Romain Renoux`,
+    title: `${p.titre} — ${ctx} · Romain Renoux`,
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -142,6 +148,7 @@ export default async function RealisationPage({
         url: `${SITE_URL}/realisations/${p.slug}`,
         creator: { "@type": "Person", name: "Romain Renoux", url: SITE_URL },
         about: UNIVERS[p.univers] ?? p.univers,
+        dateModified: p.updated_at,
       },
       {
         "@type": "BreadcrumbList",
@@ -151,7 +158,7 @@ export default async function RealisationPage({
             "@type": "ListItem",
             position: 2,
             name: "Réalisations",
-            item: `${SITE_URL}/#portfolio`,
+            item: `${SITE_URL}/realisations`,
           },
           {
             "@type": "ListItem",

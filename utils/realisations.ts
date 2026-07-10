@@ -38,10 +38,11 @@ export type Realisation = {
   panel_theme: "dark" | "light";
   website: string | null;
   partners: Partner[];
+  updated_at: string; // lastmod sitemap + dateModified JSON-LD
 };
 
 const COLS =
-  "id, slug, titre, description, univers, exps, cover_url, media, position, published, panel_theme, website, partners";
+  "id, slug, titre, description, univers, exps, cover_url, media, position, published, panel_theme, website, partners, updated_at";
 
 export async function getRealisations(): Promise<Realisation[]> {
   const { data } = await supabasePublic

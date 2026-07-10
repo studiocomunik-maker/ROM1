@@ -32,6 +32,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...reals.map((r) => ({
       url: `${SITE_URL}/realisations/${r.slug}`,
+      // lastmod réel (trigger touch_updated_at côté Supabase)
+      lastModified: r.updated_at,
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),
