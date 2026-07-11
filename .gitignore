@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# données de facturation — ne JAMAIS versionner (repo public)
+supabase/seed_compta_*.sql
