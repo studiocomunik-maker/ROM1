@@ -15,7 +15,7 @@ type Body = {
   client_id: string;
   date: string; // yyyy-mm-dd
   deadline: string;
-  lines: { label: string; price: number }[];
+  lines: { label: string; quantity: number; price: number }[]; // price = prix unitaire
 };
 
 // Émet une facture : brouillon Pennylane → finalisation (numéro attribué par
@@ -36,7 +36,9 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json().catch(() => null)) as Body | null;
-  const lines = (body?.lines ?? []).filter((l) => l.label?.trim() && l.price > 0);
+  const lines = (body?.lines ?? [])
+    .map((l) => ({ ...l, quantity: l.quantity || 1 }))
+    .filter((l) => l.label?.trim() && l.price > 0 && l.quantity > 0);
   if (!body?.client_id || !body.date || !body.deadline || !lines.length) {
     return NextResponse.json(
       { ok: false, error: "client, date, échéance et au moins une ligne sont requis." },
@@ -101,14 +103,15 @@ export async function POST(request: Request) {
       emailStatus = await sendInvoiceByEmail(draft.id);
     }
 
-    // 4) Copie locale dans le récap compta
-    const montant = lines.reduce((s, l) => s + l.price, 0);
+    // 4) Copie locale dans le récap compta (détail des postes dans `lignes`)
+    const montant = lines.reduce((s, l) => s + l.quantity * l.price, 0);
     const { error: insErr } = await supabase.from("compta_factures").insert({
       id: factureId,
       numero: finalized.invoice_number ?? `PL-${draft.id}`,
       date_emission: body.date,
       client_id: client.id,
       designation: lines.map((l) => l.label).join(" / "),
+      lignes: lines,
       total: montant,
       acompte: 0,
       montant,

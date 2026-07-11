@@ -12,7 +12,9 @@ export type ClientRow = {
   pennylane_id: string | null;
 };
 
-type Ligne = { key: string; label: string; price: string };
+type Ligne = { key: string; label: string; qty: string; price: string };
+
+const ligneTotal = (l: Ligne) => (Number(l.qty) || 0) * (Number(l.price) || 0);
 
 type Resultat = {
   numero: string | null;
@@ -35,7 +37,7 @@ export default function NouvelleFacture({
   const [date, setDate] = useState(today());
   const [deadline, setDeadline] = useState(today()); // « à payer dès réception »
   const [lignes, setLignes] = useState<Ligne[]>([
-    { key: crypto.randomUUID(), label: "", price: "" },
+    { key: crypto.randomUUID(), label: "", qty: "1", price: "" },
   ]);
 
   const [busy, setBusy] = useState(false);
@@ -43,7 +45,7 @@ export default function NouvelleFacture({
   const [resultat, setResultat] = useState<Resultat | null>(null);
 
   const client = clients.find((c) => c.id === clientId);
-  const totalNum = lignes.reduce((s, l) => s + (Number(l.price) || 0), 0);
+  const totalNum = lignes.reduce((s, l) => s + ligneTotal(l), 0);
 
   const patch = (key: string, p: Partial<Ligne>) =>
     setLignes((ls) => ls.map((l) => (l.key === key ? { ...l, ...p } : l)));
@@ -61,8 +63,12 @@ export default function NouvelleFacture({
           date,
           deadline,
           lines: lignes
-            .filter((l) => l.label.trim() && Number(l.price) > 0)
-            .map((l) => ({ label: l.label.trim(), price: Number(l.price) })),
+            .filter((l) => l.label.trim() && ligneTotal(l) > 0)
+            .map((l) => ({
+              label: l.label.trim(),
+              quantity: Number(l.qty) || 1,
+              price: Number(l.price),
+            })),
         }),
       });
       const json = await res.json();
@@ -185,30 +191,52 @@ export default function NouvelleFacture({
 
       <div className="space-y-2">
         <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-paper/45">
-          Lignes de facturation (montants HT = TTC, franchise de TVA)
+          Postes de facturation (montants HT = TTC, franchise de TVA)
         </span>
+        <div className="hidden grid-cols-[1fr_80px_110px_100px_30px] gap-2 px-1 font-mono text-[10px] uppercase tracking-[0.12em] text-paper/35 sm:grid">
+          <span>Désignation</span>
+          <span className="text-right">Qté</span>
+          <span className="text-right">Prix unit. €</span>
+          <span className="text-right">Total</span>
+          <span />
+        </div>
         {lignes.map((l) => (
-          <div key={l.key} className="flex items-center gap-2">
+          <div
+            key={l.key}
+            className="grid grid-cols-2 items-center gap-2 sm:grid-cols-[1fr_80px_110px_100px_30px]"
+          >
             <input
-              className={`${field} flex-1`}
+              className={`${field} col-span-2 sm:col-span-1`}
               placeholder="Désignation — ex. Création graphique, acompte 50 % devis 21020293"
               value={l.label}
               onChange={(e) => patch(l.key, { label: e.target.value })}
             />
             <input
               type="number"
+              step="1"
+              min="1"
+              className={`${field} text-right`}
+              placeholder="Qté"
+              value={l.qty}
+              onChange={(e) => patch(l.key, { qty: e.target.value })}
+            />
+            <input
+              type="number"
               step="0.01"
               min="0"
-              className={`${field} w-32 text-right`}
-              placeholder="€"
+              className={`${field} text-right`}
+              placeholder="€ / unité"
               value={l.price}
               onChange={(e) => patch(l.key, { price: e.target.value })}
             />
+            <span className="text-right font-mono text-sm text-paper/70">
+              {ligneTotal(l) > 0 ? `${ligneTotal(l).toLocaleString("fr-FR")} €` : "—"}
+            </span>
             <button
               type="button"
               onClick={() => setLignes((ls) => ls.filter((x) => x.key !== l.key))}
               disabled={lignes.length === 1}
-              className="font-mono text-xs uppercase text-orange hover:underline disabled:opacity-30"
+              className="justify-self-end font-mono text-xs uppercase text-orange hover:underline disabled:opacity-30"
             >
               ×
             </button>
@@ -217,11 +245,14 @@ export default function NouvelleFacture({
         <button
           type="button"
           onClick={() =>
-            setLignes((ls) => [...ls, { key: crypto.randomUUID(), label: "", price: "" }])
+            setLignes((ls) => [
+              ...ls,
+              { key: crypto.randomUUID(), label: "", qty: "1", price: "" },
+            ])
           }
           className="w-full border border-dashed border-paper/25 px-4 py-2.5 font-mono text-xs uppercase tracking-[0.1em] text-paper/55 transition-colors hover:border-orange hover:text-orange"
         >
-          + Ajouter une ligne
+          + Ajouter un poste
         </button>
       </div>
 

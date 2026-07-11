@@ -71,3 +71,6 @@ create policy "compta factures : admin met à jour"
 drop policy if exists "compta factures : admin supprime" on public.compta_factures;
 create policy "compta factures : admin supprime"
   on public.compta_factures for delete to authenticated using (true);
+
+-- Ajout 2026-07-11 : détail des postes de facturation (label / quantité / prix unitaire)
+alter table public.compta_factures add column if not exists lignes jsonb;

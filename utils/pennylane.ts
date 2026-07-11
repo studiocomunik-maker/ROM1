@@ -75,7 +75,7 @@ export async function createCompanyCustomer(input: {
   return res.json();
 }
 
-export type PLInvoiceLine = { label: string; price: number };
+export type PLInvoiceLine = { label: string; quantity: number; price: number }; // price = prix unitaire HT
 
 export type PLInvoice = {
   id: number;
@@ -103,7 +103,7 @@ export async function createDraftInvoice(input: {
       special_mention: MENTION_293B,
       invoice_lines: input.lines.map((l) => ({
         label: l.label,
-        quantity: 1,
+        quantity: l.quantity,
         unit: "piece",
         raw_currency_unit_price: l.price.toFixed(2),
         vat_rate: "exempt", // franchise en base, art. 293 B
