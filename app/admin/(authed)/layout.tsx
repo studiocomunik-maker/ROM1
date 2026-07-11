@@ -31,6 +31,9 @@ export default async function AuthedLayout({ children }: { children: React.React
           <Link href="/admin/collaborateurs" className="hidden transition-colors hover:text-paper md:inline">
             Collaborateurs
           </Link>
+          <Link href="/admin/compta" className="transition-colors hover:text-paper">
+            Compta
+          </Link>
           <Link href="/admin/settings" className="transition-colors hover:text-paper">
             Réglages
           </Link>
