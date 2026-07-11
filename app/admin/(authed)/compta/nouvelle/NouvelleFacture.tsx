@@ -63,7 +63,7 @@ export default function NouvelleFacture({
           date,
           deadline,
           lines: lignes
-            .filter((l) => l.label.trim() && ligneTotal(l) > 0)
+            .filter((l) => l.label.trim() && ligneTotal(l) !== 0)
             .map((l) => ({
               label: l.label.trim(),
               quantity: Number(l.qty) || 1,
@@ -223,9 +223,9 @@ export default function NouvelleFacture({
             <input
               type="number"
               step="0.01"
-              min="0"
               className={`${field} text-right`}
-              placeholder="€ / unité"
+              placeholder="€ / unité (négatif = acompte déduit)"
+              title="Un prix négatif permet de déduire un acompte déjà facturé sur une facture de solde"
               value={l.price}
               onChange={(e) => patch(l.key, { price: e.target.value })}
             />

@@ -64,6 +64,7 @@ export default function ComptaFactures({
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [importMsg, setImportMsg] = useState<string | null>(null);
 
   const clientById = useMemo(() => new Map(clients.map((c) => [c.id, c])), [clients]);
   const visible = rows
@@ -126,6 +127,26 @@ export default function ComptaFactures({
     setBusy(false);
   }
 
+  // Rapatrie les factures émises côté Pennylane absentes du récap local.
+  async function importPennylane() {
+    setBusy(true);
+    setError(null);
+    setImportMsg(null);
+    try {
+      const res = await fetch("/api/pennylane/import-invoices", { method: "POST" });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || `Erreur ${res.status}`);
+      let msg = `${json.importes} facture(s) importée(s)`;
+      if (json.sans_client?.length) {
+        msg += ` — client local inconnu pour : ${json.sans_client.join(", ")} (à réaffecter dans le tableau)`;
+      }
+      setImportMsg(json.importes ? msg + ". Recharge la page pour les voir." : "Rien de nouveau à importer.");
+    } catch (e) {
+      setError((e as Error).message);
+    }
+    setBusy(false);
+  }
+
   // Export CSV (séparateur ; pour Excel FR) — colonnes prêtes pour l'import Pennylane.
   // TVA 0 % : franchise en base, article 293 B du CGI.
   function exportCsv() {
@@ -163,15 +184,24 @@ export default function ComptaFactures({
             Récap factures · montant = reste à payer
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/admin/compta/clients"
             className="font-mono text-xs uppercase tracking-[0.12em] text-paper/55 transition-colors hover:text-orange"
           >
-            Annuaire clients / SIRET →
+            Annuaire clients →
+          </Link>
+          <Link
+            href="/admin/compta/devis"
+            className="font-mono text-xs uppercase tracking-[0.12em] text-paper/55 transition-colors hover:text-orange"
+          >
+            Devis →
           </Link>
           <button type="button" onClick={exportCsv} className={btn}>
-            Export CSV Pennylane
+            Export CSV
+          </button>
+          <button type="button" onClick={importPennylane} disabled={busy} className={btn}>
+            {busy ? "…" : "Importer depuis Pennylane"}
           </button>
           <Link
             href="/admin/compta/nouvelle"
@@ -317,6 +347,11 @@ export default function ComptaFactures({
       {error && (
         <p className="border border-orange/40 bg-orange/5 p-4 font-mono text-sm leading-relaxed text-orange">
           {error}
+        </p>
+      )}
+      {importMsg && (
+        <p className="border border-emerald-400/40 bg-emerald-400/5 p-4 font-mono text-sm leading-relaxed text-paper/80">
+          {importMsg}
         </p>
       )}
 

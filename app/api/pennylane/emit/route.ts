@@ -2,14 +2,12 @@ import { NextResponse } from "next/server";
 import { createClient } from "../../../../utils/supabase/server";
 import {
   pennylaneConfigured,
-  findCustomerByRegNo,
-  createCompanyCustomer,
   createDraftInvoice,
   finalizeInvoice,
   sendInvoiceByEmail,
   getInvoice,
-  parseAdresse,
 } from "../../../../utils/pennylane";
+import { ensurePennylaneCustomer } from "../_lib";
 
 type Body = {
   client_id: string;
@@ -36,12 +34,14 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json().catch(() => null)) as Body | null;
+  // prix négatif autorisé : ligne de déduction d'acompte sur une facture de solde
   const lines = (body?.lines ?? [])
     .map((l) => ({ ...l, quantity: l.quantity || 1 }))
-    .filter((l) => l.label?.trim() && l.price > 0 && l.quantity > 0);
-  if (!body?.client_id || !body.date || !body.deadline || !lines.length) {
+    .filter((l) => l.label?.trim() && l.price !== 0 && l.quantity > 0);
+  const totalFacture = lines.reduce((s, l) => s + l.quantity * l.price, 0);
+  if (!body?.client_id || !body.date || !body.deadline || !lines.length || totalFacture <= 0) {
     return NextResponse.json(
-      { ok: false, error: "client, date, échéance et au moins une ligne sont requis." },
+      { ok: false, error: "client, date, échéance et un total positif sont requis." },
       { status: 400 }
     );
   }
@@ -57,34 +57,7 @@ export async function POST(request: Request) {
 
   try {
     // 1) Client Pennylane (rapprochement SIRET, sinon création)
-    let plCustomerId = client.pennylane_id ? Number(client.pennylane_id) : null;
-    if (!plCustomerId) {
-      if (client.siret) {
-        const found = await findCustomerByRegNo(client.siret);
-        if (found) plCustomerId = found.id;
-      }
-      if (!plCustomerId) {
-        const billing = parseAdresse(client.adresse);
-        if (!billing) {
-          return NextResponse.json(
-            { ok: false, error: `Adresse de ${client.intitule} non exploitable (attendu : …, CP Ville).` },
-            { status: 422 }
-          );
-        }
-        const created = await createCompanyCustomer({
-          name: client.nom_legal || client.intitule,
-          reg_no: client.siret,
-          emails: client.email ? [client.email] : [],
-          billing_address: billing,
-          external_reference: client.id,
-        });
-        plCustomerId = created.id;
-      }
-      await supabase
-        .from("compta_clients")
-        .update({ pennylane_id: String(plCustomerId) })
-        .eq("id", client.id);
-    }
+    const plCustomerId = await ensurePennylaneCustomer(supabase, client);
 
     // 2) Brouillon → finalisation (Pennylane attribue le numéro)
     const factureId = crypto.randomUUID();
