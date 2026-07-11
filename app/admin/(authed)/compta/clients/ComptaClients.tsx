@@ -10,6 +10,7 @@ export type Row = {
   nom_legal: string | null;
   siret: string | null;
   adresse: string | null;
+  email: string | null;
   pennylane_id: string | null;
 };
 
@@ -19,6 +20,7 @@ const blank = (): Row => ({
   nom_legal: "",
   siret: "",
   adresse: "",
+  email: "",
   pennylane_id: null,
 });
 
@@ -31,6 +33,7 @@ export default function ComptaClients({ initial }: { initial: Row[] }) {
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
 
   const patch = (i: number, p: Partial<Row>) =>
     setRows((rs) => rs.map((r, idx) => (idx === i ? { ...r, ...p } : r)));
@@ -64,6 +67,7 @@ export default function ComptaClients({ initial }: { initial: Row[] }) {
         nom_legal: r.nom_legal?.trim() || null,
         siret: r.siret?.replace(/\s/g, "") || null,
         adresse: r.adresse?.trim() || null,
+        email: r.email?.trim() || null,
         pennylane_id: r.pennylane_id,
       }));
 
@@ -78,6 +82,31 @@ export default function ComptaClients({ initial }: { initial: Row[] }) {
 
     setRemoved([]);
     setSaved(true);
+    setBusy(false);
+  }
+
+  // Pousse les clients sans pennylane_id vers Pennylane (match SIRET ou création).
+  async function syncPennylane() {
+    setBusy(true);
+    setError(null);
+    setSyncMsg(null);
+    try {
+      const res = await fetch("/api/pennylane/sync-clients", { method: "POST" });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || `Erreur ${res.status}`);
+      const parts = [`${json.synced.length} synchronisé(s)`];
+      if (json.skipped.length) {
+        parts.push(
+          `${json.skipped.length} ignoré(s) : ` +
+            json.skipped
+              .map((s: { intitule: string; raison: string }) => `${s.intitule} (${s.raison})`)
+              .join(" · ")
+        );
+      }
+      setSyncMsg(parts.join(" — ") + ". Recharge la page pour voir les ids.");
+    } catch (e) {
+      setError((e as Error).message);
+    }
     setBusy(false);
   }
 
@@ -108,11 +137,12 @@ export default function ComptaClients({ initial }: { initial: Row[] }) {
       </p>
 
       {/* En-têtes de colonnes */}
-      <div className="hidden grid-cols-[1fr_1fr_150px_1fr_110px_50px] gap-2 px-3 font-mono text-[11px] uppercase tracking-[0.12em] text-paper/40 lg:grid">
+      <div className="hidden grid-cols-[1fr_1fr_140px_1fr_1fr_90px_50px] gap-2 px-3 font-mono text-[11px] uppercase tracking-[0.12em] text-paper/40 lg:grid">
         <span>Intitulé facture</span>
         <span>Nom légal</span>
         <span>SIRET</span>
         <span>Adresse</span>
+        <span>Email factures</span>
         <span>Pennylane</span>
         <span />
       </div>
@@ -121,7 +151,7 @@ export default function ComptaClients({ initial }: { initial: Row[] }) {
         {rows.map((r, i) => (
           <li
             key={r.id}
-            className="grid grid-cols-2 items-center gap-2 border border-paper/10 bg-white/[0.02] p-3 lg:grid-cols-[1fr_1fr_150px_1fr_110px_50px]"
+            className="grid grid-cols-2 items-center gap-2 border border-paper/10 bg-white/[0.02] p-3 lg:grid-cols-[1fr_1fr_140px_1fr_1fr_90px_50px]"
           >
             <input
               className={field}
@@ -146,6 +176,13 @@ export default function ComptaClients({ initial }: { initial: Row[] }) {
               placeholder="Adresse"
               value={r.adresse ?? ""}
               onChange={(e) => patch(i, { adresse: e.target.value })}
+            />
+            <input
+              type="email"
+              className={field}
+              placeholder="Email (envoi factures)"
+              value={r.email ?? ""}
+              onChange={(e) => patch(i, { email: e.target.value })}
             />
             <span
               className="truncate font-mono text-xs text-paper/40"
@@ -177,6 +214,11 @@ export default function ComptaClients({ initial }: { initial: Row[] }) {
           {error}
         </p>
       )}
+      {syncMsg && (
+        <p className="border border-emerald-400/40 bg-emerald-400/5 p-4 font-mono text-sm leading-relaxed text-paper/80">
+          {syncMsg}
+        </p>
+      )}
 
       <div className="sticky bottom-0 z-10 flex items-center gap-4 border-t border-paper/10 bg-coal/95 py-4 backdrop-blur">
         <button
@@ -192,6 +234,14 @@ export default function ComptaClients({ initial }: { initial: Row[] }) {
             Enregistré ✓
           </span>
         )}
+        <button
+          type="button"
+          onClick={syncPennylane}
+          disabled={busy}
+          className="ml-auto cursor-pointer border border-paper/25 px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-paper/70 transition-colors hover:border-paper/60 disabled:opacity-50"
+        >
+          Synchroniser avec Pennylane
+        </button>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ export default async function AdminComptaClients() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("compta_clients")
-    .select("id, intitule, nom_legal, siret, adresse, pennylane_id")
+    .select("id, intitule, nom_legal, siret, adresse, email, pennylane_id")
     .order("intitule", { ascending: true });
 
   // 42P01 = table absente (Postgres) ; PGRST205 = table absente du cache PostgREST

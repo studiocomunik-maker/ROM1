@@ -207,9 +207,13 @@ create table if not exists public.compta_clients (
   nom_legal    text,                        -- dénomination officielle (SIRENE)
   siret        text,                        -- 14 chiffres
   adresse      text,
-  pennylane_id text,                        -- id client côté Pennylane (sync à venir)
+  email        text,                        -- destinataire des factures (envoi Pennylane)
+  pennylane_id text,                        -- id client côté Pennylane
   updated_at   timestamptz not null default now()
 );
+
+-- Si la table existait déjà sans la colonne email (ajout 2026-07-11) :
+alter table public.compta_clients add column if not exists email text;
 
 drop trigger if exists trg_compta_clients_updated on public.compta_clients;
 create trigger trg_compta_clients_updated

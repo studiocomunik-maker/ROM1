@@ -173,6 +173,12 @@ export default function ComptaFactures({
           <button type="button" onClick={exportCsv} className={btn}>
             Export CSV Pennylane
           </button>
+          <Link
+            href="/admin/compta/nouvelle"
+            className="bg-orange px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-coal transition hover:opacity-90"
+          >
+            + Nouvelle facture
+          </Link>
         </div>
       </div>
 
