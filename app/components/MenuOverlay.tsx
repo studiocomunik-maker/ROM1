@@ -177,6 +177,14 @@ export default function MenuOverlay() {
             </a>
             <span className="flex gap-4">
               <a
+                href="https://boutique.rom1.fr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-orange"
+              >
+                La boutique ↗
+              </a>
+              <a
                 href="https://www.instagram.com/rom1unik/"
                 target="_blank"
                 rel="noopener noreferrer"

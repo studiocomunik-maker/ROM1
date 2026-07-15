@@ -42,6 +42,15 @@ export default function Contact() {
       </Reveal>
       <div className="mt-9 flex items-center justify-center gap-5 font-mono text-xs uppercase tracking-[0.15em] text-coal/70">
         <a
+          href="https://boutique.rom1.fr"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="transition-colors hover:text-coal"
+        >
+          La boutique ↗
+        </a>
+        <span aria-hidden>·</span>
+        <a
           href="https://www.instagram.com/rom1unik/"
           target="_blank"
           rel="noopener noreferrer"

@@ -18,8 +18,6 @@ function Eye({ className = "" }: { className?: string }) {
   );
 }
 
-const MARQUEE = "Romain & Céline — l’œil et la technique";
-
 export default function Atelier() {
   return (
     <section id="atelier" className="grain relative z-10 overflow-hidden bg-paper text-coal">
@@ -123,20 +121,6 @@ export default function Atelier() {
         </div>
       </div>
 
-      {/* Marquee orange pleine largeur */}
-      <div className="bg-orange py-2.5">
-        <div className="marquee-track flex w-max whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.22em] text-coal">
-          {[0, 1].map((i) => (
-            <span key={i} aria-hidden={i === 1} className="flex">
-              {Array.from({ length: 4 }, (_, j) => (
-                <span key={j} className="mx-4">
-                  ★ {MARQUEE}
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

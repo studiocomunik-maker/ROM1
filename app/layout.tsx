@@ -94,6 +94,7 @@ const siteJsonLd = {
       sameAs: [
         "https://www.instagram.com/rom1unik/",
         "https://www.youtube.com/@rom1unik",
+        "https://boutique.rom1.fr",
       ],
       knowsAbout: [
         "Graphisme",

@@ -3,6 +3,7 @@ import MenuOverlay from "./components/MenuOverlay";
 import Expertises from "./components/Expertises";
 import Portfolio from "./components/Portfolio";
 import Atelier from "./components/Atelier";
+import Boutique from "./components/Boutique";
 import Contact from "./components/Contact";
 import { getRealisations } from "../utils/realisations";
 import { getSiteSettings } from "../utils/settings";
@@ -41,6 +42,7 @@ export default async function Home() {
       <Expertises />
       <Portfolio items={items} />
       <Atelier />
+      <Boutique />
       <Contact />
     </main>
   );
