@@ -155,6 +155,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
         <TransitionProvider>{children}</TransitionProvider>
+        {/* Mesure d'audience Pixelstore — anonyme, sans cookie (espace client) */}
+        <script
+          defer
+          src="https://client.pixelstore.fr/t.js"
+          data-site="adfaf852-21f4-4e0c-add6-9b6c0ad2a673"
+        />
       </body>
     </html>
   );
