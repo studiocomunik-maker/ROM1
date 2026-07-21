@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL, metiers, univers } from "./data";
+import { localPages } from "./local-pages";
 import { getRealisations } from "../utils/realisations";
 
 export const revalidate = 60;
@@ -29,6 +30,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/metiers/${m.key}`,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    })),
+    ...localPages.map((p) => ({
+      url: `${SITE_URL}/${p.slug}`,
+      changeFrequency: "monthly" as const,
+      // Le hub « graphiste beaujolais » = requête tête de pont → priorité haute
+      priority: p.slug === "graphiste-beaujolais" ? 0.9 : 0.7,
     })),
     ...reals.map((r) => ({
       url: `${SITE_URL}/realisations/${r.slug}`,

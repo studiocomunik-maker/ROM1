@@ -68,7 +68,29 @@ export default function Contact() {
           YouTube ↗
         </a>
       </div>
-      <p className="mt-8 font-mono text-xs uppercase leading-[1.6] tracking-[0.15em] text-coal/60">
+      {/* Maillage SEO local — discret mais crawlable (pages hors menu) */}
+      <p className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.15em] text-coal/50">
+        <Link href="/graphiste-beaujolais" className="transition-colors hover:text-coal">
+          Graphiste Beaujolais
+        </Link>
+        <span aria-hidden>·</span>
+        <Link href="/graphiste-villefranche-sur-saone" className="transition-colors hover:text-coal">
+          Villefranche
+        </Link>
+        <span aria-hidden>·</span>
+        <Link href="/graphiste-belleville-en-beaujolais" className="transition-colors hover:text-coal">
+          Belleville
+        </Link>
+        <span aria-hidden>·</span>
+        <Link href="/graphiste-macon" className="transition-colors hover:text-coal">
+          Mâcon
+        </Link>
+        <span aria-hidden>·</span>
+        <Link href="/creation-site-internet-beaujolais" className="transition-colors hover:text-coal">
+          Sites internet
+        </Link>
+      </p>
+      <p className="mt-6 font-mono text-xs uppercase leading-[1.6] tracking-[0.15em] text-coal/60">
         © Romain Renoux — rom1.fr
         <br />
         Côté web → pixelstore.fr
