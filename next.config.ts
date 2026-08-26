@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
+  // Les scripts SQL sont lus à l'exécution par /admin/compta/pages-devis/sql
+  // (bouton « Copier le SQL »). Sans ça, le dossier n'est pas embarqué dans la
+  // fonction déployée sur Vercel et la route répond 500 en production.
+  outputFileTracingIncludes: {
+    "/admin/compta/pages-devis/sql": ["./supabase/*.sql"],
+  },
 };
 
 export default nextConfig;

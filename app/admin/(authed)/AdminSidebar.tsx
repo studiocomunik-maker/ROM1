@@ -26,6 +26,7 @@ const SECTIONS: { title: string; items: Item[] }[] = [
       { href: "/admin/compta", label: "Récap factures" },
       { href: "/admin/compta/nouvelle", label: "Nouvelle facture" },
       { href: "/admin/compta/devis", label: "Devis" },
+      { href: "/admin/compta/pages-devis", label: "Pages devis" },
       { href: "/admin/compta/clients", label: "Annuaire clients" },
     ],
   },
