@@ -70,7 +70,7 @@ export default function Contact() {
       </div>
       {/* Maillage SEO local — discret mais crawlable (pages hors menu) */}
       <p className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.15em] text-coal/50">
-        <Link href="/graphiste-beaujolais" className="transition-colors hover:text-coal">
+        <Link href="/#beaujolais" className="transition-colors hover:text-coal">
           Graphiste Beaujolais
         </Link>
         <span aria-hidden>·</span>

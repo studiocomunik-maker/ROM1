@@ -4,6 +4,7 @@ import Expertises from "./components/Expertises";
 import Portfolio from "./components/Portfolio";
 import Atelier from "./components/Atelier";
 import Boutique from "./components/Boutique";
+import Beaujolais from "./components/Beaujolais";
 import Contact from "./components/Contact";
 import { getRealisations } from "../utils/realisations";
 import { getSiteSettings } from "../utils/settings";
@@ -43,6 +44,7 @@ export default async function Home() {
       <Portfolio items={items} />
       <Atelier />
       <Boutique />
+      <Beaujolais />
       <Contact />
     </main>
   );

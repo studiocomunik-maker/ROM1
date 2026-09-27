@@ -1,6 +1,7 @@
 /* Pages d'atterrissage SEO local : « graphiste + ville » et « site internet Beaujolais ».
    Hors menu principal (accès footer + sitemap), contenu unique par page — pas de
-   template à variables. URLs à plat : rom1.fr/<slug>. */
+   template à variables. URLs à plat : rom1.fr/<slug>. La requête tête
+   « graphiste beaujolais » est portée par l'accueil (bloc Beaujolais), pas ici. */
 
 export type LocalPage = {
   slug: string;
@@ -21,64 +22,6 @@ export type LocalPage = {
 };
 
 export const localPages: LocalPage[] = [
-  {
-    slug: "graphiste-beaujolais",
-    metaTitle: "Graphiste en Beaujolais — Romain Renoux, 20 ans de métier",
-    metaDescription:
-      "Graphiste indépendant installé à Jullié, au cœur des crus du Beaujolais. Identité visuelle, étiquettes de vin, print, photo, sites web — de Villefranche à Mâcon.",
-    eyebrow: "Graphiste · Beaujolais",
-    h1: "Graphiste en Beaujolais",
-    intro:
-      "Je suis Romain Renoux, graphiste indépendant installé à Jullié, un village du Beaujolais nord posé au-dessus de Juliénas. Vingt ans de métier, un atelier au milieu des vignes, et des clients qui vont du vigneron à l'industriel — parce qu'ici, les deux se croisent au même comptoir.",
-    serviceType: "Graphisme, identité visuelle et direction artistique",
-    sections: [
-      {
-        title: "Un graphiste d'ici, pas un prestataire de passage",
-        body: [
-          "Le Beaujolais n'est pas une zone de chalandise sur une carte : c'est mon terrain. Je connais les dix crus, les imprimeurs qui tiennent la dorure, les salles où se jouent les concerts et les caves où se décident les étiquettes. Quand un domaine de Villié-Morgon ou un artisan de Beaujeu m'appelle, je suis sur place dans le quart d'heure — avec l'appareil photo dans le coffre.",
-          "Cette proximité change le travail. Une identité visuelle se dessine mieux quand on a vu le lieu, serré les mains, goûté ce qu'il y a dans le verre. Je ne vends pas des maquettes à distance : je passe, je regarde, je reviens avec des propositions qui ressemblent à ce que vous êtes.",
-        ],
-      },
-      {
-        title: "Ce que je fais",
-        body: [
-          "Identité graphique et logos, chartes complètes avec règles d'usage. Print exigeant : étiquettes de vin, packaging, éditions, brochures — des fichiers dessinés pour la matière et le massicot. Photo et vidéo : reportages de domaine, natures mortes, films de marque, captations par drone. Côté web, j'assure la direction artistique et la fabrication technique vit chez pixelstore.fr, ma structure dédiée. Et du motion design quand une marque doit bouger sans se trahir.",
-          "Un seul interlocuteur du logo au site en passant par les photos : c'est ce qui évite les identités en morceaux, où chaque prestataire tire dans sa direction.",
-        ],
-      },
-      {
-        title: "De Villefranche à Mâcon",
-        body: [
-          "J'interviens sur tout le Beaujolais et ses portes : Villefranche-sur-Saône et sa zone d'activités, Belleville-en-Beaujolais et le négoce, Beaujeu, Fleurie, Chénas, Villié-Morgon, et jusqu'à Mâcon côté Saône-et-Loire. Lyon reste à quarante-cinq minutes — j'y travaille régulièrement pour des entreprises et des lieux culturels.",
-        ],
-      },
-    ],
-    faq: [
-      {
-        q: "Combien coûte un graphiste en Beaujolais ?",
-        a: "Chaque projet est chiffré sur devis, à la mission — pas d'abonnement, pas de forfait opaque. Une identité complète, une étiquette ou un reportage photo n'ont pas le même périmètre : on en parle, je chiffre, vous savez où vous allez avant de commencer.",
-      },
-      {
-        q: "Vous déplacez-vous chez les clients ?",
-        a: "Oui, systématiquement au démarrage d'un projet. Je suis basé à Jullié, dans le Beaujolais nord : Belleville, Beaujeu ou Fleurie sont à un quart d'heure, Villefranche-sur-Saône et Mâcon à une demi-heure, Lyon à quarante-cinq minutes.",
-      },
-      {
-        q: "Travaillez-vous uniquement pour le monde du vin ?",
-        a: "Non. Le vin est mon univers historique — étiquettes, identités de domaines, photos de cave — mais je travaille aussi pour l'industrie, l'hôtellerie-restauration, la culture et le spectacle vivant. Voir mes réalisations pour la palette complète.",
-      },
-      {
-        q: "Quels sont vos délais ?",
-        a: "Un logo avec sa charte demande généralement quatre à six semaines, une étiquette trois à quatre, un site complet six à dix selon le contenu. Je travaille seul : je m'engage sur des dates que je tiens, pas sur des promesses commerciales.",
-      },
-    ],
-    metierLinks: ["identite", "print", "photo", "web"],
-    related: [
-      "graphiste-villefranche-sur-saone",
-      "graphiste-belleville-en-beaujolais",
-      "graphiste-macon",
-      "creation-site-internet-beaujolais",
-    ],
-  },
   {
     slug: "graphiste-villefranche-sur-saone",
     metaTitle: "Graphiste à Villefranche-sur-Saône — identité, print & web",
@@ -121,7 +64,6 @@ export const localPages: LocalPage[] = [
     ],
     metierLinks: ["identite", "print", "web"],
     related: [
-      "graphiste-beaujolais",
       "graphiste-belleville-en-beaujolais",
       "creation-site-internet-beaujolais",
     ],
@@ -168,7 +110,6 @@ export const localPages: LocalPage[] = [
     ],
     metierLinks: ["print", "identite", "photo"],
     related: [
-      "graphiste-beaujolais",
       "graphiste-macon",
       "creation-site-internet-beaujolais",
     ],
@@ -215,7 +156,6 @@ export const localPages: LocalPage[] = [
     ],
     metierLinks: ["identite", "print", "photo"],
     related: [
-      "graphiste-beaujolais",
       "graphiste-belleville-en-beaujolais",
       "creation-site-internet-beaujolais",
     ],
@@ -271,7 +211,6 @@ export const localPages: LocalPage[] = [
     ],
     metierLinks: ["web", "identite", "photo"],
     related: [
-      "graphiste-beaujolais",
       "graphiste-villefranche-sur-saone",
       "graphiste-belleville-en-beaujolais",
     ],
