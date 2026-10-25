@@ -140,13 +140,13 @@ export default function Expertises() {
                       />
                       {/* titre calé sur la colonne : « IDENTITÉ GRAPHIQUE » (≈11,4 em) tient sur une ligne */}
                       <span
-                        className={`whitespace-nowrap font-display uppercase leading-[0.95] tracking-[-0.02em] text-[clamp(1.5rem,7.4vw,2.4rem)] transition-[color,transform] duration-500 lg:text-[clamp(1.5rem,calc(100cqi/12),2.9rem)] ${EASE} ${on ? "text-paper lg:translate-x-3.5" : "text-paper/30"}`}
+                        className={`whitespace-nowrap font-display uppercase leading-[0.95] tracking-[-0.02em] text-[clamp(1.5rem,7.4vw,2.4rem)] transition-[color,translate] duration-500 lg:text-[clamp(1.5rem,calc(100cqi/12),2.9rem)] ${EASE} ${on ? "text-paper lg:translate-x-3.5" : "text-paper/30"}`}
                       >
                         {m.t}
                       </span>
                       <span
                         ref={(el) => { subRefs.current[i] = el; }}
-                        className={`whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.15em] transition-[color,transform] duration-500 ${EASE} ${on ? "text-orange lg:translate-x-3.5" : "text-paper/40"}`}
+                        className={`whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.15em] transition-[color,translate] duration-500 ${EASE} ${on ? "text-orange lg:translate-x-3.5" : "text-paper/40"}`}
                       >
                         {m.sub}
                       </span>
