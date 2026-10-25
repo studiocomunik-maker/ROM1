@@ -55,13 +55,19 @@ export default function Expertises() {
     const section = sectionRef.current, stage = stageRef.current;
     if (!section || !stage) return;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let cancelled = false, loading = false;
-    const io = new IntersectionObserver(
+    let cancelled = false, drawn = false;
+    // premier dessin tracé quand la section est vraiment à l'écran
+    const firstDraw = () => {
+      if (drawn || !visible.current || !scene.current) return;
+      drawn = true;
+      scene.current.goTo(activeRef.current);
+      lastSwitch.current = performance.now();
+    };
+    // 1) chargement anticipé : three.js part un écran et demi avant la section
+    const load = new IntersectionObserver(
       ([e]) => {
-        visible.current = e.isIntersecting;
-        scene.current?.setVisible(e.isIntersecting);
-        if (!e.isIntersecting || loading) return;
-        loading = true;
+        if (!e.isIntersecting) return;
+        load.disconnect();
         import("./expertisesScene").then(({ createExpertisesScene }) => {
           if (cancelled) return;
           try {
@@ -69,17 +75,24 @@ export default function Expertises() {
           } catch {
             return;
           }
-          scene.current.goTo(activeRef.current); // premier dessin tracé à l'arrivée
           scene.current.setVisible(visible.current);
-          lastSwitch.current = performance.now();
+          firstDraw();
         });
       },
-      { rootMargin: "200px 0px" },
+      { rootMargin: "150% 0px" },
     );
-    io.observe(section);
+    // 2) visibilité : l'animation ne tourne que section à l'écran
+    const view = new IntersectionObserver(([e]) => {
+      visible.current = e.isIntersecting;
+      scene.current?.setVisible(e.isIntersecting);
+      firstDraw();
+    });
+    load.observe(section);
+    view.observe(section);
     return () => {
       cancelled = true;
-      io.disconnect();
+      load.disconnect();
+      view.disconnect();
       scene.current?.destroy();
       scene.current = null;
     };
