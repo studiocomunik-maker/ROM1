@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import PageNav from "../../components/PageNav";
 import Contact from "../../components/Contact";
 import SectionHeroBg from "../../components/SectionHeroBg";
+import MetierHeroScene from "../../components/MetierHeroScene";
 import { EXPS, UNIVERS, SITE_URL, getMetier, metiers } from "../../data";
 import { getRealisationsByMetier } from "../../../utils/realisations";
 import { getSectionHero } from "../../../utils/sectionHeroes";
@@ -103,6 +104,13 @@ export default async function MetierPage({ params }: PageProps<"/metiers/[slug]"
       {/* HERO métier — explique l'expertise */}
       <section className="grain relative flex min-h-screen flex-col justify-center overflow-hidden px-6 py-32 md:px-12">
         <SectionHeroBg hero={hero} />
+        <MetierHeroScene metierKey={metier.key} />
+        {/* repère du dessin filaire (MetierHeroScene) : centré dans le hero, sous le titre */}
+        <div
+          data-hero-stage
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 aspect-[5/4] w-[min(96vw,800px)] -translate-x-1/2 -translate-y-1/2"
+        />
         <div className="relative z-10">
           <p className="mb-6 font-display text-xs uppercase tracking-[0.3em] text-orange">
             ★ Métier · {metier.sub}

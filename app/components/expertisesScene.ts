@@ -240,8 +240,13 @@ export function createExpertisesScene(opts: {
   keys: string[];
   readout: HTMLElement | null;
   reduce: boolean;
+  grid?: boolean; // grille mur + sol et ses cases qui s'allument (false : l'objet seul, ex. sur une photo)
+  events?: HTMLElement; // où écouter la souris (défaut : section)
+  flash?: boolean; // flashs : le dessin à ~300 % par-dessus, une fraction de seconde (hero des pages métiers)
 }): SceneApi {
   const { section, stage, keys, readout, reduce } = opts;
+  const withGrid = opts.grid ?? true;
+  const events = opts.events ?? section;
   const FORMS = keys.map(build);
   const N = Math.max(...FORMS.map((f) => f.length));
   const pick = (f: Stroke[], i: number) => f[Math.floor((i * f.length) / N)];
@@ -276,14 +281,16 @@ export function createExpertisesScene(opts: {
       scene.add(new THREE.LineSegments(g, m));
     }
   }
-  gridLines((add) => {
-    for (let i = -65; i <= 65; i++) add([i * CELL, FLOOR_Y, WALL_Z], [i * CELL, 140, WALL_Z], i % 5 === 0);
-    for (let j = 0; j <= 40; j++) add([-260, FLOOR_Y + j * CELL, WALL_Z], [260, FLOOR_Y + j * CELL, WALL_Z], j % 5 === 0);
-  }, 0x1b1b1f, 0x27272c, false);
-  gridLines((add) => {
-    for (let i = -65; i <= 65; i++) add([i * CELL, FLOOR_Y, WALL_Z], [i * CELL, FLOOR_Y, 70], i % 5 === 0);
-    for (let j = 0; j <= 35; j++) add([-260, FLOOR_Y, WALL_Z + j * CELL], [260, FLOOR_Y, WALL_Z + j * CELL], j % 5 === 0);
-  }, 0x26262b, 0x34343a, true);
+  if (withGrid) {
+    gridLines((add) => {
+      for (let i = -65; i <= 65; i++) add([i * CELL, FLOOR_Y, WALL_Z], [i * CELL, 140, WALL_Z], i % 5 === 0);
+      for (let j = 0; j <= 40; j++) add([-260, FLOOR_Y + j * CELL, WALL_Z], [260, FLOOR_Y + j * CELL, WALL_Z], j % 5 === 0);
+    }, 0x1b1b1f, 0x27272c, false);
+    gridLines((add) => {
+      for (let i = -65; i <= 65; i++) add([i * CELL, FLOOR_Y, WALL_Z], [i * CELL, FLOOR_Y, 70], i % 5 === 0);
+      for (let j = 0; j <= 35; j++) add([-260, FLOOR_Y, WALL_Z + j * CELL], [260, FLOOR_Y, WALL_Z + j * CELL], j % 5 === 0);
+    }, 0x26262b, 0x34343a, true);
+  }
 
   // Traits de l'objet
   const geo = new LineSegmentsGeometry();
@@ -300,6 +307,14 @@ export function createExpertisesScene(opts: {
   ghost.visible = false;
   group.add(ghost);
   disposables.push(geo, mat, ghostMat);
+  // Flash (option) : même géométrie et mêmes couleurs, agrandie ~3×, semi-transparente
+  const flashMat = new LineMaterial({ vertexColors: true, linewidth: 1.15, worldUnits: false, transparent: true, opacity: 0.3 });
+  const flash = new LineSegments2(geo, flashMat);
+  flash.frustumCulled = false;
+  flash.visible = false;
+  group.add(flash);
+  disposables.push(flashMat);
+  let nextFlash = 2.5, flashUntil = 0, flash2 = 0;
   const startAttr = geo.attributes.instanceStart as THREE.InterleavedBufferAttribute;
   const colorAttr = geo.attributes.instanceColorStart as THREE.InterleavedBufferAttribute;
   const posArr = startAttr.data.array as Float32Array;
@@ -310,7 +325,7 @@ export function createExpertisesScene(opts: {
   const cellMat = new THREE.MeshBasicMaterial({ color: 0xff3d1f, transparent: true, opacity: 0.08, depthWrite: false });
   const cellEdgeMat = new THREE.LineBasicMaterial({ color: 0xff3d1f, transparent: true, opacity: 0.4 });
   disposables.push(cellGeo, cellEdges, cellMat, cellEdgeMat);
-  const cells = Array.from({ length: 3 }, () => {
+  const cells = Array.from({ length: withGrid ? 3 : 0 }, () => {
     const m = new THREE.Mesh(cellGeo, cellMat);
     m.add(new THREE.LineSegments(cellEdges, cellEdgeMat));
     m.visible = false;
@@ -367,8 +382,8 @@ export function createExpertisesScene(opts: {
     tilt = over ? { x: ((e.clientX - s.left) / s.width) * 2 - 1, y: -(((e.clientY - s.top) / s.height) * 2 - 1) } : { x: 0, y: 0 };
   };
   const onLeave = () => { pointer = over = false; tilt = { x: 0, y: 0 }; };
-  section.addEventListener("pointermove", onMove);
-  section.addEventListener("pointerleave", onLeave);
+  events.addEventListener("pointermove", onMove);
+  events.addEventListener("pointerleave", onLeave);
 
   const ease = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
   let rotX = 0.2, rotY = 0, camX = 0, camY = 0, camZ = 84, lastRead = 0;
@@ -406,6 +421,18 @@ export function createExpertisesScene(opts: {
     const glitching = t < glitchUntil;
     ghost.visible = t < ghostUntil;
     ghost.position.x = ghostDX;
+    // flashs à 300 % : rares, très courts, parfois doublés
+    if (opts.flash && !reduce && t - t0 > DUR + STAGGER) {
+      if (t > nextFlash) {
+        flashUntil = t + 0.06 + Math.random() * 0.08;
+        flash2 = Math.random() < 0.45 ? t + 0.17 : 0;
+        nextFlash = t + 3 + Math.random() * 5;
+        flash.scale.setScalar(2.6 + Math.random() * 0.6);
+        flash.position.set((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 3, 0);
+      }
+      if (flash2 && t > flash2) { flashUntil = t + 0.05 + Math.random() * 0.06; flash2 = 0; }
+    }
+    flash.visible = t < flashUntil;
     if (!reduce) for (const c of cells) {
       if (t > c.next) { c.m.visible = placeCell(c); c.until = t + 0.06 + Math.random() * 0.14; c.next = t + 1.2 + Math.random() * 3.2; }
       if (t > c.until) c.m.visible = false;
@@ -467,15 +494,18 @@ export function createExpertisesScene(opts: {
     const cx = s.left - r.left + s.width / 2, cy = s.top - r.top + s.height / 2;
     // Grille estompée en haut, en bas, et vers la gauche jusqu'au cadre (derrière les titres) ;
     // le fondu s'arrête avant le cadre pour ne jamais éteindre l'objet. En mobile, cadre à gauche = pas de fondu.
-    const fadeTo = Math.max(0, s.left - r.left - 24);
-    const mask =
-      "linear-gradient(to bottom, transparent, #000 90px, #000 calc(100% - 90px), transparent), " +
-      `linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.45) ${Math.round(fadeTo * 0.55)}px, #000 ${Math.round(fadeTo)}px)`;
-    cv.style.maskImage = mask;
-    cv.style.setProperty("-webkit-mask-image", mask);
+    if (withGrid) {
+      const fadeTo = Math.max(0, s.left - r.left - 24);
+      const mask =
+        "linear-gradient(to bottom, transparent, #000 90px, #000 calc(100% - 90px), transparent), " +
+        `linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.45) ${Math.round(fadeTo * 0.55)}px, #000 ${Math.round(fadeTo)}px)`;
+      cv.style.maskImage = mask;
+      cv.style.setProperty("-webkit-mask-image", mask);
+    }
     renderer.setSize(W, H, false);
     mat.resolution.set(W, H);
     ghostMat.resolution.set(W, H);
+    flashMat.resolution.set(W, H);
     const Hv = s.height * 1.28, Wv = W; // même échelle qu'un canvas de 128 % du cadre
     camera.aspect = Wv / Hv;
     camera.setViewOffset(Wv, Hv, Wv / 2 - cx, Hv / 2 - cy, W, H);
@@ -508,8 +538,8 @@ export function createExpertisesScene(opts: {
       visible = false;
       cancelAnimationFrame(raf);
       ro.disconnect();
-      section.removeEventListener("pointermove", onMove);
-      section.removeEventListener("pointerleave", onLeave);
+      events.removeEventListener("pointermove", onMove);
+      events.removeEventListener("pointerleave", onLeave);
       disposables.forEach((d) => d.dispose());
       renderer.dispose();
       cv.remove();
