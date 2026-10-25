@@ -372,26 +372,42 @@ export function createExpertisesScene(opts: {
     return true;
   }
 
-  // Pointeur sur toute la section : inclinaison près du cadre + traits qui s'allument sous la souris
-  let pointer = false, over = false, tilt = { x: 0, y: 0 };
+  // Pointeur sur la section : traits qui s'allument sous la souris + léger glissé de caméra
+  let pointer = false, over = false;
   const onMove = (e: PointerEvent) => {
     const r = cv.getBoundingClientRect(), s = stage.getBoundingClientRect();
     ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     over = e.clientX > s.left - 60 && e.clientX < s.right + 60 && e.clientY > s.top - 60 && e.clientY < s.bottom + 60;
     pointer = true;
-    tilt = over ? { x: ((e.clientX - s.left) / s.width) * 2 - 1, y: -(((e.clientY - s.top) / s.height) * 2 - 1) } : { x: 0, y: 0 };
   };
-  const onLeave = () => { pointer = over = false; tilt = { x: 0, y: 0 }; };
+  const onLeave = () => { pointer = over = false; };
   events.addEventListener("pointermove", onMove);
   events.addEventListener("pointerleave", onLeave);
+
+  // L'objet se tourne vers la souris, où qu'elle soit à l'écran (position relative au centre du cadre)
+  let look: { x: number; y: number } | null = null;
+  const clamp1 = (v: number) => Math.max(-1, Math.min(1, v));
+  const onLook = (e: PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    const s = stage.getBoundingClientRect();
+    look = {
+      x: clamp1((e.clientX - (s.left + s.width / 2)) / (window.innerWidth * 0.5)),
+      y: clamp1((e.clientY - (s.top + s.height / 2)) / (window.innerHeight * 0.5)),
+    };
+  };
+  const onLookOut = (e: MouseEvent) => { if (!e.relatedTarget) look = null; }; // souris sortie de la fenêtre
+  window.addEventListener("pointermove", onLook, { passive: true });
+  document.addEventListener("mouseout", onLookOut);
 
   const ease = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
   let rotX = 0.2, rotY = 0, camX = 0, camY = 0, camZ = 84, lastRead = 0;
 
   function frame(now: number) {
     const t = now / 1000;
-    const ty = (reduce ? 0 : Math.sin(t * 0.4) * 0.45) + tilt.x * 0.35;
-    const tx = 0.2 + (TILT[keys[active]] || 0) - tilt.y * 0.18;
+    // vers la souris (rotation Y + : la face avant tourne à droite ; X + : elle s'incline vers le bas),
+    // sinon lent balancement
+    const ty = look ? look.x * 0.75 : reduce ? 0 : Math.sin(t * 0.4) * 0.45;
+    const tx = 0.2 + (TILT[keys[active]] || 0) + (look ? look.y * 0.45 : 0);
     rotY += (ty - rotY) * 0.06; rotX += (tx - rotX) * 0.06;
     group.rotation.set(rotX, rotY, 0);
     // la caméra glisse un peu avec la souris : la grille prend de la profondeur
@@ -540,6 +556,8 @@ export function createExpertisesScene(opts: {
       ro.disconnect();
       events.removeEventListener("pointermove", onMove);
       events.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("pointermove", onLook);
+      document.removeEventListener("mouseout", onLookOut);
       disposables.forEach((d) => d.dispose());
       renderer.dispose();
       cv.remove();
