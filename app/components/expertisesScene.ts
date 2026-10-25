@@ -347,7 +347,8 @@ export function createExpertisesScene(opts: {
     if (!ray.ray.intersectPlane(wallPlane, hit)) return false;
     c.m.rotation.set(0, 0, 0);
     if (hit.y < FLOOR_Y) {
-      if (!ray.ray.intersectPlane(floorPlane, hit)) return false;
+      // au sol, seulement au fond (près du mur) : près de la caméra une case deviendrait énorme
+      if (!ray.ray.intersectPlane(floorPlane, hit) || hit.z > WALL_Z + 28) return false;
       c.m.rotation.x = -Math.PI / 2;
       c.m.position.set((Math.floor(hit.x / CELL) + 0.5) * CELL, FLOOR_Y + 0.02, (Math.floor(hit.z / CELL) + 0.5) * CELL);
     } else {
