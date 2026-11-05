@@ -34,7 +34,7 @@ grant execute on function public.is_admin() to anon, authenticated, service_role
 --    (liste vérifiée le 05/11/2026 dans le SQL Editor)
 update auth.users
    set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
- where email in (__EMAILS__);
+ where email in ('contact@pixelstore.fr');
 
 -- 3) Toute policy réservée aux connectés (rôle `authenticated` seul) exige
 --    désormais en plus is_admin(). Les policies publiques (`anon, authenticated`)
