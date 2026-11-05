@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../../utils/supabase/server";
+import { isAdminUser } from "../../../../utils/supabase/admin-role";
 import { pennylaneConfigured, listCustomerInvoices } from "../../../../utils/pennylane";
 
 // Rapatrie dans le récap local les factures émises côté Pennylane (interface
@@ -9,7 +10,7 @@ export async function POST() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ ok: false }, { status: 401 });
+  if (!isAdminUser(user)) return NextResponse.json({ ok: false }, { status: 401 });
 
   if (!pennylaneConfigured()) {
     return NextResponse.json({ ok: false, error: "PENNYLANE_API_TOKEN manquant." }, { status: 503 });

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isAdminUser } from "./utils/supabase/admin-role";
 
 // Next 16 : convention « proxy » (ex-middleware). Rafraîchit la session
 // Supabase sur chaque requête et protège la zone /admin.
@@ -40,8 +41,9 @@ export async function proxy(request: NextRequest) {
   const isAdmin = pathname.startsWith("/admin");
   const isLogin = pathname === "/admin/login";
 
-  // Protège /admin/* (sauf la page de login)
-  if (isAdmin && !isLogin && !user) {
+  // Protège /admin/* (sauf la page de login) : il faut un compte ADMIN,
+  // une simple session ne suffit pas.
+  if (isAdmin && !isLogin && !isAdminUser(user)) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     const redirect = NextResponse.redirect(url);
@@ -49,8 +51,8 @@ export async function proxy(request: NextRequest) {
     return redirect;
   }
 
-  // Déjà connecté → pas la peine de revoir le login
-  if (isLogin && user) {
+  // Déjà connecté en admin → pas la peine de revoir le login
+  if (isLogin && isAdminUser(user)) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
     const redirect = NextResponse.redirect(url);

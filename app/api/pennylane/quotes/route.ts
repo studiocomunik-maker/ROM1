@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../../utils/supabase/server";
+import { isAdminUser } from "../../../../utils/supabase/admin-role";
 import { pennylaneConfigured, createQuote, sendQuoteByEmail } from "../../../../utils/pennylane";
 import { ensurePennylaneCustomer } from "../_lib";
 
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ ok: false }, { status: 401 });
+  if (!isAdminUser(user)) return NextResponse.json({ ok: false }, { status: 401 });
 
   if (!pennylaneConfigured()) {
     return NextResponse.json({ ok: false, error: "PENNYLANE_API_TOKEN manquant." }, { status: 503 });

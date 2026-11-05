@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createClient } from "../../../utils/supabase/server";
+import { isAdminUser } from "../../../utils/supabase/admin-role";
 
 // Rafraîchit immédiatement les pages publiques après une modif admin.
 // Protégé : nécessite une session authentifiée (cookies).
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ ok: false }, { status: 401 });
+  if (!isAdminUser(user)) return NextResponse.json({ ok: false }, { status: 401 });
 
   const { slug, path } = await request
     .json()

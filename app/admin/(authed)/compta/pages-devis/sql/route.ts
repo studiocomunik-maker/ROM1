@@ -2,6 +2,7 @@ import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "../../../../../../utils/supabase/server";
+import { isAdminUser } from "../../../../../../utils/supabase/admin-role";
 
 /**
  * Sert un script SQL du dossier `supabase/` pour qu'on puisse l'ouvrir d'un clic
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return new NextResponse("Non autorisé", { status: 401 });
+  if (!isAdminUser(user)) return new NextResponse("Non autorisé", { status: 401 });
 
   const asked = request.nextUrl.searchParams.get("f") ?? "migration_devis_pages.sql";
   const download = request.nextUrl.searchParams.get("download") === "1";

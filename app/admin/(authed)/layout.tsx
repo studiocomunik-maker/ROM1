@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "../../../utils/supabase/server";
+import { isAdminUser } from "../../../utils/supabase/admin-role";
 import AdminSidebar from "./AdminSidebar";
 
 // Garde serveur (défense en profondeur en plus du proxy) + chrome admin.
@@ -8,7 +9,7 @@ export default async function AuthedLayout({ children }: { children: React.React
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/admin/login");
+  if (!isAdminUser(user)) redirect("/admin/login");
 
   return (
     <div className="admin flex min-h-screen flex-col bg-coal text-paper md:flex-row">

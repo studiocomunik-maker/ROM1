@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../../utils/supabase/client";
+import { isAdminUser } from "../../../utils/supabase/admin-role";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,9 +17,16 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError(error.message);
+      setLoading(false);
+      return;
+    }
+    // Compte valide mais sans rôle admin : on referme la session aussitôt.
+    if (!isAdminUser(data.user)) {
+      await supabase.auth.signOut();
+      setError("Accès réservé à l'administration.");
       setLoading(false);
       return;
     }
