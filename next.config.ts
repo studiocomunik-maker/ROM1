@@ -15,13 +15,8 @@ const nextConfig: NextConfig = {
   // Les scripts SQL sont lus à l'exécution par /admin/compta/pages-devis/sql
   // (bouton « Copier le SQL »). Sans ça, le dossier n'est pas embarqué dans la
   // fonction déployée sur Vercel et la route répond 500 en production.
-  // L'ancienne landing « graphiste beaujolais » concurrençait l'accueil sur la
-  // requête tête : son contenu vit maintenant sur / (bloc Beaujolais).
-  async redirects() {
-    return [
-      { source: "/graphiste-beaujolais", destination: "/", permanent: true },
-    ];
-  },
+  // (/graphiste-beaujolais n'est plus redirigée vers / depuis le 24/11/2026 :
+  // c'est de nouveau une page locale, cf. app/local-pages.ts.)
   outputFileTracingIncludes: {
     "/admin/compta/pages-devis/sql": ["./supabase/*.sql"],
   },

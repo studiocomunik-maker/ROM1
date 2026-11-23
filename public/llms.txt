@@ -1,29 +1,37 @@
 # rom1 — Romain Renoux, graphiste en Beaujolais
 
-> Romain Renoux est graphiste et directeur artistique indépendant, installé au cœur du Beaujolais (entre Lyon et Mâcon, France). Spécialité : l'univers du vin — étiquettes, identités de domaines viticoles, packaging, photo/vidéo et sites web pour vignerons et caves. Contact : rom1@rom1.fr.
+> Romain Renoux (marque « rom1 ») est graphiste et directeur artistique indépendant, installé à Jullié (69840), dans le Beaujolais, entre Lyon et Mâcon. Graphiste généraliste depuis 2005 : identité visuelle et logos, print, étiquettes de vin, photo, vidéo, motion design et sites web, pour les entreprises, artisans, commerces, lieux culturels et domaines viticoles du Beaujolais. Spécialité reconnue : l'univers du vin. Contact : rom1@rom1.fr.
 
-Il travaille pour les domaines et vignerons du Beaujolais, du Rhône, du Mâconnais et de la Bourgogne, sur place comme à distance, ainsi que pour des clients en scénographie et spectacle, culture et art, corporate/industrie et hôtellerie-restauration. Chaque projet est devisé sur mesure (pas de grille tarifaire publique) : un échange par email suffit pour cadrer un budget.
+Il intervient sur tout le Beaujolais (Villefranche-sur-Saône, Belleville-en-Beaujolais, Beaujeu, Fleurie, Juliénas, Villié-Morgon), à Mâcon et dans le Mâconnais, à Lyon et dans le Rhône — sur place comme à distance. Il travaille aussi pour l'industrie (corporate, B2B), la scénographie de concerts, la culture et l'hôtellerie-restauration. Chaque projet est devisé sur mesure (pas de grille tarifaire publique). Fiche Google : « Rom1 — Romain Renoux », graphiste, Jullié.
 
 ## Services
 
-- Étiquettes de vin : création d'étiquettes et contre-étiquettes, dessinées pour la matière (papier, gaufrage, dorure), fichiers prêts pour l'impression avec mentions obligatoires intégrées.
-- Identité de domaine viticole : logo, noms de cuvées, charte graphique déclinable de la cave au site web.
-- Packaging & coffrets : cartons, étuis et coffrets pensés comme des objets.
-- Photo & vidéo : reportage de domaine, vigne, cave, vendanges, portraits, captation par drone.
-- Sites web : direction artistique des sites, fabrication technique via pixelstore.fr.
-- Identité graphique, print/édition et motion design pour tous secteurs.
+- Identité visuelle : logo, charte graphique, règles d'usage, refonte d'une identité existante — pour entreprises, artisans, commerces, associations et domaines.
+- Étiquettes de vin : étiquettes et contre-étiquettes, gammes, coffrets, dessinées pour la matière (papier, gaufrage, dorure), mentions obligatoires intégrées, suivi jusqu'à l'imprimeur.
+- Print et édition : brochures, plaquettes, packaging, signalétique.
+- Photo et vidéo : reportages d'entreprise et de domaine, vendanges, portraits, packshots, films de présentation, prises de vue par drone.
+- Motion design : animation, habillage, écrans de scène pour concerts.
+- Sites web : direction artistique, fabrication technique via pixelstore.fr (vitrine, boutique en ligne).
+
+## Réalisations notables
+
+- [Domaine des Grottes (Romain Des Grottes)](https://rom1.fr/realisations/romain-des-grottes) : étiquettes, identité, photo.
+- [Bonne Tonne](https://rom1.fr/realisations/bonne-tonne) et [Bott](https://rom1.fr/realisations/bott) : domaines viticoles (identité, print, web).
+- [Guignard Robotisation](https://rom1.fr/realisations/guignard-robotisation) : identité, print, site web, photo et films pour un industriel.
+- [BMV Transport & Logistique](https://rom1.fr/realisations/bmv-transport-logistique) : print, photo et films d'entreprise.
+- [Christophe Pacalet](https://rom1.fr/realisations/christophe-pacalet) : site internet, photo et vidéo du domaine.
+- [Rohff à Bercy](https://rom1.fr/realisations/rohff-a-bercy) : motion design et visuels de scène.
+- [Toutes les réalisations](https://rom1.fr/realisations)
 
 ## Pages clés
 
-- [Accueil — graphiste en Beaujolais](https://rom1.fr/) : portfolio, présentation, zone d'intervention (Jullié, Beaujolais nord) et questions fréquentes.
-- [Graphiste spécialisé vin, en Beaujolais](https://rom1.fr/univers/vin) : services pour domaines viticoles + questions fréquentes.
-- [Identité graphique](https://rom1.fr/metiers/identite) : logos, chartes, branding.
-- [Print & éditions](https://rom1.fr/metiers/print) : édition, packaging, étiquettes.
-- [Photo / Vidéo](https://rom1.fr/metiers/photo) : image, film, drone.
-- [Webdesign](https://rom1.fr/metiers/web) : sites sur mesure.
-- [Motion design](https://rom1.fr/metiers/motion) : animation, habillage.
+- [Graphiste en Beaujolais](https://rom1.fr/graphiste-beaujolais) : présentation, services, zone d'intervention, questions fréquentes.
+- [Accueil](https://rom1.fr/) : portfolio et présentation.
+- [Graphiste spécialisé vin, en Beaujolais](https://rom1.fr/univers/vin) : étiquettes et identités de domaines + questions fréquentes.
 - [Graphiste à Villefranche-sur-Saône](https://rom1.fr/graphiste-villefranche-sur-saone), [Belleville-en-Beaujolais](https://rom1.fr/graphiste-belleville-en-beaujolais), [Mâcon](https://rom1.fr/graphiste-macon) : interventions locales.
-- [Création de site internet en Beaujolais](https://rom1.fr/creation-site-internet-beaujolais) : sites sur-mesure pour domaines et entreprises.
+- [Création de site internet en Beaujolais](https://rom1.fr/creation-site-internet-beaujolais) : sites sur mesure pour domaines et entreprises.
+- [Identité graphique](https://rom1.fr/metiers/identite), [Print](https://rom1.fr/metiers/print), [Photo / Vidéo](https://rom1.fr/metiers/photo), [Webdesign](https://rom1.fr/metiers/web), [Motion design](https://rom1.fr/metiers/motion).
+- [À propos](https://rom1.fr/a-propos) : parcours depuis 2005.
 
 ## Sites liés
 
@@ -32,4 +40,5 @@ Il travaille pour les domaines et vignerons du Beaujolais, du Rhône, du Mâconn
 ## Contact
 
 - Email : rom1@rom1.fr
-- Zone : Beaujolais · Lyon · Rhône · Mâconnais · Bourgogne · France entière à distance
+- Adresse : Jullié (69840), Rhône, Beaujolais
+- Zone : Beaujolais · Villefranche-sur-Saône · Mâcon · Lyon · Rhône · Mâconnais · France entière à distance

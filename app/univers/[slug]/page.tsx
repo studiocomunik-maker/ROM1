@@ -25,12 +25,20 @@ type UniversPage = {
   metaDescription: string;
   services?: Service[];
   faq?: Faq[];
+  /** Image d'aperçu de partage (og:image). Le openGraph de cette page remplace
+      celui du layout : sans ce champ, la page n'a aucune image. */
+  ogImage?: { url: string; alt: string };
 };
 
 const PAGES: Record<string, UniversPage> = {
   vin: {
     h1: "Graphiste spécialisé vin, en Beaujolais",
     metaTitle: "Graphiste vin & étiquettes en Beaujolais — Romain Renoux",
+    // Étiquette L'Antidote, Domaine des Grottes — dessinée par Romain.
+    ogImage: {
+      url: "https://zcznwdearijfxfxnpsbz.supabase.co/storage/v1/object/public/realisations/romain-des-grottes/1781426151770-antidote.png",
+      alt: "Étiquette L'Antidote, Domaine des Grottes — création Romain Renoux",
+    },
     metaDescription:
       "Graphiste spécialisé vin en Beaujolais : étiquettes, identité de domaine, packaging, photo et site web pour vignerons et caves. Parlons de votre projet.",
     services: [
@@ -128,6 +136,7 @@ export async function generateMetadata({
       url: `${SITE_URL}/univers/${u.key}`,
       title: p?.metaTitle ?? `${u.t} — Romain Renoux`,
       description: p?.metaDescription ?? u.intro.slice(0, 160),
+      ...(p?.ogImage ? { images: [p.ogImage] } : {}),
     },
   };
 }

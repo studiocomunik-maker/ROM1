@@ -2,9 +2,9 @@ import Link from "next/link";
 import Reveal from "./Reveal";
 import { SITE_URL } from "../data";
 
-/* Bloc SEO « graphiste en Beaujolais » de l'accueil. Reprend le contenu de
-   l'ancienne page /graphiste-beaujolais (redirigée 301 vers /) : c'est
-   l'accueil qui doit ranker sur la requête tête, pas une page satellite. */
+/* Bloc « graphiste en Beaujolais » de l'accueil. La page dédiée
+   /graphiste-beaujolais est de nouveau en ligne (24/11/2026) avec ses propres
+   textes et sa propre FAQ : ne pas recopier l'un dans l'autre (contenu dupliqué). */
 
 const TEXTE = [
   "Graphiste indépendant installé à Jullié, dans le Beaujolais nord, au-dessus de Juliénas. Vingt ans de métier, un atelier au milieu des vignes, et des clients qui vont du vigneron à l'industriel — parce qu'ici, les deux se croisent au même comptoir.",
@@ -32,6 +32,7 @@ const FAQ = [
 ];
 
 const VILLES = [
+  { href: "/graphiste-beaujolais", t: "Graphiste en Beaujolais" },
   { href: "/graphiste-villefranche-sur-saone", t: "Villefranche-sur-Saône" },
   { href: "/graphiste-belleville-en-beaujolais", t: "Belleville-en-Beaujolais" },
   { href: "/graphiste-macon", t: "Mâcon" },

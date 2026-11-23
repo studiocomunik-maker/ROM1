@@ -1,7 +1,9 @@
 /* Pages d'atterrissage SEO local : « graphiste + ville » et « site internet Beaujolais ».
    Hors menu principal (accès footer + sitemap), contenu unique par page — pas de
-   template à variables. URLs à plat : rom1.fr/<slug>. La requête tête
-   « graphiste beaujolais » est portée par l'accueil (bloc Beaujolais), pas ici. */
+   template à variables. URLs à plat : rom1.fr/<slug>.
+   Chaque page s'ouvre sur de vraies réalisations (liste choisie à la main dans
+   `realisations`) : un visiteur qui arrive de Google voit le travail avant le texte.
+   /graphiste-beaujolais remise en ligne le 24/11/2026 (Bing la classait encore 3e). */
 
 export type LocalPage = {
   slug: string;
@@ -14,6 +16,9 @@ export type LocalPage = {
   faq: { q: string; a: string }[];
   /** Clés de métiers (data.ts) à proposer en liens internes. */
   metierLinks: string[];
+  /** Slugs des réalisations montrées en tête de page, dans l'ordre (6 conseillé).
+      La première sert d'image de fond du hero et d'aperçu de partage. */
+  realisations: string[];
   /** Slugs des autres pages locales à lier en bas de page. */
   related: string[];
   /** Ville pour le JSON-LD Service (areaServed). Absent = région entière. */
@@ -22,6 +27,72 @@ export type LocalPage = {
 };
 
 export const localPages: LocalPage[] = [
+  {
+    slug: "graphiste-beaujolais",
+    metaTitle: "Graphiste en Beaujolais — Romain Renoux, 20 ans de métier",
+    metaDescription:
+      "Graphiste indépendant installé à Jullié, au cœur des crus du Beaujolais. Identité visuelle, étiquettes de vin, print, photo, sites web — de Villefranche à Mâcon.",
+    eyebrow: "Graphiste · Beaujolais",
+    h1: "Graphiste en Beaujolais",
+    intro:
+      "Je suis Romain Renoux, graphiste indépendant à Jullié, dans le Beaujolais nord. Depuis 2005, je dessine des identités, des étiquettes de vin, des brochures et des sites pour les domaines, les entreprises et les lieux de la région — et je fais les photos qui vont avec.",
+    serviceType: "Graphisme, identité visuelle et direction artistique",
+    sections: [
+      {
+        title: "Un graphiste d'ici, pas un prestataire de passage",
+        body: [
+          "Quand un domaine de Villié-Morgon ou un artisan de Beaujeu m'appelle, je suis sur place dans le quart d'heure, avec l'appareil photo dans le coffre. Je connais les crus, les imprimeurs de la région, leurs papiers et leurs limites : ça évite les mauvaises surprises au moment de tirer les étiquettes ou la plaquette.",
+          "Je ne vends pas des maquettes à distance. Je viens voir le lieu, j'écoute comment vous parlez de votre travail, et je reviens avec des propositions qui vous ressemblent, pas avec la tendance du moment.",
+        ],
+      },
+      {
+        title: "Ce que je fais",
+        body: [
+          "Identité graphique et logos, chartes complètes avec règles d'usage. Print exigeant : étiquettes de vin, packaging, éditions, brochures — des fichiers dessinés pour la matière et le massicot. Photo et vidéo : reportages de domaine, natures mortes, films de marque, captations par drone. Côté web, j'assure la direction artistique et la fabrication technique vit chez pixelstore.fr, ma structure dédiée. Et du motion design quand une marque doit bouger sans se trahir.",
+          "Le même interlocuteur du premier croquis à la mise en ligne : vos supports se répondent au lieu de tirer chacun dans sa direction.",
+        ],
+      },
+      {
+        title: "De Villefranche à Mâcon",
+        body: [
+          "J'interviens sur tout le Beaujolais et ses portes : Villefranche-sur-Saône et sa zone d'activités, Belleville-en-Beaujolais et le négoce, Beaujeu, Fleurie, Chénas, Villié-Morgon, et jusqu'à Mâcon côté Saône-et-Loire. Lyon reste à quarante-cinq minutes — j'y travaille régulièrement pour des entreprises et des lieux culturels.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Faites-vous les étiquettes de vin ?",
+        a: "Oui, c'est au cœur de mon travail depuis 2005 : étiquettes et contre-étiquettes, gammes complètes, coffrets. Je les dessine pour le papier et l'impression choisis, avec les mentions obligatoires intégrées, et je suis le bon à tirer jusqu'à l'imprimeur.",
+      },
+      {
+        q: "Pouvez-vous aussi faire les photos et la vidéo ?",
+        a: "Oui : reportages de domaine, vendanges, portraits, packshots de bouteilles, films de présentation et prises de vue par drone. Les images sortent de la même main que l'identité, donc elles vont ensemble.",
+      },
+      {
+        q: "Et pour le site internet ?",
+        a: "Je fais la direction artistique, et la fabrication est assurée par pixelstore.fr, ma structure web : site vitrine, boutique pour vendre ses vins en ligne, contenu que vous mettez à jour vous-même.",
+      },
+      {
+        q: "Comment démarre un projet ?",
+        a: "Par un appel ou un email, puis une visite sur place. Je vous envoie ensuite un devis détaillé par étapes : on ne commence que lorsque tout est clair pour vous.",
+      },
+    ],
+    realisations: [
+      "romain-des-grottes",
+      "bonne-tonne",
+      "guignard-robotisation",
+      "bott",
+      "rohff-a-bercy",
+      "le-bourlay",
+    ],
+    metierLinks: ["identite", "print", "photo", "web"],
+    related: [
+      "graphiste-villefranche-sur-saone",
+      "graphiste-belleville-en-beaujolais",
+      "graphiste-macon",
+      "creation-site-internet-beaujolais",
+    ],
+  },
   {
     slug: "graphiste-villefranche-sur-saone",
     metaTitle: "Graphiste à Villefranche-sur-Saône — identité, print & web",
@@ -62,8 +133,17 @@ export const localPages: LocalPage[] = [
         a: "C'est même fréquent. Un logo qui a de la notoriété locale ne se jette pas : on le redessine proprement, on reconstruit la charte autour, et vos supports repartent sur des bases saines sans perdre vingt ans de reconnaissance.",
       },
     ],
+    realisations: [
+      "guignard-robotisation",
+      "bmv-transport-logistique",
+      "tabaj",
+      "bonne-tonne",
+      "le-bourlay",
+      "rohff-a-bercy",
+    ],
     metierLinks: ["identite", "print", "web"],
     related: [
+      "graphiste-beaujolais",
       "graphiste-belleville-en-beaujolais",
       "creation-site-internet-beaujolais",
     ],
@@ -108,8 +188,17 @@ export const localPages: LocalPage[] = [
         a: "Jullié est au centre du Beaujolais viticole : Juliénas et Chénas sont à cinq minutes, Fleurie et Villié-Morgon à dix, Brouilly à vingt. Je passe déjà devant chez vous.",
       },
     ],
+    realisations: [
+      "romain-des-grottes",
+      "bonne-tonne",
+      "bott",
+      "le-bourlay",
+      "julien-sunier",
+      "christophe-pacalet",
+    ],
     metierLinks: ["print", "identite", "photo"],
     related: [
+      "graphiste-beaujolais",
       "graphiste-macon",
       "creation-site-internet-beaujolais",
     ],
@@ -154,8 +243,17 @@ export const localPages: LocalPage[] = [
         a: "Oui : reportages d'entreprise, photos de domaines et de cuvées, films de marque et captations par drone (dans le respect de la réglementation). L'image fait partie du même geste que l'identité — c'est souvent le duo qui change tout.",
       },
     ],
+    realisations: [
+      "bott",
+      "bonnet-cotton",
+      "guignard-robotisation",
+      "yann-bertrand",
+      "bmv-transport-logistique",
+      "romain-des-grottes",
+    ],
     metierLinks: ["identite", "print", "photo"],
     related: [
+      "graphiste-beaujolais",
       "graphiste-belleville-en-beaujolais",
       "creation-site-internet-beaujolais",
     ],
@@ -209,8 +307,17 @@ export const localPages: LocalPage[] = [
         a: "Oui : boutique avec paiement sécurisé, gestion des millésimes et des stocks, vente par cartons, et les obligations du secteur (mentions, majorité légale) posées correctement dès le départ.",
       },
     ],
+    realisations: [
+      "le-bourlay",
+      "christophe-pacalet",
+      "guignard-robotisation",
+      "bonnet-cotton",
+      "tabaj",
+      "julien-sunier",
+    ],
     metierLinks: ["web", "identite", "photo"],
     related: [
+      "graphiste-beaujolais",
       "graphiste-villefranche-sur-saone",
       "graphiste-belleville-en-beaujolais",
     ],
