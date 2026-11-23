@@ -45,7 +45,18 @@ export async function generateMetadata({
       url,
       title: page.metaTitle,
       description: page.metaDescription,
-      ...(cover ? { images: [{ url: cover, alt: page.h1 }] } : {}),
+      // Couverture passée par l'optimiseur d'images (1200 px) : les PNG
+      // d'origine font jusqu'à 7 Mo, trop lourds pour les aperçus de partage.
+      ...(cover
+        ? {
+            images: [
+              {
+                url: `${SITE_URL}/_next/image?url=${encodeURIComponent(cover)}&w=1200&q=75`,
+                alt: page.h1,
+              },
+            ],
+          }
+        : {}),
     },
   };
 }
@@ -124,6 +135,8 @@ export default async function LocalLanding({ params }: PageProps<"/[landing]">) 
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-coal via-coal/75 to-coal/45" />
+            {/* Haut assombri : le logo (mix-blend-difference) disparaît sur une photo claire */}
+            <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-coal/85 to-transparent" />
           </div>
         )}
         <div className="relative z-10">

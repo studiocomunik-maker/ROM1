@@ -3,7 +3,7 @@
    template à variables. URLs à plat : rom1.fr/<slug>.
    Chaque page s'ouvre sur de vraies réalisations (liste choisie à la main dans
    `realisations`) : un visiteur qui arrive de Google voit le travail avant le texte.
-   /graphiste-beaujolais remise en ligne le 24/11/2026 (Bing la classait encore 3e). */
+   /graphiste-beaujolais remise en ligne le 24/11/2026 (Bing l'avait encore en index). */
 
 export type LocalPage = {
   slug: string;

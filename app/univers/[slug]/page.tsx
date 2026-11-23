@@ -136,7 +136,17 @@ export async function generateMetadata({
       url: `${SITE_URL}/univers/${u.key}`,
       title: p?.metaTitle ?? `${u.t} — Romain Renoux`,
       description: p?.metaDescription ?? u.intro.slice(0, 160),
-      ...(p?.ogImage ? { images: [p.ogImage] } : {}),
+      // Passée par l'optimiseur d'images (1200 px) : le PNG d'origine fait 7 Mo.
+      ...(p?.ogImage
+        ? {
+            images: [
+              {
+                url: `${SITE_URL}/_next/image?url=${encodeURIComponent(p.ogImage.url)}&w=1200&q=75`,
+                alt: p.ogImage.alt,
+              },
+            ],
+          }
+        : {}),
     },
   };
 }
